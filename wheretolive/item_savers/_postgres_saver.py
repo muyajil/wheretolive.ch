@@ -1,0 +1,2 @@
+class PostgresSaver():
+    pass
