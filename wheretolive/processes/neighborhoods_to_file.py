@@ -1,4 +1,4 @@
-from ..crawlers import NeighborhoodMappingCrawler
+from ..aggregators import NeighborhoodAggregator
 from ..json_savers import FileJsonSaver
 import logging
 import os
@@ -6,11 +6,9 @@ import os
 logger = logging.getLogger(os.path.basename(__file__))
 
 logger.debug('Starting process...')
-mapper = NeighborhoodMappingCrawler()
+aggregator = NeighborhoodAggregator(towns_by_zip_path='/home/muy/repositories/wheretolive.ch/towns_by_zip.json')
 logger.debug('Mapping Switzerland...')
-towns_by_zip, neighborhoods_by_zip = mapper.crawl()
-logger.debug('Saving towns_by_zip...')
-saver = FileJsonSaver()
-saver.save('/home/muy/repositories/wheretolive.ch/towns_by_zip.json', towns_by_zip)
+neighborhoods_by_zip = aggregator.aggregate()
 logger.debug('Saving neighborhoods_by_zip...')
+saver = FileJsonSaver()
 saver.save('/home/muy/repositories/wheretolive.ch/neighborhoods_by_zip.json', neighborhoods_by_zip)

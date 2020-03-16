@@ -8,7 +8,7 @@ import os
 
 
 # FileCrawler
-class NeighborhoodMappingCrawler():
+class TownsCrawler():
 
     def __init__(self):
         self.base_url = 'https://data.geo.admin.ch/ch.swisstopo-vd.ortschaftenverzeichnis_plz/PLZO_CSV_LV03.zip'
@@ -75,22 +75,6 @@ class NeighborhoodMappingCrawler():
             self.towns_by_zip[cur_zip]['state'] = town['state']
             self.towns_by_zip[cur_zip]['bfs_nr'] = town['bfs_nr']
 
-    def compute_neighborhoods(self):
-        self.neighborhoods = dict()
-        self.merge_zip_codes()
-        self.logger.debug('Computing Neighborhoods...')
-        for base_zip in self.towns_by_zip:
-            neighborhoods = []
-            for candidate_zip in self.towns_by_zip:
-                cand = self.towns_by_zip[candidate_zip]
-                base = self.towns_by_zip[base_zip]
-
-                dist = math.sqrt((cand['x'] - base['x'])**2 + (cand['y'] - base['y'])**2)
-                if dist == 0.0:
-                    continue
-                neighborhoods.append({'zip': candidate_zip, 'dist': dist})
-            self.neighborhoods[base_zip] = sorted(neighborhoods, key=lambda x: x['dist'])
-
     def crawl(self):
-        self.compute_neighborhoods()
-        return self.towns_by_zip, self.neighborhoods
+        self.merge_zip_codes()
+        return self.towns_by_zip

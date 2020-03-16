@@ -3,7 +3,7 @@ import json
 
 class Switzerland():
 
-    def __init__(self, 
+    def __init__(self,
                  mode='json',
                  towns_by_zip_path=None,
                  neighborhoods_by_zip_path=None,

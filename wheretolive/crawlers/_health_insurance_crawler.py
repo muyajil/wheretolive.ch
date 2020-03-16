@@ -60,4 +60,4 @@ class HealthInsuranceCrawler():
 
     def crawl(self):
         for url in self.urls:
-
+            pass
