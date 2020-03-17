@@ -1,2 +1,2 @@
-from ._neighborhood_aggregator import NeighborhoodAggregator
-__all__ = ["NeighborhoodAggregator"]
+from ._route_aggregator import RouteAggregator
+__all__ = ["RouteAggregator"]

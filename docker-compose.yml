@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: wheretolive
+      POSTGRES_PASSWORD: wheretolive
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pg_admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: m@wheretolive.ch
+      PGADMIN_DEFAULT_PASSWORD: wheretolive
+    ports:
+      - 8080:80

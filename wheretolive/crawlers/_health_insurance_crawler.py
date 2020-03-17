@@ -1,28 +1,27 @@
 from datetime import datetime
 import requests
 import codecs
-from ..json_savers import FileJsonSaver
-from .. import Switzerland
+from ..models import Town
+from ..database import get_session
 import json
+from bs4 import BeautifulSoup
+import logging
 
 
 # WebsiteCrawler
 class HealthInsuranceCrawler():
 
     def __init__(self):
-        self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+        self.base_url = "https://www.priminfo.admin.ch/de/praemien"
         self.locations = self.get_locations()
-        self.health_insurance_rates_by_zip = dict()
-        self.country = Switzerland(towns_by_zip_path='/home/repositories/wheretolive.ch/towns_by_zip.json')
         self.ranges = {
             "birth_year":  [x for x in range(datetime.now().year - 80, datetime.now().year)],
             "franchise": {
                 "adult": [300, 500, 1000, 1500, 2000, 2500],
                 "child": [0, 100, 200, 300, 400, 500, 600]  # Until and including 18 years
-            },
-            "zip_codes": self.country.zip_codes
+            }
         }
-        self.base_url = "https://www.priminfo.admin.ch/de/praemien"
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     def get_locations(self):
         url = self.base_url + '/locations'
@@ -36,14 +35,15 @@ class HealthInsuranceCrawler():
         url_suffix += f'&yob%5B0%5D={birth_year}'
         url_suffix += f'&franchise%5B0%5D={franchise}'
         url_suffix += '&coverage%5B0%5D=1'
-        url_suffix += '&models%5B%5D=base&models%5B%5D=ham&models%5B%5D=hmo&models%5B%5D=div'
+        url_suffix += '&models%5B%5D=base&models%5B%5D=ham&models%5B%5D=hmo&models%5B%5D=div&display=savings'
 
         return self.base_url + url_suffix
 
     @property
-    def urls(self):
-        for zip_code in self.ranges['zip_codes']:
-            location_id = self.locations[zip_code][0]
+    def items(self):
+        zip_codes = get_session().query(Town).select(Town.zip_code)
+        for zip_code in zip_codes:
+            location_id = self.locations['index'][zip_code][0]
             for birth_year in self.ranges['birth_year']:
                 if datetime.now().year - birth_year > 18:
                     franchise_range = self.ranges['franchise']['adult']
@@ -59,5 +59,23 @@ class HealthInsuranceCrawler():
                     }
 
     def crawl(self):
-        for url in self.urls:
-            pass
+        for item in self.items:
+            self.logger.debug(f'Requesting url: {item["url"]}')
+            content = requests.get(item['url']).text
+            soup = BeautifulSoup(content, features="lxml")
+            rows = soup.find_all("tr")
+            for row in rows[3:]:
+                texts = row.find_all("th")
+                numbers = row.find_all("td")
+                try:
+                    yield {
+                        'name': texts[0].a.string,
+                        'url': texts[0].a['href'],
+                        'model': texts[1].string.strip().replace('\xad', ''),
+                        'rate': float(numbers[0].string),
+                        'zip_code': item['zip_code'],
+                        'franchise': item['franchise'],
+                        'birth_year': item['birth_year']
+                    }
+                except (AttributeError, ValueError):
+                    continue

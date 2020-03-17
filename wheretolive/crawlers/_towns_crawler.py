@@ -73,7 +73,8 @@ class TownsCrawler():
                 self.towns_by_zip[cur_zip]['y'] = town['y']
             self.towns_by_zip[cur_zip]['lang'] = town['lang']
             self.towns_by_zip[cur_zip]['state'] = town['state']
-            self.towns_by_zip[cur_zip]['bfs_nr'] = town['bfs_nr']
+            self.towns_by_zip[cur_zip]['bfs_nr'] = int(town['bfs_nr'])
+            self.towns_by_zip[cur_zip]['zip_code'] = int(cur_zip)
 
     def crawl(self):
         self.merge_zip_codes()
