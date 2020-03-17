@@ -21,6 +21,7 @@ start_batch = datetime.now()
 for idx, health_insurance_rate in enumerate(health_insurance_rates):
     health_insurace = HealthInsurance(
         name=health_insurance_rate['name'].lower(),
+        name_capitalized=health_insurance_rate['name'],
         url=health_insurance_rate['url'])
 
     health_insurance_id = session.query(HealthInsurance.id) \

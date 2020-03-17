@@ -38,6 +38,7 @@ class HealthInsurance(base):
     __tablename__ = 'health_insurance'
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
+    name_capitalized = Column(String)
     url = Column(String)
 
 
