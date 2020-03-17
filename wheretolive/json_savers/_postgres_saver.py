@@ -1,2 +1,0 @@
-class PostgresTableJsonSaver():
-    pass

@@ -38,7 +38,7 @@ class HealthInsurance(base):
     __tablename__ = 'health_insurance'
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    url = Column(String, unique=True)
+    url = Column(String)
 
 
 class HealthInsuranceRate(base):

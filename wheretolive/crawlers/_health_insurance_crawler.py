@@ -6,6 +6,8 @@ from ..database import get_session
 import json
 from bs4 import BeautifulSoup
 import logging
+import time
+from retry import retry
 
 
 # WebsiteCrawler
@@ -41,9 +43,9 @@ class HealthInsuranceCrawler():
 
     @property
     def items(self):
-        zip_codes = get_session().query(Town).select(Town.zip_code)
-        for zip_code in zip_codes:
-            location_id = self.locations['index'][zip_code][0]
+        zip_codes = get_session().query(Town.zip_code)
+        for zip_code, in zip_codes:
+            location_id = self.locations['index'][str(zip_code)][0]
             for birth_year in self.ranges['birth_year']:
                 if datetime.now().year - birth_year > 18:
                     franchise_range = self.ranges['franchise']['adult']
@@ -58,12 +60,17 @@ class HealthInsuranceCrawler():
                         'url': self.compose_url(location_id, birth_year, franchise)
                     }
 
+    @retry(requests.exceptions.ConnectionError, delay=1, backoff=2)
+    def get_rows_from_url(self, url):
+        content = requests.get(url).text
+        soup = BeautifulSoup(content, features="lxml")
+        rows = soup.find_all("tr")
+        return rows
+
     def crawl(self):
         for item in self.items:
             self.logger.debug(f'Requesting url: {item["url"]}')
-            content = requests.get(item['url']).text
-            soup = BeautifulSoup(content, features="lxml")
-            rows = soup.find_all("tr")
+            rows = self.get_rows_from_url(item['url'])
             for row in rows[3:]:
                 texts = row.find_all("th")
                 numbers = row.find_all("td")
