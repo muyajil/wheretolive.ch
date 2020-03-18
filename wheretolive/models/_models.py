@@ -60,6 +60,15 @@ class Accomodation(base):
     __tablename__ = 'accomodation'
     comparis_id = Column(Integer, primary_key=True)
     zip_code = Column(Integer)
+    town_name = Column(String)
+    street_name = Column(String)
+    house_number = Column(String)
     rooms = Column(Float)
     area = Column(Float)
     price = Column(Float)
+    image_url = Column(String)
+    is_rent = Column(Boolean)
+    found_date = Column(DateTime)
+    property_type_id = Column(Integer)
+    property_type = Column(String)
+
