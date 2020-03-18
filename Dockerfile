@@ -6,10 +6,9 @@ ADD ./conda-spec.txt /conda-spec.txt
 
 RUN conda create --name wheretolive.ch --file /conda-spec.txt
 RUN echo "source activate wheretolive.ch" > ~/.bashrc
-ENV PATH /opt/conda/envs/env/bin:$PATH
+ENV PATH /opt/conda/envs/wheretolive.ch/bin:$PATH
 RUN pip install --no-cache-dir retry
 
-ADD ./* /src/
-WORKDIR /src
+ADD ./wheretolive /wheretolive
 
-ENTRYPOINT ["/bin/bash", "-c"]
+ENTRYPOINT ["/opt/conda/envs/wheretolive.ch/bin/python"]
