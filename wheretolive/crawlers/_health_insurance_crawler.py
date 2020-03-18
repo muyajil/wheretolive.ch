@@ -43,7 +43,7 @@ class HealthInsuranceCrawler():
 
     @property
     def items(self):
-        zip_codes = get_session().query(Town.zip_code)
+        zip_codes = get_session().query(Town.zip_code).distinct()
         for zip_code, in zip_codes:
             location_id = self.locations['index'][str(zip_code)][0]
             for birth_year in self.ranges['birth_year']:
