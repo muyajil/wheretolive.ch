@@ -7,12 +7,12 @@ from sqlalchemy.types import ARRAY
 class Town(base):
     __tablename__ = 'town'
     zip_code = Column(Integer, primary_key=True)
-    names = Column(ARRAY(String))
+    bfs_nr = Column(Integer, primary_key=True)
+    name = Column(String, primary_key=True)
     x = Column(Float)
     y = Column(Float)
     lang = Column(String)
     state = Column(String)
-    bfs_nr = Column(Integer)
 
 
 class TaxRate(base):
@@ -26,8 +26,12 @@ class TaxRate(base):
 
 class Route(base):
     __tablename__ = 'route'
-    source_town = Column(Integer, primary_key=True)
-    target_town = Column(Integer, primary_key=True)
+    source_town_zip_code = Column(Integer, primary_key=True)
+    source_town_bfs_nr = Column(Integer, primary_key=True)
+    source_town_name = Column(String, primary_key=True)
+    target_town_zip_code = Column(Integer, primary_key=True)
+    target_town_bfs_nr = Column(Integer, primary_key=True)
+    target_town_name = Column(String, primary_key=True)
     distance = Column(Float)
     car_commute_time = Column(Float)
     public_commute_time = Column(Float)

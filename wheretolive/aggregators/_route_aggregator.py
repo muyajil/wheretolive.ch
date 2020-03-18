@@ -24,7 +24,11 @@ class RouteAggregator():
                 if distance == 0.0:
                     continue
                 yield {
-                    "source_town": source_town.zip_code,
-                    "target_town": target_town.zip_code,
+                    "source_town_zip_code": source_town.zip_code,
+                    "source_town_bfs_nr": source_town.bfs_nr,
+                    "source_town_name": source_town.name,
+                    "target_town_zip_code": target_town.zip_code,
+                    "target_town_bfs_nr": target_town.bfs_nr,
+                    "target_town_name": target_town.name,
                     "distance": distance
                 }
