@@ -13,11 +13,16 @@ logger.debug('Starting process...')
 crawler = TownsCrawler()
 
 logger.debug('Getting towns...')
-towns_by_zip = crawler.crawl()
+towns = crawler.crawl()
 
 logger.debug('Inserting towns into database...')
-for zip_code in towns_by_zip:
-    town = Town(**towns_by_zip[zip_code])
-    session.add(town)
+for town in towns:
+
+    if session.query(Town) \
+            .filter_by(zip_code=town['zip_code'], name=town['name'], bfs_nr=town['bfs_nr']) \
+            .one_or_none() is None:
+        town = Town(**town)
+        session.add(town)
+
 session.commit()
 session.remove()
