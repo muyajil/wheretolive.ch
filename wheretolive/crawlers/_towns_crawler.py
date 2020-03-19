@@ -35,18 +35,50 @@ class TownsCrawler():
         with source, target:
             shutil.copyfileobj(source, target)
 
+    def get_latitude(self, east, north):
+        # Axiliary values (% Bern)
+        y_aux = (east - 600000) / 1000000
+        x_aux = (north - 200000) / 1000000
+        lat = (16.9023892
+               + (3.238272 * x_aux)
+               - (0.270978 * y_aux**2)
+               - (0.002528 * x_aux**2)
+               - (0.0447 * y_aux**2 * x_aux)
+               - (0.0140 * x_aux**3))
+
+        # Unit 10000" to 1" and convert seconds to degrees (dec)
+        lat = (lat * 100) / 36
+        return lat
+
+    def get_longitude(self, east, north):
+        # Axiliary values (% Bern)
+        y_aux = (east - 600000) / 1000000
+        x_aux = (north - 200000) / 1000000
+        lng = (2.6779094
+               + (4.728982 * y_aux)
+               + (0.791484 * y_aux * x_aux)
+               + (0.1306 * y_aux * x_aux**2)
+               - (0.0436 * y_aux**3))
+
+        # Unit 10000" to 1" and convert seconds to degrees (dec)
+        lng = (lng * 100) / 36
+        return lng
+
     def crawl(self):
         self.download_data()
         self.extract_csv()
         with open(self.csv_path, encoding='latin-1') as f:
             reader = csv.DictReader(f, delimiter=self.csv_delimiter)
             for item in reader:
+                if item['Kantonskürzel'] == 'LI':
+                    # Skip Lichtenstein
+                    continue
                 yield {
                     'name': item['Ortschaftsname'],
                     'zip_code': int(item['PLZ']),
                     'lang': item['Sprache'],
                     'state': item['Kantonskürzel'],
                     'bfs_nr': int(item['BFS-Nr']),
-                    'x': float(item['E']),
-                    'y': float(item['N'])
+                    'lat': self.get_latitude(float(item['E']), float(item['N'])),
+                    'long': self.get_longitude(float(item['E']), float(item['N']))
                 }

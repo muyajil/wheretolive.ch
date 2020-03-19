@@ -17,10 +17,23 @@
             }
         },
         {
-            "name": "Commute Timmes To Db",
+            "name": "Commute Times To Db",
             "type": "python",
             "request": "launch",
             "module": "wheretolive.processes.initial_commute_times_to_db",
+            "console": "integratedTerminal",
+            "env": {
+                "LOGLEVEL": "DEBUG",
+                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
+                "PYTHONPATH": "${workspace}:$PYTHONPATH",
+                "MAPS_API_KEY": "AIzaSyBzWe16UIfLa_5u1SMiRACTcXOr-K0zCrU"
+            }
+        },
+        {
+            "name": "SBB Timetable To Db",
+            "type": "python",
+            "request": "launch",
+            "module": "wheretolive.processes.initial_sbb_timetable_to_db",
             "console": "integratedTerminal",
             "env": {
                 "LOGLEVEL": "DEBUG",
