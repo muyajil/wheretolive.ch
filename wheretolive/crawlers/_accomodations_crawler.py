@@ -11,8 +11,9 @@ from retry import retry
 
 class AccomodationsCrawler():
 
-    def __init__(self):
+    def __init__(self, max_ad_age_h="null"):
         self.base_url = "https://www.comparis.ch/immobilien/result/list"
+        self.max_ad_age_h = max_ad_age_h
         self.logger = logging.getLogger(self.__class__.__name__)
 
     @retry(requests.exceptions.ConnectionError, delay=1, backoff=2)
@@ -39,7 +40,7 @@ class AccomodationsCrawler():
         url_suffix += "%22PriceTo%22%3Anull%2C"
         url_suffix += "%22ComparisPointsMin%22%3A0%2C"
         url_suffix += "%22AdAgeMax%22%3A0%2C"
-        url_suffix += "%22AdAgeInHoursMax%22%3Anull%2C"
+        url_suffix += f"%22AdAgeInHoursMax%22%3A{self.max_ad_age_h}%2C"
         url_suffix += "%22Keyword%22%3A%22%22%2C"
         url_suffix += "%22WithImagesOnly%22%3Anull%2C"
         url_suffix += "%22WithPointsOnly%22%3Anull%2C"
