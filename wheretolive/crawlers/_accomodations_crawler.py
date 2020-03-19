@@ -91,10 +91,11 @@ class AccomodationsCrawler():
 
     def get_address(self, listing):
         try:
+            if len(listing['Address']) == 0:
+                return None, None, None
             if len(listing['Address']) == 1:
                 _, town_name = listing['Address'][0].split(' ', 1)
-                street_name = None
-                house_number = None
+                return town_name, None, None
             elif len(listing['Address']) == 2:
                 try:
                     splits = listing['Address'][0].split(' ')
@@ -105,7 +106,7 @@ class AccomodationsCrawler():
                     street_name = listing['Address'][0]
 
                 _, town_name = listing['Address'][1].split(' ', 1)
-            return town_name, street_name, house_number
+                return town_name, street_name, house_number
         except:
             self.logger.error(f'Problem with parsing address of listing {listing["AdId"]}')
 
