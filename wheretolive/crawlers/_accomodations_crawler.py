@@ -109,6 +109,7 @@ class AccomodationsCrawler():
                 return town_name, street_name, house_number
         except:
             self.logger.error(f'Problem with parsing address of listing {listing["AdId"]}')
+            return None, None, None
 
     def get_rooms(self, listing):
         if len(listing['EssentialInformation']) == 0:
@@ -121,6 +122,7 @@ class AccomodationsCrawler():
             return rooms
         except:
             self.logger.error(f'Problem with parsing rooms of listing {listing["AdId"]}')
+            return None
 
     def get_image_url(self, listing):
         if '//' == listing['ImageUrl'][:2]:
