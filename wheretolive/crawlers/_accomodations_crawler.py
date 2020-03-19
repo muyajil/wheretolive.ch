@@ -24,9 +24,9 @@ class AccomodationsCrawler():
         last_page = max(map(lambda x: int(x.split('-')[-1]), pagination_items))
         return last_page
 
-    def compose_url(self, zip_code, page=0):
+    def compose_url(self, deal_type, zip_code, page=0):
         url_suffix = "?requestobject=%7B"
-        url_suffix += "%22DealType%22%3A10%2C"
+        url_suffix += f"%22DealType%22%3A{deal_type}%2C"
         url_suffix += "%22SiteId%22%3A0%2C"
         url_suffix += "%22RootPropertyTypes%22%3A%5B%5D%2C"
         url_suffix += "%22PropertyTypes%22%3A%5B%5D%2C"
@@ -69,17 +69,18 @@ class AccomodationsCrawler():
     @property
     def items(self):
         zip_codes = get_session().query(Town.zip_code).distinct()
-        for zip_code, in zip_codes:
-            url = self.compose_url(zip_code)
-            last_page = self.get_max_pages(url)
-            if last_page is None:
-                continue
-            for page in range(last_page + 1):
-                yield {
-                    "zip_code": zip_code,
-                    "page": page,
-                    "url": self.compose_url(zip_code, page)
-                }
+        for deal_type in [20, 10]:
+            for zip_code, in zip_codes:
+                url = self.compose_url(deal_type, zip_code)
+                last_page = self.get_max_pages(url)
+                if last_page is None:
+                    continue
+                for page in range(last_page + 1):
+                    yield {
+                        "zip_code": zip_code,
+                        "page": page,
+                        "url": self.compose_url(deal_type, zip_code, page)
+                    }
 
     @retry(requests.exceptions.ConnectionError, delay=1, backoff=2)
     def get_listings_from_url(self, url):
