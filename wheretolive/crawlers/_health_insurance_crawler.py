@@ -47,6 +47,7 @@ class HealthInsuranceCrawler():
         for zip_code, in zip_codes:
             if str(zip_code) not in self.locations['index']:
                 self.logger.warn(f'Zip Code {zip_code} not found in locations')
+                continue
             location_id = self.locations['index'][str(zip_code)][0]
             for birth_year in self.ranges['birth_year']:
                 if datetime.now().year - birth_year > 18:

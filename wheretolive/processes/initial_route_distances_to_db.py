@@ -22,7 +22,7 @@ start_batch = datetime.now()
 for idx, route in enumerate(routes):
     route = Route(**route)
     session.add(route)
-    if idx % 10000 == 0 and idx > 0:
+    if idx % 50000 == 0 and idx > 0:
         now = datetime.now()
         logger.info(
             f'Routes aggregated: {idx}\tBatch Time elapsed: {now-start_batch}\tTotal Time elapsed: {now-start}')
