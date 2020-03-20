@@ -1,2 +1,25 @@
-from ._models import Town, TaxRate, HealthInsurance, HealthInsuranceRate, Route, Accomodation
-__all__ = ["Town", "TaxRate", "HealthInsurance", "HealthInsuranceRate", "Route", "Accomodation"]
+from ._models import Town, \
+        TaxRate, \
+        HealthInsurance, \
+        HealthInsuranceRate, \
+        Commute, \
+        Accomodation, \
+        SBBStation, \
+        SBBStopTime, \
+        SBBTrip, \
+        SBBRoute, \
+        SBBCalendar, \
+        SBBTransfers
+__all__ = [
+    "Town",
+    "TaxRate",
+    "HealthInsurance",
+    "HealthInsuranceRate",
+    "Commute",
+    "Accomodation",
+    "SBBStation",
+    "SBBStopTime",
+    "SBBTrip",
+    "SBBRoute",
+    "SBBCalendar",
+    "SBBTransfers"]

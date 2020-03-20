@@ -52,5 +52,9 @@ for idx, health_insurance_rate in enumerate(health_insurance_rates):
         session.commit()
         start_batch = now
 
+now = datetime.now()
+logger.info(
+    f'Health Insurance Rates crawled: {idx}\tBatch Time elapsed: {now-start_batch}\tTotal Time elapsed: {now-start}')
+
 session.commit()
 session.remove()

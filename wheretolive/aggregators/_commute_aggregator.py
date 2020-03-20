@@ -3,7 +3,7 @@ import math
 from ..models import Town
 
 
-class RouteAggregator():
+class CommuteAggregator():
 
     def __init__(self, db_session):
         self.logger = logging.getLogger(self.__class__.__name__)

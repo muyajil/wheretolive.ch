@@ -1,6 +1,6 @@
 from ..database import base
 from sqlalchemy import Boolean, DateTime, Column, Integer, \
-                       String, ForeignKey, Float
+                       String, ForeignKey, Float, Time
 from sqlalchemy.types import ARRAY
 
 
@@ -25,8 +25,8 @@ class TaxRate(base):
     rate = Column(Float)
 
 
-class Route(base):
-    __tablename__ = 'route'
+class Commute(base):
+    __tablename__ = 'commute'
     source_town_id = Column(Integer, primary_key=True)
     target_town_id = Column(Integer, primary_key=True)
     distance = Column(Float)
@@ -68,3 +68,55 @@ class Accomodation(base):
     found_date = Column(DateTime)
     property_type_id = Column(Integer)
     property_type = Column(String)
+
+
+class SBBStation(base):
+    __tablename__ = 'sbb_station'
+    id = Column(String, primary_key=True)
+    name = Column(String)
+    lat = Column(Float)
+    long = Column(Float)
+    parent_station = Column(String)
+
+
+class SBBStopTime(base):
+    __tablename__ = 'sbb_stop_time'
+    trip_id = Column(String, primary_key=True)
+    station_id = Column(String, primary_key=True)
+    stop_sequence = Column(Integer, primary_key=True)
+    arrival_time = Column(Time)
+    arrives_next_day = Column(Boolean)
+    departure_time = Column(Time)
+    departs_next_day = Column(Boolean)
+
+
+class SBBTrip(base):
+    __tablename__ = 'sbb_trip'
+    trip_id = Column(String, primary_key=True)
+    route_id = Column(String)
+    service_id = Column(String)
+
+
+class SBBRoute(base):
+    __tablename__ = 'sbb_route'
+    route_id = Column(String, primary_key=True)
+    route_desc = Column(String)
+
+
+class SBBCalendar(base):
+    __tablename__ = 'sbb_calendar'
+    service_id = Column(String, primary_key=True)
+    monday = Column(Boolean)
+    tuesday = Column(Boolean)
+    wednesday = Column(Boolean)
+    thursday = Column(Boolean)
+    friday = Column(Boolean)
+    saturday = Column(Boolean)
+    sunday = Column(Boolean)
+
+
+class SBBTransfers(base):
+    __tablename__ = 'sbb_transfers'
+    from_stop_id = Column(String, primary_key=True)
+    to_stop_id = Column(String, primary_key=True)
+    min_transfer_time = Column(Integer)

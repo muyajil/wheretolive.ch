@@ -11,7 +11,18 @@ base = declarative_base()
 
 
 def init_db():
-    from ..models import Town, Route, HealthInsuranceRate, HealthInsurance, Accomodation, TaxRate
+    from ..models import Town, \
+        TaxRate, \
+        HealthInsurance, \
+        HealthInsuranceRate, \
+        Commute, \
+        Accomodation, \
+        SBBStation, \
+        SBBStopTime, \
+        SBBTrip, \
+        SBBRoute, \
+        SBBCalendar, \
+        SBBTransfers
     base.metadata.create_all(bind=__engine)
 
 
@@ -25,4 +36,4 @@ def drop_table(table):
 
 @compiles(DropTable, "postgresql")
 def _compile_drop_table(element, compiler, **kwargs):
-    return compiler.visit_drop_table(element) + " CASCADE"
+    return compiler.visit_drop_table(element).replace('DROP TABLE', 'DROP TABLE IF EXISTS') + " CASCADE"

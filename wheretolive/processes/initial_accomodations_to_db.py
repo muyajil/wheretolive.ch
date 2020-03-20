@@ -32,5 +32,8 @@ for idx, accomodation in enumerate(accomodations):
             f'Listings crawled: {idx}\tBatch Time elapsed: {now-start_batch}\tTotal Time elapsed: {now-start}')
         session.commit()
         start_batch = now
+now = datetime.now()
+logger.info(
+    f'Listings crawled: {idx}\tBatch Time elapsed: {now-start_batch}\tTotal Time elapsed: {now-start}')
 session.commit()
 session.remove()
