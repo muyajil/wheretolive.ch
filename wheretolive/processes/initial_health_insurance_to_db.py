@@ -11,50 +11,60 @@ drop_table(HealthInsuranceRate.__table__)
 init_db()
 logger = logging.getLogger(os.path.basename(__file__))
 
-logger.debug('Starting process...')
+logger.debug("Starting process...")
 crawler = HealthInsuranceCrawler()
-logger.debug('Getting Health Insurance Rates...')
+logger.debug("Getting Health Insurance Rates...")
 health_insurance_rates = crawler.crawl()
-logger.debug('Inserting Health Insurance Rates into database...')
+logger.debug("Inserting Health Insurance Rates into database...")
 start = datetime.now()
 start_batch = datetime.now()
 for idx, health_insurance_rate in enumerate(health_insurance_rates):
     health_insurace = HealthInsurance(
-        name=health_insurance_rate['name'].lower(),
-        name_capitalized=health_insurance_rate['name'],
-        url=health_insurance_rate['url'])
+        name=health_insurance_rate["name"].lower(),
+        name_capitalized=health_insurance_rate["name"],
+        url=health_insurance_rate["url"],
+    )
 
-    health_insurance_id = session.query(HealthInsurance.id) \
-        .filter_by(name=health_insurace.name) \
+    health_insurance_id = (
+        session.query(HealthInsurance.id)
+        .filter_by(name=health_insurace.name)
         .one_or_none()
+    )
 
     if health_insurance_id is None:
         session.add(health_insurace)
         session.flush()
         health_insurance_id = health_insurace.id
     else:
-        health_insurance_id, = health_insurance_id
+        (health_insurance_id,) = health_insurance_id
 
     health_insurance_rate = HealthInsuranceRate(
         health_insurance_id=health_insurance_id,
-        zip_code=health_insurance_rate['zip_code'],
-        birth_year=health_insurance_rate['birth_year'],
-        franchise=health_insurance_rate['franchise'],
-        model=health_insurance_rate['model'],
-        rate=health_insurance_rate['rate'])
+        zip_code=health_insurance_rate["zip_code"],
+        birth_year=health_insurance_rate["birth_year"],
+        franchise=health_insurance_rate["franchise"],
+        model=health_insurance_rate["model"],
+        rate=health_insurance_rate["rate"],
+    )
 
     session.add(health_insurance_rate)
 
     if idx % 5000 == 0 and idx > 0:
         now = datetime.now()
         logger.info(
-            f'Health Insurance Rates crawled: {idx}\tBatch Time elapsed: {now-start_batch}\tTotal Time elapsed: {now-start}')
+            f"Health Insurance Rates crawled: {idx}\t"
+            + f"Batch Time elapsed: {now-start_batch}\t"
+            + f"Total Time elapsed: {now-start}"
+        )
         session.commit()
         start_batch = now
 
 now = datetime.now()
 logger.info(
-    f'Health Insurance Rates crawled: {idx}\tBatch Time elapsed: {now-start_batch}\tTotal Time elapsed: {now-start}')
+    f"Health Insurance Rates crawled: {idx}\t"
+    + f"Batch Time elapsed: {now-start_batch}\t"
+    + f"Total Time elapsed: {now-start}"
+)
 
 session.commit()
 session.remove()

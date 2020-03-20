@@ -1,4 +1,6 @@
 {
     "python.pythonPath": "/home/muy/miniconda3/envs/wheretolive.ch/bin/python",
-    "python.linting.pylintArgs": ["--ignored-classes=SQLObject,Registrant,scoped_session"]
+    "python.linting.pylintArgs": [
+        "--ignored-classes=SQLObject,Registrant,scoped_session"
+    ],
 }

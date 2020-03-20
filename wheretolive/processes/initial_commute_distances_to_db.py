@@ -13,12 +13,12 @@ logger = logging.getLogger(os.path.basename(__file__))
 
 inserter = BatchedDBInserter(logger, session, batch_size=50000)
 
-logger.debug('Starting process...')
+logger.debug("Starting process...")
 aggregator = CommuteAggregator(session)
 
-logger.debug('Mapping Switzerland...')
+logger.debug("Mapping Switzerland...")
 commutes = map(lambda x: Commute(**x), aggregator.aggregate())
-logger.debug('Inserting routes into database')
+logger.debug("Inserting routes into database")
 inserter.insert(commutes)
 
 session.remove()

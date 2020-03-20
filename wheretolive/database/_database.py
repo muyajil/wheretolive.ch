@@ -5,24 +5,12 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import os
 
-__engine = create_engine(os.environ.get('DB_CONN'), convert_unicode=True)
+__engine = create_engine(os.environ.get("DB_CONN"), convert_unicode=True)
 session_factory = sessionmaker(bind=__engine)
 base = declarative_base()
 
 
 def init_db():
-    from ..models import Town, \
-        TaxRate, \
-        HealthInsurance, \
-        HealthInsuranceRate, \
-        Commute, \
-        Accomodation, \
-        SBBStation, \
-        SBBStopTime, \
-        SBBTrip, \
-        SBBRoute, \
-        SBBCalendar, \
-        SBBTransfers
     base.metadata.create_all(bind=__engine)
 
 
@@ -36,4 +24,7 @@ def drop_table(table):
 
 @compiles(DropTable, "postgresql")
 def _compile_drop_table(element, compiler, **kwargs):
-    return compiler.visit_drop_table(element).replace('DROP TABLE', 'DROP TABLE IF EXISTS') + " CASCADE"
+    return (
+        compiler.visit_drop_table(element).replace("DROP TABLE", "DROP TABLE IF EXISTS")
+        + " CASCADE"
+    )

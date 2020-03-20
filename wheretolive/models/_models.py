@@ -1,11 +1,17 @@
 from ..database import base
-from sqlalchemy import Boolean, DateTime, Column, Integer, \
-                       String, ForeignKey, Float, Time
-from sqlalchemy.types import ARRAY
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    Column,
+    Integer,
+    String,
+    Float,
+    Time,
+)
 
 
 class Town(base):
-    __tablename__ = 'town'
+    __tablename__ = "town"
     id = Column(Integer, primary_key=True)
     zip_code = Column(Integer)
     bfs_nr = Column(Integer)
@@ -17,7 +23,7 @@ class Town(base):
 
 
 class TaxRate(base):
-    __tablename__ = 'tax_rate'
+    __tablename__ = "tax_rate"
     profile = Column(String, primary_key=True)
     bfs_nr = Column(Integer, primary_key=True)
     min_income = Column(Integer, primary_key=True)
@@ -26,7 +32,7 @@ class TaxRate(base):
 
 
 class Commute(base):
-    __tablename__ = 'commute'
+    __tablename__ = "commute"
     source_town_id = Column(Integer, primary_key=True)
     target_town_id = Column(Integer, primary_key=True)
     distance = Column(Float)
@@ -36,7 +42,7 @@ class Commute(base):
 
 
 class HealthInsurance(base):
-    __tablename__ = 'health_insurance'
+    __tablename__ = "health_insurance"
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
     name_capitalized = Column(String)
@@ -44,7 +50,7 @@ class HealthInsurance(base):
 
 
 class HealthInsuranceRate(base):
-    __tablename__ = 'health_insurance_rate'
+    __tablename__ = "health_insurance_rate"
     health_insurance_id = Column(Integer, primary_key=True)
     zip_code = Column(Integer, primary_key=True)
     birth_year = Column(Integer, primary_key=True)
@@ -54,7 +60,7 @@ class HealthInsuranceRate(base):
 
 
 class Accomodation(base):
-    __tablename__ = 'accomodation'
+    __tablename__ = "accomodation"
     comparis_id = Column(Integer, primary_key=True)
     zip_code = Column(Integer)
     town_name = Column(String)
@@ -71,7 +77,7 @@ class Accomodation(base):
 
 
 class SBBStation(base):
-    __tablename__ = 'sbb_station'
+    __tablename__ = "sbb_station"
     id = Column(String, primary_key=True)
     name = Column(String)
     lat = Column(Float)
@@ -80,7 +86,7 @@ class SBBStation(base):
 
 
 class SBBStopTime(base):
-    __tablename__ = 'sbb_stop_time'
+    __tablename__ = "sbb_stop_time"
     trip_id = Column(String, primary_key=True)
     station_id = Column(String, primary_key=True)
     stop_sequence = Column(Integer, primary_key=True)
@@ -91,20 +97,20 @@ class SBBStopTime(base):
 
 
 class SBBTrip(base):
-    __tablename__ = 'sbb_trip'
+    __tablename__ = "sbb_trip"
     trip_id = Column(String, primary_key=True)
     route_id = Column(String)
     service_id = Column(String)
 
 
 class SBBRoute(base):
-    __tablename__ = 'sbb_route'
+    __tablename__ = "sbb_route"
     route_id = Column(String, primary_key=True)
     route_desc = Column(String)
 
 
 class SBBCalendar(base):
-    __tablename__ = 'sbb_calendar'
+    __tablename__ = "sbb_calendar"
     service_id = Column(String, primary_key=True)
     monday = Column(Boolean)
     tuesday = Column(Boolean)
@@ -116,7 +122,7 @@ class SBBCalendar(base):
 
 
 class SBBTransfer(base):
-    __tablename__ = 'sbb_transfer'
+    __tablename__ = "sbb_transfer"
     from_stop_id = Column(String, primary_key=True)
     to_stop_id = Column(String, primary_key=True)
     min_transfer_time = Column(Integer)

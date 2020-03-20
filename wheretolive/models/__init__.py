@@ -1,15 +1,18 @@
-from ._models import Town, \
-        TaxRate, \
-        HealthInsurance, \
-        HealthInsuranceRate, \
-        Commute, \
-        Accomodation, \
-        SBBStation, \
-        SBBStopTime, \
-        SBBTrip, \
-        SBBRoute, \
-        SBBCalendar, \
-        SBBTransfer
+from ._models import (
+    Town,
+    TaxRate,
+    HealthInsurance,
+    HealthInsuranceRate,
+    Commute,
+    Accomodation,
+    SBBStation,
+    SBBStopTime,
+    SBBTrip,
+    SBBRoute,
+    SBBCalendar,
+    SBBTransfer,
+)
+
 __all__ = [
     "Town",
     "TaxRate",
@@ -22,4 +25,5 @@ __all__ = [
     "SBBTrip",
     "SBBRoute",
     "SBBCalendar",
-    "SBBTransfer"]
+    "SBBTransfer",
+]

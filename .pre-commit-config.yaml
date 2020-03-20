@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/Quantco/pre-commit-mirrors-flake8
+    rev: ''  # Use the sha / tag you want to point at
+    hooks:
+      - id: flake8-conda
+  - repo: https://github.com/Quantco/pre-commit-mirrors-black
+    rev: ''  # Use the sha / tag you want to point at
+    hooks:
+      - id: black-conda
+  - repo: local
+    hooks:
+      - id: save-conda-env
+        name: save-conda-env
+        entry: /bin/bash ./save_env.sh
+        language: script
+        pass_filenames: false

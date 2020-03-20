@@ -13,12 +13,12 @@ logger = logging.getLogger(os.path.basename(__file__))
 
 inserter = BatchedDBInserter(logger, session)
 
-logger.debug('Starting process...')
+logger.debug("Starting process...")
 crawler = TaxRateCrawler()
 
-logger.debug('Getting Tax Rates...')
+logger.debug("Getting Tax Rates...")
 tax_rates = map(lambda x: TaxRate(**x), crawler.crawl())
-logger.debug('Inserting tax rates into database...')
+logger.debug("Inserting tax rates into database...")
 inserter.insert(tax_rates)
 
 session.remove()

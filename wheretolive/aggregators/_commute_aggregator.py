@@ -3,8 +3,7 @@ import math
 from ..models import Town
 
 
-class CommuteAggregator():
-
+class CommuteAggregator:
     def __init__(self, db_session):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.db_session = db_session
@@ -15,8 +14,9 @@ class CommuteAggregator():
         s_long = math.radians(source_town.long)
         t_lat = math.radians(target_town.lat)
         t_long = math.radians(target_town.long)
-        a = ((1 - math.cos(t_lat-s_lat))/2
-             + math.cos(s_lat) * math.cos(t_lat) * (1-math.cos(t_long-s_long))/2)
+        a = (1 - math.cos(t_lat - s_lat)) / 2 + math.cos(s_lat) * math.cos(t_lat) * (
+            1 - math.cos(t_long - s_long)
+        ) / 2
         return 12742 * math.asin(math.sqrt(a))
 
     def aggregate(self):
@@ -30,5 +30,5 @@ class CommuteAggregator():
                 yield {
                     "source_town_id": source_town.id,
                     "target_town_id": target_town.id,
-                    "distance": self.get_distance(source_town, target_town)
+                    "distance": self.get_distance(source_town, target_town),
                 }
