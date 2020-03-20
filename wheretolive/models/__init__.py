@@ -9,7 +9,7 @@ from ._models import Town, \
         SBBTrip, \
         SBBRoute, \
         SBBCalendar, \
-        SBBTransfers
+        SBBTransfer
 __all__ = [
     "Town",
     "TaxRate",
@@ -22,4 +22,4 @@ __all__ = [
     "SBBTrip",
     "SBBRoute",
     "SBBCalendar",
-    "SBBTransfers"]
+    "SBBTransfer"]

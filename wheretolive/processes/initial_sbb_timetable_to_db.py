@@ -1,5 +1,5 @@
 from ..crawlers import SBBTimetableCrawler
-from ..models import SBBStation, SBBStopTime, SBBTrip, SBBRoute, SBBCalendar, SBBTransfers
+from ..models import SBBStation, SBBStopTime, SBBTrip, SBBRoute, SBBCalendar, SBBTransfer
 from ..database import get_session, init_db, drop_table
 from ..utils import BatchedDBInserter
 import logging
@@ -12,7 +12,7 @@ drop_table(SBBStopTime.__table__)
 drop_table(SBBTrip.__table__)
 drop_table(SBBRoute.__table__)
 drop_table(SBBCalendar.__table__)
-drop_table(SBBTransfers.__table__)
+drop_table(SBBTransfer.__table__)
 init_db()
 logger = logging.getLogger(os.path.basename(__file__))
 
