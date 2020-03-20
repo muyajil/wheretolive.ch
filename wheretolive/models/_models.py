@@ -115,8 +115,8 @@ class SBBCalendar(base):
     sunday = Column(Boolean)
 
 
-class SBBTransfers(base):
-    __tablename__ = 'sbb_transfers'
+class SBBTransfer(base):
+    __tablename__ = 'sbb_transfer'
     from_stop_id = Column(String, primary_key=True)
     to_stop_id = Column(String, primary_key=True)
     min_transfer_time = Column(Integer)
