@@ -1,6 +1,6 @@
-from ..crawlers import AccomodationsCrawler
-from ..models import Accomodation
-from ..database import get_session, init_db, drop_table
+from ...crawlers import AccomodationsCrawler
+from ...models import Accomodation
+from ...database import get_session, init_db, drop_table
 import logging
 import os
 from datetime import datetime

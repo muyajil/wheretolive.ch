@@ -1,5 +1,5 @@
-from ..crawlers import SBBTimetableCrawler
-from ..models import (
+from ...crawlers import SBBTimetableCrawler
+from ...models import (
     SBBStation,
     SBBStopTime,
     SBBTrip,
@@ -7,8 +7,8 @@ from ..models import (
     SBBCalendar,
     SBBTransfer,
 )
-from ..database import get_session, init_db, drop_table
-from ..utils import BatchedDBInserter
+from ...database import get_session, init_db, drop_table
+from ...utils import BatchedDBInserter
 import logging
 import os
 

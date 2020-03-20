@@ -1,6 +1,6 @@
-from ..models import Town
-from ..database import get_session, init_db, drop_table
-from ..crawlers import TownsCrawler
+from ...models import Town
+from ...database import get_session, init_db, drop_table
+from ...crawlers import TownsCrawler
 import logging
 import os
 from datetime import datetime

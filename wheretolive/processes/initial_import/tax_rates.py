@@ -1,7 +1,7 @@
-from ..crawlers import TaxRateCrawler
-from ..models import TaxRate
-from ..database import get_session, init_db, drop_table
-from ..utils import BatchedDBInserter
+from ...crawlers import TaxRateCrawler
+from ...models import TaxRate
+from ...database import get_session, init_db, drop_table
+from ...utils import BatchedDBInserter
 import logging
 import os
 
@@ -11,7 +11,7 @@ drop_table(TaxRate.__table__)
 init_db()
 logger = logging.getLogger(os.path.basename(__file__))
 
-inserter = BatchedDBInserter(logger, session)
+inserter = BatchedDBInserter(logger, session, batch_size=50000)
 
 logger.debug("Starting process...")
 crawler = TaxRateCrawler()
