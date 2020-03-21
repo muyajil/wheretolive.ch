@@ -1,7 +1,6 @@
 import logging
 from ..models import Town, SBBStation
 from ..utils.math import get_distance
-from datetime import datetime
 
 
 class ClosestStationAggregator:
@@ -11,8 +10,6 @@ class ClosestStationAggregator:
 
     def aggregate(self):
         towns = self.db_session.query(Town)
-        start = datetime.now()
-        start_batch = datetime.now()
         for idx, town in enumerate(towns):
             closest_station_id = None
             closest_station_distance = None
@@ -40,12 +37,4 @@ class ClosestStationAggregator:
 
             town.closest_station_id = closest_station_id
             town.closest_train_station_id = closest_train_station_id
-            self.db_session.commit()
-
-            if idx % 100 == 0 and idx > 0:
-                now = datetime.now()
-                logline = f"Finished towns: {idx}\t"
-                logline += f"Batch Time elapsed: {now-start_batch}\t"
-                logline += f"Total Time elapsed: {now-start}"
-                start_batch = now
-                self.logger.info(logline)
+            yield town
