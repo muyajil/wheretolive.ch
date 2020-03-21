@@ -70,6 +70,7 @@ dependencies:
   - readline=7.0=h7b6447c_5
   - regex=2020.2.20=py38h7b6447c_0
   - requests=2.23.0=py38_0
+  - rope=0.16.0=py_0
   - setuptools=46.0.0=py38_0
   - six=1.14.0=py38_0
   - soupsieve=1.9.5=py38_0

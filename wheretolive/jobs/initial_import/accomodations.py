@@ -11,7 +11,7 @@ init_db()
 logger = logging.getLogger(os.path.basename(__file__))
 
 logger.debug("Starting process...")
-crawler = AccomodationsCrawler()
+crawler = AccomodationsCrawler(session)
 
 logger.debug("Getting Accomodations...")
 accomodations = crawler.crawl()

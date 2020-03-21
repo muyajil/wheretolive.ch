@@ -2,7 +2,6 @@ from datetime import datetime
 import requests
 import codecs
 from ..models import Town
-from ..database import get_session
 import json
 from bs4 import BeautifulSoup
 import logging
@@ -11,7 +10,7 @@ from retry import retry
 
 # WebsiteCrawler
 class HealthInsuranceCrawler:
-    def __init__(self):
+    def __init__(self, db_session):
         self.base_url = "https://www.priminfo.admin.ch/de/praemien"
         self.locations = self.get_locations()
         self.ranges = {
@@ -24,6 +23,7 @@ class HealthInsuranceCrawler:
             },
         }
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.db_session = db_session
 
     def get_locations(self):
         url = self.base_url + "/locations"
@@ -43,7 +43,7 @@ class HealthInsuranceCrawler:
 
     @property
     def items(self):
-        zip_codes = get_session().query(Town.zip_code).distinct()
+        zip_codes = self.db_session.query(Town.zip_code).distinct()
         for (zip_code,) in zip_codes:
             if str(zip_code) not in self.locations["index"]:
                 self.logger.warn(f"Zip Code {zip_code} not found in locations")

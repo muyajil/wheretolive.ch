@@ -12,7 +12,7 @@ init_db()
 logger = logging.getLogger(os.path.basename(__file__))
 
 logger.debug("Starting process...")
-crawler = HealthInsuranceCrawler()
+crawler = HealthInsuranceCrawler(session)
 logger.debug("Getting Health Insurance Rates...")
 health_insurance_rates = crawler.crawl()
 logger.debug("Inserting Health Insurance Rates into database...")

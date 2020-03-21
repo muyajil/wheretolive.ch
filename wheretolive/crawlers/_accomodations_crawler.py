@@ -2,7 +2,6 @@ import requests
 import re
 import logging
 from ..models import Town
-from ..database import get_session
 from bs4 import BeautifulSoup
 import json
 from datetime import datetime
@@ -10,10 +9,11 @@ from retry import retry
 
 
 class AccomodationsCrawler:
-    def __init__(self, max_ad_age_h="null"):
+    def __init__(self, db_session, max_ad_age_h="null"):
         self.base_url = "https://www.comparis.ch/immobilien/result/list"
         self.max_ad_age_h = max_ad_age_h
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.db_session = db_session
 
     @retry(requests.exceptions.ConnectionError, delay=1, backoff=2)
     def get_max_pages(self, url):
@@ -68,7 +68,7 @@ class AccomodationsCrawler:
 
     @property
     def items(self):
-        zip_codes = get_session().query(Town.zip_code).distinct()
+        zip_codes = self.db_session.query(Town.zip_code).distinct()
         for deal_type in [20, 10]:
             for (zip_code,) in zip_codes:
                 url = self.compose_url(deal_type, zip_code)
