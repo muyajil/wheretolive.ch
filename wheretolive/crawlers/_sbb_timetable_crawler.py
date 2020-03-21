@@ -56,14 +56,26 @@ class SBBTimetableCrawler:
             datetime.strptime(":".join(splits), "%H:%M:%S").time()
         return datetime.strptime(":".join(splits), "%H:%M:%S").time(), next_day
 
+    def get_station_type(self, station_id, parent_station_id):
+        if station_id[-1] == "P" and parent_station_id is None:
+            return "train"
+        if station_id[-1] != "P" and parent_station_id is None:
+            return "bus_tram"
+        if ":" in station_id and parent_station_id[-1] == "P":
+            return "platform"
+        if ":" not in station_id and parent_station_id[-1] == "P":
+            return "train_mirror"
+
     def crawl_stops(self):
         for line in self.get_rows_from_export("stops.txt"):
+            parent_station = line[5] if line[5] != "" else None
             yield {
                 "id": line[0],
                 "name": line[1],
                 "lat": float(line[2]),
                 "long": float(line[3]),
-                "parent_station": line[5] if line[5] != "" else None,
+                "parent_station": parent_station,
+                "station_type": self.get_station_type(line[0], parent_station),
             }
 
     def crawl_stop_times(self):

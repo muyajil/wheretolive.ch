@@ -83,6 +83,7 @@ class SBBStation(base):
     lat = Column(Float)
     long = Column(Float)
     parent_station = Column(String)
+    station_type = Column(String)
 
 
 class SBBStopTime(base):
