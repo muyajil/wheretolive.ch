@@ -20,6 +20,8 @@ class Town(base):
     long = Column(Float)
     lang = Column(String)
     state = Column(String)
+    closest_station_id = Column(String)
+    closest_train_station_id = Column(String)
 
 
 class TaxRate(base):
