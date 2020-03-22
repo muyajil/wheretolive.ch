@@ -129,3 +129,15 @@ class SBBTransfer(base):
     from_stop_id = Column(String, primary_key=True)
     to_stop_id = Column(String, primary_key=True)
     min_transfer_time = Column(Integer)
+
+
+class SBBConnection(base):
+    __tablename__ = "sbb_connection"
+    trip_id = Column(String, primary_key=True)
+    from_stop_id = Column(String, primary_key=True)
+    departure_time = Column(Time, primary_key=True)
+    departs_next_day = Column(Boolean, primary_key=True)
+    to_stop_id = Column(String, primary_key=True)
+    arrival_time = Column(Time, primary_key=True)
+    arrives_next_day = Column(Boolean, primary_key=True)
+    sequence_nr = Column(Integer, primary_key=True)
