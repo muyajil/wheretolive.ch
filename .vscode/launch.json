@@ -41,6 +41,18 @@
                 "PYTHONPATH": "${workspace}:$PYTHONPATH",
                 "MAPS_API_KEY": "AIzaSyBzWe16UIfLa_5u1SMiRACTcXOr-K0zCrU"
             }
+        },
+        {
+            "name": "Closest Stations to DB",
+            "type": "python",
+            "request": "launch",
+            "module": "wheretolive.jobs.initial_import.closest_station",
+            "console": "integratedTerminal",
+            "env": {
+                "LOGLEVEL": "DEBUG",
+                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
+                "PYTHONPATH": "${workspace}:$PYTHONPATH"
+            }
         }
     ]
 }
