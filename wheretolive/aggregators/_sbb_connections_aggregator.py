@@ -1,5 +1,5 @@
 import logging
-from ..models import SBBStopTime
+from ..models import SBBStopTime, SBBStation
 from ..utils import BatchIterator
 
 
@@ -8,7 +8,20 @@ class SBBConnectionAggregator:
         self.db_session = db_session
         self.logger = logging.getLogger(self.__class__.__name__)
 
+    def get_parent_station(self, stop_id):
+        if stop_id not in self.parent_station_map:
+            return None
+        return self.parent_station_map[stop_id]
+
+    def init_parent_station_map(self):
+        stations = self.db_session.query(
+            SBBStation.id, SBBStation.parent_station
+        ).filter(SBBStation.parent_station.isnot(None))
+
+        self.parent_station_map = dict(stations)
+
     def aggregate(self):
+        self.init_parent_station_map()
         trip_ids = self.db_session.query(SBBStopTime.trip_id).distinct()
         batch_iterator = BatchIterator(100, trip_ids)
 
@@ -37,9 +50,11 @@ class SBBConnectionAggregator:
                 yield {
                     "trip_id": origin.trip_id,
                     "from_stop_id": origin.station_id,
+                    "from_stop_parent_id": self.get_parent_station(origin.station_id),
                     "departure_time": origin.departure_time,
                     "departs_next_day": origin.departs_next_day,
                     "to_stop_id": dest.station_id,
+                    "to_stop_parent_id": self.get_parent_station(dest.station_id),
                     "arrival_time": dest.arrival_time,
                     "arrives_next_day": dest.arrives_next_day,
                     "sequence_nr": sequence_nr,
