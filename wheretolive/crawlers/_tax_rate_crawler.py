@@ -68,7 +68,7 @@ class TaxRateCrawler:
     def crawl(self):
         self.download_data()
         self.logger.debug("Extracting tax rates...")
-        sheet_names = ["Ledig", "VOK", "VMK", "DOPMK"]
+        sheet_names = ["Ledig", "VOK", "VMK", "DOPMK", "REN"]
 
         for sheet_name in sheet_names:
             profile = self.code_mapping[sheet_name]
