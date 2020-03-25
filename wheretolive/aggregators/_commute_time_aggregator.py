@@ -34,7 +34,7 @@ class CommuteTimeAggregator:
 
         if true_stop_id not in self.earliest_arrival:
             # Never arrived at this station
-            return True
+            return False  # Return false
         else:
             if true_stop_id not in self.in_connection:
                 # This happens in the case of the first connection leaving at the source station
@@ -86,6 +86,7 @@ class CommuteTimeAggregator:
 
     def compute_csa(self, arrival_stop_id):
         # For the commute we are not interested in connections arriving after lunchtime
+        # You cannot check a connection from C when you never arrived in C!
         earliest = time(12, 0, 0)
 
         for c in self.connections:
