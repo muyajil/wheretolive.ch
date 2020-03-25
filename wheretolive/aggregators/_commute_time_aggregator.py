@@ -142,18 +142,14 @@ class CommuteTimeAggregator:
         self.earliest_arrival[true_source_stop_id] = departure_time
         self.compute_csa(true_target_stop_id)
         route = self.get_route(true_source_stop_id, true_target_stop_id,)
+        trip_ids = map(lambda x: x.trip_id, route)
         return {
             "time": route[0].arrival_time - route[-1].departure_time,
-            "changes": len(route) - 1,
+            "changes": len(set(trip_ids)),
         }
 
     def aggregate(self):
         self.init_transfer_map()
-        # destination_town_ids = self.db_session.query(Commute.target_town_id).distinct()
-        # for (destination_town_id,) in destination_town_ids:
-        #     commutes = self.db_session.query(Commute).filter_by(
-        #         target_town_id=destination_town_id
-        #     )
         commutes = self.db_session.query(Commute).yield_per(10000)
         for commute in commutes:
             source_town = self.db_session.query(Town).get(commute.source_town_id)
