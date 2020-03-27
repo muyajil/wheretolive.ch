@@ -149,14 +149,19 @@ class CommuteTimeAggregator:
             true_target_stop_id = self.get_true_stop_id(
                 target_town.closest_train_station_id
             )
-        # Check if stations are the same and return something that shows that there is no commute necessary
+        if true_source_stop_id == true_target_stop_id:
+            return {"time": 0.0, "changes": 0}
         self.earliest_arrival[true_source_stop_id] = departure_time
         self.compute_csa(true_target_stop_id)
         route = self.get_route(true_source_stop_id, true_target_stop_id)
+        if len(route) == 0:
+            return {"time": None, "changes": None}
         trip_ids = map(lambda x: x.trip_id, route)
         return {
-            "time": datetime.combine(date.min, route[0].arrival_time)
-            - datetime.combine(date.min, route[-1].departure_time),
+            "time": (
+                datetime.combine(date.min, route[0].arrival_time)
+                - datetime.combine(date.min, route[-1].departure_time)
+            ).seconds,
             "changes": len(set(trip_ids)) - 1,
         }
 

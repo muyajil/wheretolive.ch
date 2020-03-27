@@ -8,7 +8,7 @@ import os
 session = get_session()
 logger = logging.getLogger(os.path.basename(__file__))
 
-committer = BatchedDBCommitter(logger, session, batch_size=10)
+committer = BatchedDBCommitter(logger, session, batch_size=1)
 
 logger.debug("Starting process...")
 aggregator = CommuteTimeAggregator(session)
