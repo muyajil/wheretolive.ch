@@ -74,6 +74,8 @@ class CommuteTimeAggregator:
 
     @property
     def connections(self):
+        # TODO: Cache connections in list.
+        # TODO: Here we need to join to sbb_service and sbb_calender and use those that do run on mondays
         sbb_connections = (
             self.db_session.query(SBBConnection)
             .filter(SBBConnection.departs_next_day.is_(False))
@@ -117,11 +119,6 @@ class CommuteTimeAggregator:
         if arrival_stop_id not in self.in_connection:
             return route
 
-        # last_connection = self.in_connection[arrival_stop_id]
-        # last_true_stop_id = self.get_true_stop_id(
-        #     last_connection.from_stop_id, last_connection.from_stop_parent_id
-        # )
-
         last_true_stop_id = arrival_stop_id
 
         while last_true_stop_id != departure_stop_id:
@@ -130,8 +127,6 @@ class CommuteTimeAggregator:
             last_true_stop_id = self.get_true_stop_id(
                 last_connection.from_stop_id, last_connection.from_stop_parent_id
             )
-
-        # route.append(last_connection)
 
         return route
 
