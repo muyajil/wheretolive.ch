@@ -1,5 +1,13 @@
 import logging
-from ..models import SBBConnection, Town, SBBTransfer, Commute, SBBStation
+from ..models import (
+    SBBConnection,
+    Town,
+    SBBTransfer,
+    Commute,
+    SBBStation,
+    SBBCalendar,
+    SBBTrip,
+)
 from datetime import time, date, timedelta, datetime
 
 
@@ -9,6 +17,7 @@ class CommuteTimeAggregator:
         self.logger = logging.getLogger(self.__class__.__name__)
         self.in_connection = dict()
         self.earliest_arrival = dict()
+        self.__connections_list = []
 
     def init_transfer_map(self):
         self.transfer_map = dict()
@@ -72,21 +81,26 @@ class CommuteTimeAggregator:
             # We choose this connection if we arrive earlier
             return connection.arrival_time < self.earliest_arrival[true_stop_id]
 
-    @property
-    def connections(self):
-        # TODO: Cache connections in list.
-        # TODO: Here we need to join to sbb_service and sbb_calender and use those that do run on mondays
+    def init_connections(self):
         sbb_connections = (
             self.db_session.query(SBBConnection)
+            .join(SBBTrip, SBBTrip.trip_id == SBBConnection.trip_id)
+            .join(SBBCalendar, SBBCalendar.service_id == SBBTrip.service_id)
             .filter(SBBConnection.departs_next_day.is_(False))
             .filter(SBBConnection.arrival_time <= time(12, 0, 0))
             .filter(SBBConnection.departure_time >= time(6, 0, 0))
+            .filter(SBBCalendar.monday.is_(True))
             .order_by(SBBConnection.departure_time, SBBConnection.trip_id)
-            .yield_per(100000)
+            .yield_per(10000)
         )
 
-        for sbb_connection in sbb_connections:
-            yield sbb_connection
+        self.__connections_list = [x for x in sbb_connections]
+
+    @property
+    def connections(self):
+        if not self.__connections_list:
+            self.init_connections()
+        return self.__connections_list
 
     def compute_csa(self, arrival_stop_id):
         # For the commute we are not interested in connections arriving after lunchtime
