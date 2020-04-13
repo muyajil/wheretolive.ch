@@ -41,6 +41,7 @@ class TaxRatePredicted(base):
     num_children = Column(Integer, primary_key=True)
     num_salaries = Column(Integer, primary_key=True)
     is_married = Column(Boolean, primary_key=True)
+    is_exact = Column(Boolean)
     rate = Column(Float)
 
 
