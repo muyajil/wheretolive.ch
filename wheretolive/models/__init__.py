@@ -12,6 +12,7 @@ from ._models import (
     SBBCalendar,
     SBBTransfer,
     SBBConnection,
+    TaxRatePredicted,
 )
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "SBBCalendar",
     "SBBTransfer",
     "SBBConnection",
+    "TaxRatePredicted",
 ]
