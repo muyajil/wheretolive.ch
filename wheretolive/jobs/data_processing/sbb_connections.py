@@ -21,4 +21,4 @@ sbb_connections = map(lambda x: SBBConnection(**x), aggregator.aggregate())
 logger.debug("Inserting connections into database...")
 inserter.insert(sbb_connections)
 
-session.remove
+session.remove()
