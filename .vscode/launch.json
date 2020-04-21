@@ -75,6 +75,18 @@
                 "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
                 "PYTHONPATH": "${workspace}:$PYTHONPATH"
             }
+        },
+        {
+            "name": "Tax Rates Predicted to DB",
+            "type": "python",
+            "request": "launch",
+            "module": "wheretolive.jobs.data_processing.tax_rates",
+            "console": "integratedTerminal",
+            "env": {
+                "LOGLEVEL": "DEBUG",
+                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
+                "PYTHONPATH": "${workspace}:$PYTHONPATH"
+            }
         }
     ]
 }

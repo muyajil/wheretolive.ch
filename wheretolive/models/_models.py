@@ -33,6 +33,18 @@ class TaxRate(base):
     rate = Column(Float)
 
 
+class TaxRatePredicted(base):
+    __tablename__ = "tax_rate_predicted"
+    bfs_nr = Column(Integer, primary_key=True)
+    min_income = Column(Integer, primary_key=True)
+    max_income = Column(Integer, primary_key=True)
+    num_children = Column(Integer, primary_key=True)
+    num_salaries = Column(Integer, primary_key=True)
+    num_taxed = Column(Integer, primary_key=True)
+    is_exact = Column(Boolean)
+    rate = Column(Float)
+
+
 class Commute(base):
     __tablename__ = "commute"
     source_town_id = Column(Integer, primary_key=True)
