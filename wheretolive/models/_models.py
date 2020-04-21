@@ -50,10 +50,10 @@ class Commute(base):
     source_town_id = Column(Integer, primary_key=True)
     target_town_id = Column(Integer, primary_key=True)
     distance = Column(Float)
-    commute_closest_station_time = Column(Float)
-    commute_closest_station_changes = Column(Integer)
-    commute_closest_train_station_time = Column(Float)
-    commute_closest_train_station_changes = Column(Integer)
+    closest_station_time = Column(Float)
+    closest_station_changes = Column(Integer)
+    closest_train_station_time = Column(Float)
+    closest_train_station_changes = Column(Integer)
 
 
 class HealthInsurance(base):
