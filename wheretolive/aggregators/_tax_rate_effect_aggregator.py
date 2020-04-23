@@ -40,9 +40,6 @@ class TaxRateEffectAggregator:
                     order by s.bfs_nr, s.min_income
                     """
 
-    def init_tax_rates(self):
-        self.__tax_rates = pd.read_sql(self.__sql, os.environ.get("DB_CONN"))
-
     def aggregate(self):
         df = pd.read_sql(self.__sql, os.environ.get("DB_CONN"))
         df["2c_effect"] = df["m2c_rate"] - df["m0c_rate"]
