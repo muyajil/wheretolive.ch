@@ -3,6 +3,7 @@ from ._closest_station_aggregator import ClosestStationAggregator
 from ._sbb_connections_aggregator import SBBConnectionAggregator
 from ._commute_time_aggregator import CommuteTimeAggregator
 from ._tax_rate_effect_aggregator import TaxRateEffectAggregator
+from ._sbb_station_group_aggregator import SBBStationGroupAggregator
 
 __all__ = [
     "CommuteAggregator",
@@ -10,4 +11,5 @@ __all__ = [
     "SBBConnectionAggregator",
     "CommuteTimeAggregator",
     "TaxRateEffectAggregator",
+    "SBBStationGroupAggregator",
 ]

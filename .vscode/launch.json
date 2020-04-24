@@ -68,7 +68,7 @@
             "name": "Commute Times to DB",
             "type": "python",
             "request": "launch",
-            "module": "wheretolive.jobs.data_processing.commute_time",
+            "module": "wheretolive.jobs.data_processing.commute_times",
             "console": "integratedTerminal",
             "env": {
                 "LOGLEVEL": "DEBUG",
@@ -81,6 +81,18 @@
             "type": "python",
             "request": "launch",
             "module": "wheretolive.jobs.data_processing.tax_rates",
+            "console": "integratedTerminal",
+            "env": {
+                "LOGLEVEL": "DEBUG",
+                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
+                "PYTHONPATH": "${workspace}:$PYTHONPATH"
+            }
+        },
+        {
+            "name": "SBB Station Groups To DB",
+            "type": "python",
+            "request": "launch",
+            "module": "wheretolive.jobs.data_processing.sbb_station_groups",
             "console": "integratedTerminal",
             "env": {
                 "LOGLEVEL": "DEBUG",

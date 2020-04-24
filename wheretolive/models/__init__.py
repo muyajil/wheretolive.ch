@@ -13,6 +13,8 @@ from ._models import (
     SBBTransfer,
     SBBConnection,
     TaxRateEffect,
+    TrainCommute,
+    SBBStationGroup,
 )
 
 __all__ = [
@@ -30,4 +32,6 @@ __all__ = [
     "SBBTransfer",
     "SBBConnection",
     "TaxRateEffect",
+    "TrainCommute",
+    "SBBStationGroup",
 ]

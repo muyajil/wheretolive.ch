@@ -1,13 +1,5 @@
 from ..database import base
-from sqlalchemy import (
-    Boolean,
-    DateTime,
-    Column,
-    Integer,
-    String,
-    Float,
-    Time,
-)
+from sqlalchemy import Boolean, DateTime, Column, Integer, String, Float, Time, ARRAY
 
 
 class Town(base):
@@ -45,9 +37,15 @@ class TaxRateEffect(base):
 
 class Commute(base):
     __tablename__ = "commute"
-    source_town_id = Column(Integer, primary_key=True)
-    target_town_id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    source_town_id = Column(Integer)
+    target_town_id = Column(Integer)
     distance = Column(Float)
+
+
+class TrainCommute(base):
+    __tablename__ = "train_commute"
+    commute_id = Column(Integer, primary_key=True)
     closest_station_time = Column(Float)
     closest_station_changes = Column(Integer)
     closest_train_station_time = Column(Float)
@@ -97,6 +95,12 @@ class SBBStation(base):
     long = Column(Float)
     parent_station = Column(String)
     station_type = Column(String)
+
+
+class SBBStationGroup(base):
+    __tablename__ = "sbb_station_group"
+    sbb_station_id = Column(String, primary_key=True)
+    sbb_station_group = Column(ARRAY(String))
 
 
 class SBBStopTime(base):
