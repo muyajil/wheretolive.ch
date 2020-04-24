@@ -47,6 +47,9 @@ class SBBConnectionAggregator:
                 if origin.trip_id != dest.trip_id:
                     sequence_nr = 0
 
+                if origin.station_id == dest.station_id:
+                    continue
+
                 yield {
                     "trip_id": origin.trip_id,
                     "from_stop_id": origin.station_id,
