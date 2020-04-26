@@ -8,6 +8,8 @@ class BatchIterator:
 
     @property
     def batches(self):
+        if self.batch_size is None:
+            return self.iterable
         it = iter(self.iterable)
         while True:
             batch = list(islice(it, self.batch_size))
