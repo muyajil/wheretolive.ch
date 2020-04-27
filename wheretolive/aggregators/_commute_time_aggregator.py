@@ -175,23 +175,28 @@ class CommuteTimeAggregator:
 
                 if true_to_stop_id in self.station_groups:
                     for stop_id in self.station_groups[true_to_stop_id]:
-                        self.earliest_arrival[stop_id] = (
+                        potential_arrival_time = (
                             datetime.combine(
                                 date.min, self.get_conn_attr(c, "arrival_time")
                             )
                             + timedelta(minutes=3)
                         ).time()
-                        self.in_connection[stop_id] = np.array(
-                            (
-                                true_to_stop_id,
-                                None,
-                                stop_id,
-                                None,
-                                self.get_conn_attr(c, "arrival_time"),
-                                self.earliest_arrival[stop_id],
-                                None,
+                        if (
+                            stop_id not in self.earliest_arrival
+                            or self.earliest_arrival[stop_id] > potential_arrival_time
+                        ):
+                            self.earliest_arrival[stop_id] = potential_arrival_time
+                            self.in_connection[stop_id] = np.array(
+                                (
+                                    true_to_stop_id,
+                                    None,
+                                    stop_id,
+                                    None,
+                                    self.get_conn_attr(c, "arrival_time"),
+                                    self.earliest_arrival[stop_id],
+                                    None,
+                                )
                             )
-                        )
 
                 # Arrival stop id should always be a parent stop id
                 if (
