@@ -8,7 +8,9 @@ import csv
 
 class SBBTimetableCrawler:
     def __init__(self):
-        self.base_url = "https://opendata.swiss/api/3/action/package_show?id=fahrplanentwurf-2020-gtfs"
+        self.base_url = "https://opendata.swiss/api/3/action/package_show?id=fahrplanentwurf-{}-gtfs".format(
+            datetime.now().year
+        )
         self.zip_path = "/tmp/timetable.zip"
         self.extraction_path = "/tmp/timetable/"
         self.logger = logging.getLogger(self.__class__.__name__)
