@@ -112,7 +112,8 @@ class CommuteTimeAggregator:
                 not sbb_connection.departs_next_day and
                 sbb_calendar.monday and
                 sbb_connection.arrival_time <= '12:00:00' and
-                sbb_connection.departure_time >= '06:00:00'
+                sbb_connection.departure_time >= '06:00:00' and
+                sbb_connection.departure_time <= '12:00:00'
             order by sbb_connection.departure_time, sbb_connection.trip_id
         """
 
@@ -174,11 +175,12 @@ class CommuteTimeAggregator:
 
                 if true_to_stop_id in self.station_groups:
                     for stop_id in self.station_groups[true_to_stop_id]:
-                        # TODO: Maybe add some minutes here for the transfer
-                        self.earliest_arrival[stop_id] = self.get_conn_attr(
-                            c, "arrival_time"
-                        )
-                        # TODO: add connection with 0 time diff
+                        self.earliest_arrival[stop_id] = (
+                            datetime.combine(
+                                date.min, self.get_conn_attr(c, "arrival_time")
+                            )
+                            + timedelta(minutes=3)
+                        ).time()
                         self.in_connection[stop_id] = np.array(
                             (
                                 true_to_stop_id,
@@ -186,7 +188,7 @@ class CommuteTimeAggregator:
                                 stop_id,
                                 None,
                                 self.get_conn_attr(c, "arrival_time"),
-                                self.get_conn_attr(c, "arrival_time"),
+                                self.earliest_arrival[stop_id],
                                 None,
                             )
                         )
