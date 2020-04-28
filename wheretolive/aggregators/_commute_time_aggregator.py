@@ -1,5 +1,5 @@
 import logging
-from ..models import SBBTransfer, SBBStationGroup
+from ..models import SBBTransfer, SBBStationGroup, SBBStation
 from datetime import time, date, timedelta, datetime
 import pandas as pd
 import os
@@ -16,14 +16,27 @@ class CommuteTimeAggregator:
         self.__connections_df = None
         self.db_conn = pg.connect(os.environ.get("DB_CONN"))
 
+    def get_true_station_id(self, stop_id):
+        if stop_id not in self.parent_station_map:
+            return stop_id
+        return self.parent_station_map[stop_id]
+
+    def init_parent_station_map(self):
+        stations = self.db_session.query(
+            SBBStation.id, SBBStation.parent_station
+        ).filter(SBBStation.parent_station.isnot(None))
+
+        self.parent_station_map = dict(stations)
+
     def init_transfer_map(self):
         self.transfer_map = dict()
         transfers = self.db_session.query(SBBTransfer)
         for transfer in transfers:
-            if transfer.from_stop_id not in self.transfer_map:
-                self.transfer_map[transfer.from_stop_id] = dict()
-            self.transfer_map[transfer.from_stop_id][
-                transfer.to_stop_id
+            from_stop_id = self.get_true_station_id(transfer.from_stop_id)
+            if from_stop_id not in self.transfer_map:
+                self.transfer_map[from_stop_id] = dict()
+            self.transfer_map[from_stop_id][
+                self.get_true_station_id(transfer.to_stop_id)
             ] = transfer.min_transfer_time
         self.logger.info("Transfer Map initialized")
 
@@ -37,14 +50,8 @@ class CommuteTimeAggregator:
 
         self.logger.info("SBB Station Groups initialized")
 
-    def get_true_stop_id(self, stop_id, parent_stop_id):
-        return parent_stop_id if parent_stop_id else stop_id
-
     def is_transfer_origin_possible(self, connection):
-        true_stop_id = self.get_true_stop_id(
-            self.get_conn_attr(connection, "from_stop_id"),
-            self.get_conn_attr(connection, "from_stop_parent_id"),
-        )
+        true_stop_id = self.get_conn_attr(connection, "from_stop_id")
 
         if true_stop_id not in self.earliest_arrival:
             # Never arrived at this station
@@ -80,10 +87,7 @@ class CommuteTimeAggregator:
                 ).time() <= self.get_conn_attr(connection, "departure_time")
 
     def is_transfer_dest_possible(self, connection):
-        true_stop_id = self.get_true_stop_id(
-            self.get_conn_attr(connection, "to_stop_id"),
-            self.get_conn_attr(connection, "to_stop_parent_id"),
-        )
+        true_stop_id = self.get_conn_attr(connection, "to_stop_id")
 
         if true_stop_id not in self.earliest_arrival:
             # First connection that leads to this stop
@@ -99,9 +103,7 @@ class CommuteTimeAggregator:
         sql = """
             select
                 sbb_connection.from_stop_id,
-                sbb_connection.from_stop_parent_id,
                 sbb_connection.to_stop_id,
-                sbb_connection.to_stop_parent_id,
                 sbb_connection.departure_time,
                 sbb_connection.arrival_time,
                 sbb_connection.trip_id
@@ -132,13 +134,9 @@ class CommuteTimeAggregator:
             select
             commute.id,
             s_sbb_station.id as source_station_id,
-            s_sbb_station.parent_station as source_station_parent_id,
             s_t_sbb_station.id as source_train_station_id,
-            s_t_sbb_station.parent_station as source_train_station_parent_id,
             t_sbb_station.id as target_station_id,
-            t_sbb_station.parent_station as target_station_parent_id,
             t_t_sbb_station.id as target_train_station_id,
-            t_t_sbb_station.parent_station as target_train_station_parent_id
         from commute
         join town as s_town on s_town.id = source_town_id
         join town as t_town on t_town.id = target_town_id
@@ -163,10 +161,7 @@ class CommuteTimeAggregator:
             if self.is_transfer_origin_possible(c) and self.is_transfer_dest_possible(
                 c
             ):
-                true_to_stop_id = self.get_true_stop_id(
-                    self.get_conn_attr(c, "to_stop_id"),
-                    self.get_conn_attr(c, "to_stop_parent_id"),
-                )
+                true_to_stop_id = self.get_conn_attr(c, "to_stop_id")
 
                 self.earliest_arrival[true_to_stop_id] = self.get_conn_attr(
                     c, "arrival_time"
@@ -199,11 +194,8 @@ class CommuteTimeAggregator:
                             )
 
                 # Arrival stop id should always be a parent stop id
-                if (
-                    self.get_conn_attr(c, "to_stop_id") == arrival_stop_id
-                    or self.get_conn_attr(c, "to_stop_parent_id") == arrival_stop_id
-                ):
-                    earliest = min(earliest, self.get_conn_attr(c, "arrival_time"))
+                if arrival_stop_id in self.earliest_arrival:
+                    earliest = self.earliest_arrival[arrival_stop_id]
 
             elif self.get_conn_attr(c, "arrival_time") > earliest:
                 return
@@ -215,13 +207,15 @@ class CommuteTimeAggregator:
 
         last_true_stop_id = arrival_stop_id
 
-        while last_true_stop_id != departure_stop_id:
+        possible_departure_stop_ids = [departure_stop_id]
+
+        if departure_stop_id in self.station_groups:
+            possible_departure_stop_ids += self.station_groups[departure_stop_id]
+
+        while last_true_stop_id not in possible_departure_stop_ids:
             last_connection = self.in_connection[last_true_stop_id]
             route.append(last_connection)
-            last_true_stop_id = self.get_true_stop_id(
-                self.get_conn_attr(last_connection, "from_stop_id"),
-                self.get_conn_attr(last_connection, "from_stop_parent_id"),
-            )
+            last_true_stop_id = self.get_conn_attr(last_connection, "from_stop_id")
 
         return route
 
@@ -230,26 +224,23 @@ class CommuteTimeAggregator:
         self.earliest_arrival = dict()
 
         if station_type == "closest":
-            true_source_stop_id = self.get_true_stop_id(
-                self.get_comm_attr(commute, "source_station_id"),
-                self.get_comm_attr(commute, "source_station_parent_id"),
-            )
-            true_target_stop_id = self.get_true_stop_id(
-                self.get_comm_attr(commute, "target_station_id"),
-                self.get_comm_attr(commute, "target_station_parent_id"),
-            )
+            true_source_stop_id = self.get_comm_attr(commute, "source_station_id")
+            true_target_stop_id = self.get_comm_attr(commute, "target_station_id")
         else:
-            true_source_stop_id = self.get_true_stop_id(
-                self.get_comm_attr(commute, "source_train_station_id"),
-                self.get_comm_attr(commute, "source_train_station_parent_id"),
-            )
-            true_target_stop_id = self.get_true_stop_id(
-                self.get_comm_attr(commute, "target_train_station_id"),
-                self.get_comm_attr(commute, "target_train_station_parent_id"),
-            )
+            true_source_stop_id = self.get_comm_attr(commute, "source_train_station_id")
+            true_target_stop_id = self.get_comm_attr(commute, "target_train_station_id")
+
         if true_source_stop_id == true_target_stop_id:
             return {"time": 0.0, "changes": 0}
         self.earliest_arrival[true_source_stop_id] = departure_time
+
+        # We could also start the journey from a close station to the start station
+        if true_source_stop_id in self.station_groups:
+            for stop_id in self.station_groups[true_source_stop_id]:
+                self.earliest_arrival[stop_id] = (
+                    datetime.combine(date.min, departure_time) + timedelta(minutes=3)
+                ).time()
+
         self.compute_csa(true_target_stop_id)
         route = self.get_route(true_source_stop_id, true_target_stop_id)
         if len(route) == 0:
@@ -271,18 +262,14 @@ class CommuteTimeAggregator:
     def get_conn_attr(self, connection, attr):
         if attr == "from_stop_id":
             return connection[0]
-        if attr == "from_stop_parent_id":
-            return connection[1]
         if attr == "to_stop_id":
-            return connection[2]
-        if attr == "to_stop_parent_id":
-            return connection[3]
+            return connection[1]
         if attr == "departure_time":
-            return connection[4]
+            return connection[2]
         if attr == "arrival_time":
-            return connection[5]
+            return connection[3]
         if attr == "trip_id":
-            return connection[6]
+            return connection[4]
         raise ValueError(f"Attribute {attr} not supported!")
 
     def get_comm_attr(self, commute, attr):
@@ -290,20 +277,12 @@ class CommuteTimeAggregator:
             return commute[0]
         if attr == "source_station_id":
             return commute[1]
-        if attr == "source_station_parent_id":
-            return commute[2]
         if attr == "source_train_station_id":
-            return commute[3]
-        if attr == "source_train_station_parent_id":
-            return commute[4]
+            return commute[2]
         if attr == "target_station_id":
-            return commute[5]
-        if attr == "target_station_parent_id":
-            return commute[6]
+            return commute[3]
         if attr == "target_train_station_id":
-            return commute[7]
-        if attr == "target_train_station_parent_id":
-            return commute[8]
+            return commute[4]
 
         raise ValueError(f"Attribute {attr} not supported!")
 
