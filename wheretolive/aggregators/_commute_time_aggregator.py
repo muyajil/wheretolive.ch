@@ -1,5 +1,5 @@
 import logging
-from ..models import SBBTransfer, SBBStationGroup, SBBStation
+from ..models import SBBTransfer, SBBStationGroup
 from datetime import time, date, timedelta, datetime
 import pandas as pd
 import os
@@ -13,30 +13,18 @@ class CommuteTimeAggregator:
         self.logger = logging.getLogger(self.__class__.__name__)
         self.in_connection = dict()
         self.earliest_arrival = dict()
+        self.computed_commutes = dict()
         self.__connections_df = None
         self.db_conn = pg.connect(os.environ.get("DB_CONN"))
-
-    def get_true_station_id(self, stop_id):
-        if stop_id not in self.parent_station_map:
-            return stop_id
-        return self.parent_station_map[stop_id]
-
-    def init_parent_station_map(self):
-        stations = self.db_session.query(
-            SBBStation.id, SBBStation.parent_station
-        ).filter(SBBStation.parent_station.isnot(None))
-
-        self.parent_station_map = dict(stations)
 
     def init_transfer_map(self):
         self.transfer_map = dict()
         transfers = self.db_session.query(SBBTransfer)
         for transfer in transfers:
-            from_stop_id = self.get_true_station_id(transfer.from_stop_id)
-            if from_stop_id not in self.transfer_map:
-                self.transfer_map[from_stop_id] = dict()
-            self.transfer_map[from_stop_id][
-                self.get_true_station_id(transfer.to_stop_id)
+            if transfer.from_stop_id not in self.transfer_map:
+                self.transfer_map[transfer.from_stop_id] = dict()
+            self.transfer_map[transfer.from_stop_id][
+                transfer.to_stop_id
             ] = transfer.min_transfer_time
         self.logger.info("Transfer Map initialized")
 
@@ -44,9 +32,9 @@ class CommuteTimeAggregator:
         self.station_groups = dict()
         station_groups = self.db_session.query(SBBStationGroup)
         for station_group in station_groups:
-            self.station_groups[
-                station_group.sbb_station_id
-            ] = station_group.sbb_station_group
+            self.station_groups[station_group.sbb_station_id] = list(
+                zip(station_group.sbb_station_group, station_group.walking_times)
+            )
 
         self.logger.info("SBB Station Groups initialized")
 
@@ -62,11 +50,11 @@ class CommuteTimeAggregator:
                 return True
             prev_connection = self.in_connection[true_stop_id]
             if (
-                self.get_conn_attr(prev_connection, "to_stop_id")
+                self.get_conn_attr(prev_connection, "exact_to_stop_id")
                 not in self.transfer_map
-                or self.get_conn_attr(connection, "from_stop_id")
+                or self.get_conn_attr(connection, "exact_from_stop_id")
                 not in self.transfer_map[
-                    self.get_conn_attr(prev_connection, "to_stop_id")
+                    self.get_conn_attr(prev_connection, "exact_to_stop_id")
                 ]
             ):
                 # No transfer condition on these two connections
@@ -77,8 +65,8 @@ class CommuteTimeAggregator:
             else:
                 # Transfer condition must be satisfied
                 min_transfer_time = self.transfer_map[
-                    self.get_conn_attr(prev_connection, "to_stop_id")
-                ][self.get_conn_attr(connection, "from_stop_id")]
+                    self.get_conn_attr(prev_connection, "exact_to_stop_id")
+                ][self.get_conn_attr(connection, "exact_from_stop_id")]
                 return (
                     datetime.combine(
                         date.min, self.get_conn_attr(prev_connection, "arrival_time")
@@ -103,7 +91,9 @@ class CommuteTimeAggregator:
         sql = """
             select
                 sbb_connection.from_stop_id,
+                sbb_connection.exact_from_stop_id,
                 sbb_connection.to_stop_id,
+                sbb_connection.exact_to_stop_id,
                 sbb_connection.departure_time,
                 sbb_connection.arrival_time,
                 sbb_connection.trip_id
@@ -112,10 +102,8 @@ class CommuteTimeAggregator:
             join sbb_calendar on sbb_calendar.service_id = sbb_trip.service_id
             where
                 not sbb_connection.departs_next_day and
-                sbb_calendar.monday and
-                sbb_connection.arrival_time <= '12:00:00' and
-                sbb_connection.departure_time >= '06:00:00' and
-                sbb_connection.departure_time <= '12:00:00'
+                not sbb_connection.arrives_next_day and
+                sbb_calendar.monday
             order by sbb_connection.departure_time, sbb_connection.trip_id
         """
 
@@ -128,33 +116,55 @@ class CommuteTimeAggregator:
             self.init_connections()
         return self.__connections_df
 
-    @property
-    def commutes(self):
-        sql = """
+    def load_commutes(self):
+        sql_1 = """
             select
             commute.id,
             s_sbb_station.id as source_station_id,
-            s_t_sbb_station.id as source_train_station_id,
-            t_sbb_station.id as target_station_id,
-            t_t_sbb_station.id as target_train_station_id,
+            t_sbb_station.id as target_station_id
         from commute
         join town as s_town on s_town.id = source_town_id
         join town as t_town on t_town.id = target_town_id
         join sbb_station as s_sbb_station on s_sbb_station.id = s_town.closest_station_id
-        join sbb_station as s_t_sbb_station on s_t_sbb_station.id = s_town.closest_train_station_id
         join sbb_station as t_sbb_station on t_sbb_station.id = t_town.closest_station_id
-        join sbb_station as t_t_sbb_station on t_t_sbb_station.id = t_town.closest_train_station_id
         """
 
-        cursor = self.db_conn.cursor()
-        cursor.execute(sql)
-        self.logger.info("Commutes initialized")
-        for c in cursor:
-            yield c
+        sql_2 = """
+            select
+            commute.id,
+            s_sbb_station.id as source_station_id,
+            t_sbb_station.id as target_station_id,
+        from commute
+        join town as s_town on s_town.id = source_town_id
+        join town as t_town on t_town.id = target_town_id
+        join sbb_station as s_sbb_station on s_sbb_station.id = s_town.closest_train_station_id
+        join sbb_station as t_sbb_station on t_sbb_station.id = t_town.closest_train_station_id
+        """
+
+        sqls = [sql_1, sql_2]
+        commute_types = ["closest_station", "closest_train"]
+
+        for sql, commute_type in zip(sqls, commute_types):
+            cursor = self.db_conn.cursor()
+            cursor.execute(sql)
+            for c in cursor:
+                yield c + (commute_type,)
+            cursor.close()
+
+    @property
+    def train_commutes(self):
+        for commute in self.load_commutes():
+
+            yield {
+                "commute_id": commute[0],
+                "source": commute[1],
+                "target": commute[2],
+                "type": commute[3],
+            }
 
     def compute_csa(self, arrival_stop_id):
         # For the commute we are not interested in connections arriving after lunchtime
-        earliest = time(12, 0, 0)
+        earliest = time(23, 59, 59)
 
         for c in self.connections.values:
 
@@ -169,12 +179,12 @@ class CommuteTimeAggregator:
                 self.in_connection[true_to_stop_id] = c
 
                 if true_to_stop_id in self.station_groups:
-                    for stop_id in self.station_groups[true_to_stop_id]:
+                    for stop_id, walking_time in self.station_groups[true_to_stop_id]:
                         potential_arrival_time = (
                             datetime.combine(
                                 date.min, self.get_conn_attr(c, "arrival_time")
                             )
-                            + timedelta(minutes=3)
+                            + timedelta(seconds=walking_time)
                         ).time()
                         if (
                             stop_id not in self.earliest_arrival
@@ -184,9 +194,9 @@ class CommuteTimeAggregator:
                             self.in_connection[stop_id] = np.array(
                                 (
                                     true_to_stop_id,
-                                    None,
+                                    true_to_stop_id,
                                     stop_id,
-                                    None,
+                                    stop_id,
                                     self.get_conn_attr(c, "arrival_time"),
                                     self.earliest_arrival[stop_id],
                                     None,
@@ -219,30 +229,24 @@ class CommuteTimeAggregator:
 
         return route
 
-    def compute_journey(self, commute, departure_time, station_type):
+    def compute_journey(self, train_commute):
         self.in_connection = dict()
         self.earliest_arrival = dict()
 
-        if station_type == "closest":
-            true_source_stop_id = self.get_comm_attr(commute, "source_station_id")
-            true_target_stop_id = self.get_comm_attr(commute, "target_station_id")
-        else:
-            true_source_stop_id = self.get_comm_attr(commute, "source_train_station_id")
-            true_target_stop_id = self.get_comm_attr(commute, "target_train_station_id")
-
-        if true_source_stop_id == true_target_stop_id:
-            return {"time": 0.0, "changes": 0}
-        self.earliest_arrival[true_source_stop_id] = departure_time
+        if train_commute["source"] == train_commute["target"]:
+            return {"time": 0, "changes": 0}
+        self.earliest_arrival[train_commute["source"]] = time(6, 0, 0)
 
         # We could also start the journey from a close station to the start station
-        if true_source_stop_id in self.station_groups:
-            for stop_id in self.station_groups[true_source_stop_id]:
+        if train_commute["source"] in self.station_groups:
+            for stop_id, walking_time in self.station_groups[train_commute["source"]]:
                 self.earliest_arrival[stop_id] = (
-                    datetime.combine(date.min, departure_time) + timedelta(minutes=3)
+                    datetime.combine(date.min, time(6, 0, 0))
+                    + timedelta(seconds=walking_time)
                 ).time()
 
-        self.compute_csa(true_target_stop_id)
-        route = self.get_route(true_source_stop_id, true_target_stop_id)
+        self.compute_csa(train_commute["target"])
+        route = self.get_route(train_commute["source"], train_commute["target"])
         if len(route) == 0:
             return {"time": None, "changes": None}
         trip_ids = filter(
@@ -262,49 +266,64 @@ class CommuteTimeAggregator:
     def get_conn_attr(self, connection, attr):
         if attr == "from_stop_id":
             return connection[0]
-        if attr == "to_stop_id":
+        if attr == "exact_from_stop_id":
             return connection[1]
-        if attr == "departure_time":
+        if attr == "to_stop_id":
             return connection[2]
-        if attr == "arrival_time":
+        if attr == "exact_to_stop_id":
             return connection[3]
-        if attr == "trip_id":
+        if attr == "departure_time":
             return connection[4]
-        raise ValueError(f"Attribute {attr} not supported!")
-
-    def get_comm_attr(self, commute, attr):
-        if attr == "id":
-            return commute[0]
-        if attr == "source_station_id":
-            return commute[1]
-        if attr == "source_train_station_id":
-            return commute[2]
-        if attr == "target_station_id":
-            return commute[3]
-        if attr == "target_train_station_id":
-            return commute[4]
-
+        if attr == "arrival_time":
+            return connection[5]
+        if attr == "trip_id":
+            return connection[6]
         raise ValueError(f"Attribute {attr} not supported!")
 
     def aggregate(self):
         self.init_transfer_map()
         self.init_sbb_station_groups()
-        for commute in self.commutes:
-            train_commute = {}
-            train_commute["commute_id"] = self.get_comm_attr(commute, "id")
-            counter = 0
+        for train_commute in self.train_commutes:
 
-            for c in self.connections.values:
-                counter += 1
+            if train_commute["source"] in self.computed_commutes:
+                if (
+                    train_commute["target"]
+                    in self.computed_commutes[train_commute["source"]]
+                ):
+                    yield {
+                        "commute_id": train_commute["commute_id"],
+                        "commute_type": train_commute["type"],
+                        "time": self.computed_commutes[train_commute["source"]][
+                            train_commute["target"]
+                        ]["time"],
+                        "changes": self.computed_commutes[train_commute["source"]][
+                            train_commute["target"]
+                        ]["changes"],
+                    }
+                    continue
 
-            for station_type in ["closest", "closest_train"]:
+            journey = self.compute_journey(train_commute)
+            if train_commute["source"] not in self.computed_commutes:
+                self.computed_commutes[train_commute["source"]] = dict()
 
-                journey = self.compute_journey(commute, time(6, 0, 0), station_type,)
-                if station_type == "closest":
-                    train_commute["closest_station_time"] = journey["time"]
-                    train_commute["closest_station_changes"] = journey["changes"]
-                else:
-                    train_commute["closest_train_station_time"] = journey["time"]
-                    train_commute["closest_train_station_changes"] = journey["changes"]
+            if (
+                train_commute["target"]
+                not in self.computed_commutes[train_commute["source"]]
+            ):
+                self.computed_commutes[train_commute["source"]][
+                    train_commute["target"]
+                ] = dict()
 
-            yield train_commute
+            self.computed_commutes[train_commute["source"]][train_commute["target"]][
+                "time"
+            ] = journey["time"]
+            self.computed_commutes[train_commute["source"]][train_commute["target"]][
+                "changes"
+            ] = journey["changes"]
+
+            yield {
+                "commute_id": train_commute["commute_id"],
+                "commute_type": train_commute["type"],
+                "time": journey["time"],
+                "changes": journey["changes"],
+            }
