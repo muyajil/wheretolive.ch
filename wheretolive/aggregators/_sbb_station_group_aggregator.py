@@ -21,6 +21,7 @@ class SBBStationGroupAggregator:
         )
         for source_station in relevant_stations:
             sbb_station_group = []
+            walking_times = []
             target_stations = relevant_stations
             for target_station in target_stations:
                 if source_station[0] == target_station[0]:
@@ -32,11 +33,13 @@ class SBBStationGroupAggregator:
                     target_station[2],
                 )
 
-                if distance <= 0.1:
+                if distance <= 1:
                     sbb_station_group.append(target_station[0])
+                    walking_times.append(int(distance * 1000 * 1.5))
 
             if len(sbb_station_group) > 0:
                 yield {
                     "sbb_station_id": source_station[0],
                     "sbb_station_group": sbb_station_group,
+                    "walking_times": walking_times,
                 }

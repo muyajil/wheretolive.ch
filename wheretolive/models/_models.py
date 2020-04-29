@@ -100,6 +100,7 @@ class SBBStationGroup(base):
     __tablename__ = "sbb_station_group"
     sbb_station_id = Column(String, primary_key=True)
     sbb_station_group = Column(ARRAY(String))
+    walking_times = Column(ARRAY(Integer))
 
 
 class SBBStopTime(base):
