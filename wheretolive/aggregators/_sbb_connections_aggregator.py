@@ -54,9 +54,11 @@ class SBBConnectionAggregator:
                 yield {
                     "trip_id": origin.trip_id,
                     "from_stop_id": self.get_true_station_id(origin.station_id),
+                    "exact_from_stop_id": origin.station_id,
                     "departure_time": origin.departure_time,
                     "departs_next_day": origin.departs_next_day,
                     "to_stop_id": self.get_true_station_id(dest.station_id),
+                    "exact_to_stop_id": dest.station_id,
                     "arrival_time": dest.arrival_time,
                     "arrives_next_day": dest.arrives_next_day,
                     "sequence_nr": sequence_nr,

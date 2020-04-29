@@ -46,11 +46,9 @@ class Commute(base):
 class TrainCommute(base):
     __tablename__ = "train_commute"
     commute_id = Column(Integer, primary_key=True)
-    closest_station_time = Column(Float)
-    closest_station_changes = Column(Integer)
-    closest_train_station_time = Column(Float)
-    closest_train_station_changes = Column(Integer)
-    # TODO: Use a type field and only time & changes fields
+    commute_type = Column(String, primary_key=True)
+    time = Column(Integer)
+    changes = Column(Integer)
 
 
 class HealthInsurance(base):
@@ -151,9 +149,11 @@ class SBBConnection(base):
     __tablename__ = "sbb_connection"
     trip_id = Column(String, primary_key=True)
     from_stop_id = Column(String, primary_key=True)
+    exact_from_stop_id = Column(String)
     departure_time = Column(Time, primary_key=True)
     departs_next_day = Column(Boolean, primary_key=True)
     to_stop_id = Column(String, primary_key=True)
+    exact_to_stop_id = Column(String)
     arrival_time = Column(Time, primary_key=True)
     arrives_next_day = Column(Boolean, primary_key=True)
     sequence_nr = Column(Integer, primary_key=True)
