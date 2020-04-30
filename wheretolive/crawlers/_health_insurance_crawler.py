@@ -14,9 +14,7 @@ class HealthInsuranceCrawler:
         self.base_url = "https://www.priminfo.admin.ch/de/praemien"
         self.locations = self.get_locations()
         self.ranges = {
-            "birth_year": [
-                x for x in range(datetime.now().year - 80, datetime.now().year)
-            ],
+            "age_groups": [(0, 18), (19, 25), (26, 80)],
             "franchise": {
                 "adult": [300, 500, 1000, 1500, 2000, 2500],
                 "child": [0, 100, 200, 300, 400, 500, 600],
@@ -49,18 +47,19 @@ class HealthInsuranceCrawler:
                 self.logger.warn(f"Zip Code {zip_code} not found in locations")
                 continue
             location_id = self.locations["index"][str(zip_code)][0]
-            for birth_year in self.ranges["birth_year"]:
-                if datetime.now().year - birth_year > 18:
-                    franchise_range = self.ranges["franchise"]["adult"]
-                else:
+            for min_age, max_age in self.ranges["age_groups"]:
+                if min_age == 0:
                     franchise_range = self.ranges["franchise"]["child"]
+                else:
+                    franchise_range = self.ranges["franchise"]["adult"]
                 for franchise in franchise_range:
-
+                    min_birth_year = datetime.now().year - min_age
                     yield {
-                        "birth_year": birth_year,
+                        "min_birth_year": min_birth_year,
+                        "max_birth_year": datetime.now().year - max_age,
                         "zip_code": zip_code,
                         "franchise": franchise,
-                        "url": self.compose_url(location_id, birth_year, franchise),
+                        "url": self.compose_url(location_id, min_birth_year, franchise),
                     }
 
     @retry(requests.exceptions.ConnectionError, delay=1, backoff=2)
@@ -85,7 +84,8 @@ class HealthInsuranceCrawler:
                         "rate": float(numbers[0].string),
                         "zip_code": item["zip_code"],
                         "franchise": item["franchise"],
-                        "birth_year": item["birth_year"],
+                        "min_birth_year": item["min_birth_year"],
+                        "max_birth_year": item["max_birth_year"],
                     }
                 except (AttributeError, ValueError):
                     continue

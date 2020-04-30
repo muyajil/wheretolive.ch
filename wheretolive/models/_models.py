@@ -63,7 +63,8 @@ class HealthInsuranceRate(base):
     __tablename__ = "health_insurance_rate"
     health_insurance_id = Column(Integer, primary_key=True)
     zip_code = Column(Integer, primary_key=True)
-    birth_year = Column(Integer, primary_key=True)
+    min_birth_year = Column(Integer, primary_key=True)
+    max_birth_year = Column(Integer, primary_key=True)
     franchise = Column(Integer, primary_key=True)
     model = Column(String, primary_key=True)
     rate = Column(Float)
