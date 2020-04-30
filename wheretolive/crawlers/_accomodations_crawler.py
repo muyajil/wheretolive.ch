@@ -157,7 +157,7 @@ class AccomodationsCrawler:
                     "area": listing["AreaValue"],
                     "is_rent": listing["DealType"] == 10,
                     "image_url": self.get_image_url(listing),
-                    "found_date": datetime.now(),
+                    "last_seen": datetime.now(),
                     "property_type_id": listing["PropertyTypeId"],
                     "property_type": listing["PropertyTypeText"],
                     "rooms": self.get_rooms(listing),

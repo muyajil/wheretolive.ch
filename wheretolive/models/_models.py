@@ -83,7 +83,7 @@ class Accomodation(base):
     price = Column(Float)
     image_url = Column(String)
     is_rent = Column(Boolean)
-    found_date = Column(DateTime)
+    last_seen = Column(DateTime)
     property_type_id = Column(Integer)
     property_type = Column(String)
     original_publisher = Column(String)
