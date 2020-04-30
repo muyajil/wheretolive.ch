@@ -161,4 +161,6 @@ class AccomodationsCrawler:
                     "property_type_id": listing["PropertyTypeId"],
                     "property_type": listing["PropertyTypeText"],
                     "rooms": self.get_rooms(listing),
+                    "is_active": True,
+                    "original_publisher": listing["PartnerName"],
                 }

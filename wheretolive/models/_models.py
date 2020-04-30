@@ -72,6 +72,7 @@ class HealthInsuranceRate(base):
 class Accomodation(base):
     __tablename__ = "accomodation"
     comparis_id = Column(Integer, primary_key=True)
+    is_active = Column(Boolean)
     zip_code = Column(Integer)
     town_name = Column(String)
     street_name = Column(String)
@@ -84,6 +85,7 @@ class Accomodation(base):
     found_date = Column(DateTime)
     property_type_id = Column(Integer)
     property_type = Column(String)
+    original_publisher = Column(String)
 
 
 class SBBStation(base):
