@@ -11,7 +11,7 @@ drop_table(TrainCommute.__table__)
 init_db()
 logger = logging.getLogger(os.path.basename(__file__))
 
-inserter = BatchedDBInserter(logger, session, batch_size=200)
+inserter = BatchedDBInserter(logger, session, batch_size=400)
 
 logger.debug("Starting process...")
 aggregator = CommuteTimeAggregatorGo(session)
