@@ -1,4 +1,4 @@
-from ...aggregators import CommuteTimeAggregatorGo
+from ...aggregators import TrainCommuteAggregator
 from ...database import get_session, init_db, drop_table
 from ...utils import BatchedDBInserter
 from ...models import TrainCommute
@@ -14,7 +14,7 @@ logger = logging.getLogger(os.path.basename(__file__))
 inserter = BatchedDBInserter(logger, session, batch_size=400)
 
 logger.debug("Starting process...")
-aggregator = CommuteTimeAggregatorGo(session)
+aggregator = TrainCommuteAggregator(session)
 
 logger.debug("Computing routes...")
 commutes = map(lambda x: TrainCommute(**x), aggregator.aggregate())

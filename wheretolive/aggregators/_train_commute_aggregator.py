@@ -8,7 +8,7 @@ from subprocess import Popen
 import time
 
 
-class CommuteTimeAggregatorGo:
+class TrainCommuteAggregator:
     def __init__(self, db_session):
         self.db_session = db_session
         self.logger = logging.getLogger(self.__class__.__name__)
