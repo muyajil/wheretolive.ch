@@ -75,7 +75,7 @@ class AccomodationsCrawler:
                 last_page = self.get_max_pages(url)
                 if last_page is None:
                     continue
-                for page in range(last_page):
+                for page in range(last_page + 1):
                     yield {
                         "zip_code": zip_code,
                         "page": page,
@@ -86,10 +86,13 @@ class AccomodationsCrawler:
     def get_listings_from_url(self, url):
         content = requests.get(url).text
         soup = BeautifulSoup(content, features="lxml")
-        json_text = soup.find_all("script", id="__NEXT_DATA__")[0].string
-        return json.loads(json_text)["props"]["pageProps"]["initialResultData"][
-            "resultItems"
-        ]
+        try:
+            json_text = soup.find_all("script", id="__NEXT_DATA__")[0].string
+            return json.loads(json_text)["props"]["pageProps"]["initialResultData"][
+                "resultItems"
+            ]
+        except IndexError:
+            return []
 
     def get_address(self, listing):
         try:
