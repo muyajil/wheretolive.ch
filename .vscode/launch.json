@@ -8,7 +8,7 @@
             "name": "Accomodations To Db",
             "type": "python",
             "request": "launch",
-            "module": "wheretolive.jobs.initial_import.accomodations",
+            "module": "wheretolive.jobs.updates.accomodations",
             "console": "integratedTerminal",
             "env": {
                 "LOGLEVEL": "DEBUG",
