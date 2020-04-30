@@ -41,7 +41,8 @@ for idx, health_insurance_rate in enumerate(health_insurance_rates):
     health_insurance_rate = HealthInsuranceRate(
         health_insurance_id=health_insurance_id,
         zip_code=health_insurance_rate["zip_code"],
-        birth_year=health_insurance_rate["birth_year"],
+        min_birth_year=health_insurance_rate["min_birth_year"],
+        max_birth_year=health_insurance_rate["max_birth_year"],
         franchise=health_insurance_rate["franchise"],
         model=health_insurance_rate["model"],
         rate=health_insurance_rate["rate"],
