@@ -10,7 +10,26 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "dependsOn": [
+                "Build CSA Binary"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Build CSA Binary",
+            "type": "shell",
+            "command": "/usr/local/go/bin/go build ./",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/csa"
+            },
+            "problemMatcher": [
+                "$go"
+            ]
         }
     ]
 }

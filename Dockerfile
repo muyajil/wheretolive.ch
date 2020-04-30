@@ -10,5 +10,6 @@ RUN echo "source activate wheretolive.ch" > ~/.bashrc
 ENV PATH /opt/conda/envs/wheretolive.ch/bin:$PATH
 
 ADD ./wheretolive /wheretolive
+ADD ./csa/ /csa
 
 ENTRYPOINT ["/opt/conda/envs/wheretolive.ch/bin/python"]
