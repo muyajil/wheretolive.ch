@@ -34,7 +34,7 @@ for idx, accomodation in enumerate(accomodations):
         accomodation = Accomodation(**accomodation)
         session.add(accomodation)
     else:
-        for k, v in accomodation.iteritems():
+        for k, v in accomodation.items():
             setattr(acc, k, v)
     if idx % 100 == 0 and idx > 0:
         now = datetime.now()
