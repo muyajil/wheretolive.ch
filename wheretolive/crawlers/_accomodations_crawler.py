@@ -75,7 +75,7 @@ class AccomodationsCrawler:
                 last_page = self.get_max_pages(url)
                 if last_page is None:
                     continue
-                for page in range(last_page + 1):
+                for page in range(last_page):
                     yield {
                         "zip_code": zip_code,
                         "page": page,
