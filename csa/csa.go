@@ -201,7 +201,7 @@ func main() {
 	commutes = getCommutes()
 	fmt.Println("Loaded Commutes")
 
-	numWorkers := runtime.NumCPU() - 1
+	numWorkers := runtime.NumCPU() - 4
 
 	jobs := make(chan commute, numWorkers)
 	results := make(chan []string, numWorkers)
