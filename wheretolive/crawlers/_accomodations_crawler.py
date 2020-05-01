@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 from retry import retry
+import time
 
 
 class AccomodationsCrawler:
@@ -82,8 +83,9 @@ class AccomodationsCrawler:
                         "url": self.compose_url(deal_type, zip_code, page),
                     }
 
-    @retry(requests.exceptions.ConnectionError, delay=1, backoff=2)
+    @retry(requests.exceptions.ConnectionError, delay=1, backoff=2, tries=5)
     def get_listings_from_url(self, url):
+        time.sleep(1)
         content = requests.get(url).text
         soup = BeautifulSoup(content, features="lxml")
         try:

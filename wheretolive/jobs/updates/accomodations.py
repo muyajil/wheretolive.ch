@@ -32,7 +32,7 @@ for idx, accomodation in enumerate(accomodations):
     else:
         for k, v in accomodation.items():
             setattr(acc, k, v)
-    if idx % 100 == 0 and idx > 0:
+    if idx % 10 == 0 and idx > 0:
         now = datetime.now()
         logger.info(
             f"Listings crawled: {idx}\tBatch Time elapsed: {now-start_batch}\tTotal Time elapsed: {now-start}"
