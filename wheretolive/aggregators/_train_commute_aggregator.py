@@ -107,20 +107,18 @@ class TrainCommuteAggregator:
             cursor.execute(sql)
             for c in cursor:
                 commute_id, source, target = c
-                if source in self.commutes_by_stations:
-                    if target in self.commutes_by_stations[source]:
-                        self.commutes_by_stations[source][target].append(commute_id)
-                        continue
+                if (source, target, commute_type) in self.commutes_by_stations:
+                    self.commutes_by_stations[source, target, commute_type].append(
+                        commute_id
+                    )
+                    continue
 
-                if source not in self.commutes_by_stations:
-                    self.commutes_by_stations[source] = dict()
-                self.commutes_by_stations[source][target] = [commute_id]
-                commutes.append((source, target, commute_type))
+                self.commutes_by_stations[source, target, commute_type] = [commute_id]
+                commutes.append((source, target))
             cursor.close()
 
         commutes_df = pd.DataFrame(
-            commutes,
-            columns=["source_station_id", "target_station_id", "commute_type"],
+            commutes, columns=["source_station_id", "target_station_id"],
         )
 
         commutes_df.to_csv("/tmp/commutes.csv", index=False, header=False)
@@ -146,10 +144,11 @@ class TrainCommuteAggregator:
                     break
                 else:
                     splits = list(filter(lambda x: x != "", line.split(",")))
-                    if len(splits) < 5:
+                    if len(splits) < 4:
                         prev_chunk = line
                     else:
                         yield splits
+                        prev_chunk = ""
 
     def aggregate(self):
         self.export_transfer_map()
@@ -162,11 +161,15 @@ class TrainCommuteAggregator:
         _ = Popen(["./csa/csa"])
 
         for row in self.output_lines:
-            source, target, commute_type, time_sec, changes = row
-            for commute_id in self.commutes_by_stations[source][target]:
-                yield {
-                    "commute_id": commute_id,
-                    "commute_type": commute_type,
-                    "time": None if int(time_sec) < 0 else int(time_sec),
-                    "changes": None if int(changes) < 0 else int(changes),
-                }
+            source, target, time_sec, changes = row
+            for commute_type in ["closest_station", "closest_train"]:
+                if (source, target, commute_type) in self.commutes_by_stations:
+                    for commute_id in self.commutes_by_stations[
+                        source, target, commute_type
+                    ]:
+                        yield {
+                            "commute_id": commute_id,
+                            "commute_type": commute_type,
+                            "time": None if int(time_sec) < 0 else int(time_sec),
+                            "changes": None if int(changes) < 0 else int(changes),
+                        }

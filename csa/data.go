@@ -23,9 +23,8 @@ type connection struct {
 }
 
 type commute struct {
-	source      string
-	target      string
-	commuteType string
+	source string
+	target string
 }
 
 func getTransferMap() map[string]map[string]int {

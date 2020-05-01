@@ -170,7 +170,7 @@ func worker(jobs <-chan commute, results chan<- []string) {
 		earliestArrival := make(map[string]int)
 		inConnection := make(map[string]connection)
 		j := computeJourney(c, &earliestArrival, &inConnection)
-		results <- []string{c.source, c.target, c.commuteType, strconv.Itoa(j.time), strconv.Itoa(j.changes)}
+		results <- []string{c.source, c.target, strconv.Itoa(j.time), strconv.Itoa(j.changes)}
 	}
 }
 
@@ -206,9 +206,8 @@ func submitCommuteJobs(jobs chan<- commute) {
 		}
 
 		jobs <- commute{
-			source:      line[0],
-			target:      line[1],
-			commuteType: line[2]}
+			source: line[0],
+			target: line[1]}
 	}
 }
 
