@@ -75,24 +75,3 @@ func getConnections() []connection {
 
 	return connections
 }
-
-func getCommutes() []commute {
-	csvFile, _ := os.Open("/tmp/commutes.csv")
-	reader := csv.NewReader(bufio.NewReader(csvFile))
-	var commutes []commute
-	for {
-		line, error := reader.Read()
-		if error == io.EOF {
-			break
-		} else if error != nil {
-			log.Fatal(error)
-		}
-
-		commutes = append(commutes, commute{
-			source:      line[0],
-			target:      line[1],
-			commuteType: line[2]})
-	}
-
-	return commutes
-}

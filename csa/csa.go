@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
+	"io"
+	"log"
 	"math"
 	"os"
 	"runtime"
@@ -191,6 +194,24 @@ func csvWriter(results <-chan []string, finished chan<- bool) {
 	finished <- true
 }
 
+func submitCommuteJobs(jobs chan<- commute) {
+	csvFile, _ := os.Open("/tmp/commutes.csv")
+	reader := csv.NewReader(bufio.NewReader(csvFile))
+	for {
+		line, error := reader.Read()
+		if error == io.EOF {
+			break
+		} else if error != nil {
+			log.Fatal(error)
+		}
+
+		jobs <- commute{
+			source:      line[0],
+			target:      line[1],
+			commuteType: line[2]}
+	}
+}
+
 func main() {
 	transferMap = getTransferMap()
 	fmt.Println("Loaded Transfer Map")
@@ -198,8 +219,6 @@ func main() {
 	fmt.Println("Loaded Station Groups")
 	connections = getConnections()
 	fmt.Println("Loaded Connections")
-	commutes = getCommutes()
-	fmt.Println("Loaded Commutes")
 
 	numWorkers := runtime.NumCPU() - 4
 
@@ -212,9 +231,7 @@ func main() {
 	}
 	go csvWriter(results, finished)
 
-	for _, c := range commutes {
-		jobs <- c
-	}
+	submitCommuteJobs(jobs)
 	close(jobs)
 	fmt.Println("Sent all jobs")
 	<-finished
