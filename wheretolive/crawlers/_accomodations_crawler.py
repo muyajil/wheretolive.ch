@@ -3,6 +3,7 @@ import re
 import logging
 from ..models import Town
 from bs4 import BeautifulSoup
+from sqlalchemy.sql.expression import func
 import json
 from datetime import datetime
 from retry import retry
@@ -70,7 +71,9 @@ class AccomodationsCrawler:
 
     @property
     def items(self):
-        zip_codes = self.db_session.query(Town.zip_code).distinct()
+        zip_codes = (
+            self.db_session.query(Town.zip_code).distinct().order_by(func.random())
+        )
         for deal_type in [20, 10]:
             for (zip_code,) in zip_codes:
                 url = self.compose_url(deal_type, zip_code)
