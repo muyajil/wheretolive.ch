@@ -65,18 +65,6 @@
             }
         },
         {
-            "name": "Commute Times to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.data_processing.commute_times",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
             "name": "Tax Rates Predicted to DB",
             "type": "python",
             "request": "launch",
@@ -110,10 +98,10 @@
 			"args": []
         },
         {
-            "name": "Commute Times to DB (Go)",
+            "name": "Train Commutes to DB",
             "type": "python",
             "request": "launch",
-            "module": "wheretolive.jobs.data_processing.commute_times_go",
+            "module": "wheretolive.jobs.data_processing.train_commutes",
             "console": "integratedTerminal",
             "env": {
                 "LOGLEVEL": "DEBUG",
