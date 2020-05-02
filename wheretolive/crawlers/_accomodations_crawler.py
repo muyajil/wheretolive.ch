@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 from retry import retry
 import time
+import numpy as np
 
 
 class AccomodationsCrawler:
@@ -85,7 +86,7 @@ class AccomodationsCrawler:
 
     @retry(requests.exceptions.ConnectionError, delay=1, backoff=2, tries=5)
     def get_listings_from_url(self, url):
-        time.sleep(1)
+        time.sleep(1 + abs(np.random.normal()))
         content = requests.get(url).text
         soup = BeautifulSoup(content, features="lxml")
         try:
