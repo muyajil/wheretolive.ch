@@ -138,17 +138,15 @@ class TrainCommuteAggregator:
             if chunk == "":
                 time.sleep(5)
                 continue
-            for line in chunk.split("\n"):
-                if line == "done":
-                    finished = True
-                    break
-                else:
-                    splits = list(filter(lambda x: x != "", line.split(",")))
-                    if len(splits) < 4:
-                        prev_chunk = line
-                    else:
-                        yield splits
-                        prev_chunk = ""
+            chunk_splits = chunk.split("\n")
+            if chunk_splits[-1] == "done":
+                finished = True
+            elif not chunk_splits[-1] == "":
+                prev_chunk = chunk_splits[-1]
+            else:
+                prev_chunk = ""
+            for line in chunk_splits[:-1]:
+                yield line.split(",")
 
     def aggregate(self):
         self.export_transfer_map()
@@ -161,15 +159,18 @@ class TrainCommuteAggregator:
         _ = Popen(["./csa/csa"])
 
         for row in self.output_lines:
-            source, target, time_sec, changes = row
-            for commute_type in ["closest_station", "closest_train"]:
-                if (source, target, commute_type) in self.commutes_by_stations:
-                    for commute_id in self.commutes_by_stations[
-                        source, target, commute_type
-                    ]:
-                        yield {
-                            "commute_id": commute_id,
-                            "commute_type": commute_type,
-                            "time": None if int(time_sec) < 0 else int(time_sec),
-                            "changes": None if int(changes) < 0 else int(changes),
-                        }
+            try:
+                source, target, time_sec, changes = row
+                for commute_type in ["closest_station", "closest_train"]:
+                    if (source, target, commute_type) in self.commutes_by_stations:
+                        for commute_id in self.commutes_by_stations[
+                            source, target, commute_type
+                        ]:
+                            yield {
+                                "commute_id": commute_id,
+                                "commute_type": commute_type,
+                                "time": None if int(time_sec) < 0 else int(time_sec),
+                                "changes": None if int(changes) < 0 else int(changes),
+                            }
+            except:  # noqa: E722
+                raise RuntimeError("Problem with: " + str(row))
