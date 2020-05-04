@@ -99,8 +99,8 @@ class TrainCommuteAggregator:
         join sbb_station as t_sbb_station on t_sbb_station.id = t_town.closest_train_station_id
         """
 
-        sqls = [sql_1, sql_2]
-        commute_types = ["closest_station", "closest_train"]
+        sqls = [sql_2, sql_1]
+        commute_types = ["closest_train", "closest_station"]
         commutes = []
         for sql, commute_type in zip(sqls, commute_types):
             cursor = self.db_conn.cursor()
