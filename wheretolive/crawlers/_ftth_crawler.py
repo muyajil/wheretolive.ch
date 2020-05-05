@@ -19,7 +19,7 @@ class FTTHCrawler:
         )
 
         for acc in accomodations:
-            time.sleep(1)
+            time.sleep(0.1)
             url = f"{self.base_url}/{acc.zip_code}/{acc.street_name}/{acc.house_number}"
             try:
                 result = requests.get(url).json()
