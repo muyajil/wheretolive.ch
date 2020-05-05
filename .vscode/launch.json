@@ -109,5 +109,17 @@
                 "PYTHONPATH": "${workspace}:$PYTHONPATH"
             }
         },
+        {
+            "name": "FTTH Information to DB",
+            "type": "python",
+            "request": "launch",
+            "module": "wheretolive.jobs.updates.ftth",
+            "console": "integratedTerminal",
+            "env": {
+                "LOGLEVEL": "DEBUG",
+                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
+                "PYTHONPATH": "${workspace}:$PYTHONPATH"
+            }
+        },
     ]
 }
