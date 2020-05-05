@@ -26,5 +26,7 @@ services:
   wheretolive:
     image: wheretolive
     container_name: wheretolive
+    ports:
+      - 5000:5000
     build: ./
-    command: ["--version"]
+    entrypoint: gunicorn --workers 4 --bind 0.0.0.0:5000 wheretolive.webapp.wsgi:app
