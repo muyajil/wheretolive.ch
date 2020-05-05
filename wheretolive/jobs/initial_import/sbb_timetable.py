@@ -7,23 +7,22 @@ from ...models import (
     SBBCalendar,
     SBBTransfer,
 )
-from ...database import get_session, init_db, drop_table
 from ...utils import BatchedDBInserter
+from ...webapp.app import db
 import logging
 import os
 
 
-session = get_session()
-drop_table(SBBStation.__table__)
-drop_table(SBBStopTime.__table__)
-drop_table(SBBTrip.__table__)
-drop_table(SBBRoute.__table__)
-drop_table(SBBCalendar.__table__)
-drop_table(SBBTransfer.__table__)
-init_db()
+SBBStation.__table__.drop(db.engine)
+SBBStopTime.__table__.drop(db.engine)
+SBBTrip.__table__.drop(db.engine)
+SBBRoute.__table__.drop(db.engine)
+SBBCalendar.__table__.drop(db.engine)
+SBBTransfer.__table__.drop(db.engine)
+db.create_all()
 logger = logging.getLogger(os.path.basename(__file__))
 
-inserter = BatchedDBInserter(logger, session, batch_size=50000)
+inserter = BatchedDBInserter(logger, db.session, batch_size=50000)
 
 logger.debug("Starting process...")
 crawler = SBBTimetableCrawler()
@@ -57,6 +56,3 @@ logger.debug("Getting Transfers...")
 transfers = map(lambda x: SBBTransfer(**x), crawler.crawl_transfers())
 logger.debug("Inserting Transfers into Database...")
 inserter.insert(transfers)
-
-
-session.remove()

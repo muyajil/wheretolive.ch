@@ -23,6 +23,7 @@ dependencies:
   - expat=2.2.6=he6710b0_0
   - flake8=3.7.9=py38_0
   - flask=1.1.1=py_0
+  - flask-sqlalchemy=2.4.1=py_0
   - fontconfig=2.13.0=h9420a91_0
   - freetype=2.9.1=h8a8886c_1
   - glib=2.63.1=h5a9c865_0

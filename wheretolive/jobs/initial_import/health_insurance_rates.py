@@ -1,18 +1,17 @@
 from ...crawlers import HealthInsuranceCrawler
 from ...models import HealthInsurance, HealthInsuranceRate
-from ...database import get_session, init_db, drop_table
+from ...webapp.app import db
 import logging
 import os
 from datetime import datetime
 
-session = get_session()
-drop_table(HealthInsurance.__table__)
-drop_table(HealthInsuranceRate.__table__)
-init_db()
+HealthInsurance.__table__.drop(db.engine)
+HealthInsuranceRate.__table__.drop(db.engine)
+db.create_all()
 logger = logging.getLogger(os.path.basename(__file__))
 
 logger.debug("Starting process...")
-crawler = HealthInsuranceCrawler(session)
+crawler = HealthInsuranceCrawler(db.session)
 logger.debug("Getting Health Insurance Rates...")
 health_insurance_rates = crawler.crawl()
 logger.debug("Inserting Health Insurance Rates into database...")
@@ -26,14 +25,14 @@ for idx, health_insurance_rate in enumerate(health_insurance_rates):
     )
 
     health_insurance_id = (
-        session.query(HealthInsurance.id)
+        db.session.query(HealthInsurance.id)
         .filter_by(name=health_insurace.name)
         .one_or_none()
     )
 
     if health_insurance_id is None:
-        session.add(health_insurace)
-        session.flush()
+        db.session.add(health_insurace)
+        db.session.flush()
         health_insurance_id = health_insurace.id
     else:
         (health_insurance_id,) = health_insurance_id
@@ -48,7 +47,7 @@ for idx, health_insurance_rate in enumerate(health_insurance_rates):
         rate=health_insurance_rate["rate"],
     )
 
-    session.add(health_insurance_rate)
+    db.session.add(health_insurance_rate)
 
     if idx % 5000 == 0 and idx > 0:
         now = datetime.now()
@@ -57,7 +56,7 @@ for idx, health_insurance_rate in enumerate(health_insurance_rates):
             + f"Batch Time elapsed: {now-start_batch}\t"
             + f"Total Time elapsed: {now-start}"
         )
-        session.commit()
+        db.session.commit()
         start_batch = now
 
 now = datetime.now()
@@ -67,5 +66,4 @@ logger.info(
     + f"Total Time elapsed: {now-start}"
 )
 
-session.commit()
-session.remove()
+db.session.commit()

@@ -1,21 +1,18 @@
 from ...crawlers import FTTHCrawler
-from ...database import get_session
 from ...utils import BatchedDBCommitter
+from ...webapp.app import db
 import logging
 import os
 
 
-session = get_session()
 logger = logging.getLogger(os.path.basename(__file__))
 
-committer = BatchedDBCommitter(logger, session, batch_size=10)
+committer = BatchedDBCommitter(logger, db.session, batch_size=10)
 
 logger.debug("Starting process...")
-crawler = FTTHCrawler(session)
+crawler = FTTHCrawler(db.session)
 
 logger.debug("Computing routes...")
 accomodations = crawler.crawl()
 logger.debug("Committing FTTH information to database...")
 committer.commit(accomodations)
-
-session.remove()
