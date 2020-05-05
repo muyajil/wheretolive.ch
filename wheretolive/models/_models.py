@@ -87,6 +87,9 @@ class Accomodation(base):
     property_type_id = Column(Integer)
     property_type = Column(String)
     original_publisher = Column(String)
+    max_upload = Column(Integer)
+    max_download = Column(Integer)
+    ftth_available = Column(Boolean)
 
 
 class SBBStation(base):
