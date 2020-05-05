@@ -11,7 +11,9 @@ class FTTHCrawler:
 
     def crawl(self):
         accomodations = self.db_session.query(Accomodation).filter(
-            ~Accomodation.house_number.is_(None) and ~Accomodation.street_name.is_(None)
+            ~Accomodation.house_number.is_(None)
+            and ~Accomodation.street_name.is_(None)
+            and Accomodation.ftth_available.is_(None)
         )
 
         for acc in accomodations:
