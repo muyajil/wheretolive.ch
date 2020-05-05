@@ -133,5 +133,17 @@
                 "PYTHONPATH": "${workspace}:$PYTHONPATH"
             }
         },
+        {
+            "name": "Coop Store Availability to DB",
+            "type": "python",
+            "request": "launch",
+            "module": "wheretolive.jobs.enrichment.coop",
+            "console": "integratedTerminal",
+            "env": {
+                "LOGLEVEL": "DEBUG",
+                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
+                "PYTHONPATH": "${workspace}:$PYTHONPATH"
+            }
+        },
     ]
 }
