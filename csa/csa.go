@@ -135,7 +135,7 @@ func computeJourney(commute commute, eA *map[string]int, iC *map[string]connecti
 			changes: 0}
 	}
 
-	(*eA)[commute.source] = 6 * 3600
+	(*eA)[commute.source] = 6.5 * 3600
 
 	if stationGroup, exists := stationGroups[commute.source]; exists {
 		for stationID, walkingTime := range stationGroup {

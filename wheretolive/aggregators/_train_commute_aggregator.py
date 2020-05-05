@@ -58,7 +58,7 @@ class TrainCommuteAggregator:
             where
                 not sbb_connection.departs_next_day and
                 not sbb_connection.arrives_next_day and
-                sbb_connection.departure_time >= '06:00:00' and
+                sbb_connection.departure_time >= '06:30:00' and
                 sbb_calendar.monday
             order by sbb_connection.departure_time, sbb_connection.trip_id
         """
@@ -108,13 +108,14 @@ class TrainCommuteAggregator:
             for c in cursor:
                 commute_id, source, target = c
                 if (source, target, commute_type) in self.commutes_by_stations:
-                    self.commutes_by_stations[source, target, commute_type].append(
+                    self.commutes_by_stations[source, target, commute_type].add(
                         commute_id
                     )
-                    continue
-
-                self.commutes_by_stations[source, target, commute_type] = [commute_id]
-                commutes.append((source, target))
+                else:
+                    self.commutes_by_stations[source, target, commute_type] = {
+                        commute_id
+                    }
+                    commutes.append((source, target))
             cursor.close()
 
         commutes_df = pd.DataFrame(
@@ -160,6 +161,7 @@ class TrainCommuteAggregator:
 
         for row in self.output_lines:
             try:
+                # TODO: Somehow here it is still possible to get duplicate (commute_id, commute_type) tuples
                 source, target, time_sec, changes = row
                 for commute_type in ["closest_station", "closest_train"]:
                     if (source, target, commute_type) in self.commutes_by_stations:
@@ -172,5 +174,8 @@ class TrainCommuteAggregator:
                                 "time": None if int(time_sec) < 0 else int(time_sec),
                                 "changes": None if int(changes) < 0 else int(changes),
                             }
+                        self.commutes_by_stations.pop(
+                            (source, target, commute_type), None
+                        )
             except:  # noqa: E722
                 raise RuntimeError("Problem with: " + str(row))
