@@ -41,7 +41,7 @@ class LidlStoreCrawler:
                         store_location["lat"],
                         store_location["long"],
                     )
-                    < 5
+                    <= 5
                 ):
                     town.lidl = True
                     break

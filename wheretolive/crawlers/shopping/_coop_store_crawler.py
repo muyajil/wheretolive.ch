@@ -37,7 +37,7 @@ class CoopStoreCrawler:
                         store_location["latitude"],
                         store_location["longitude"],
                     )
-                    < 5
+                    <= 5
                 ):
                     town.coop = True
                     break

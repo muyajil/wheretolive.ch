@@ -42,7 +42,7 @@ class MigrosStoreCrawler:
                         store_location["lat"],
                         store_location["lon"],
                     )
-                    < 5
+                    <= 5
                 ):
                     town.migros = True
                     break
