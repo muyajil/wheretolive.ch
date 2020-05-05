@@ -14,6 +14,10 @@ class Town(base):
     state = Column(String)
     closest_station_id = Column(String)
     closest_train_station_id = Column(String)
+    migros = Column(Boolean)
+    coop = Column(Boolean)
+    lidl = Column(Boolean)
+    aldi = Column(Boolean)
 
 
 class TaxRate(base):
@@ -164,12 +168,3 @@ class SBBConnection(base):
     arrival_time = Column(Time, primary_key=True)
     arrives_next_day = Column(Boolean, primary_key=True)
     sequence_nr = Column(Integer, primary_key=True)
-
-
-class ShoppingAvailability(base):
-    __tablename__ = "shopping_availability"
-    town_id = Column(Integer, primary_key=True)
-    migros = Column(Boolean)
-    coop = Column(Boolean)
-    lidl = Column(Boolean)
-    aldi = Column(Boolean)
