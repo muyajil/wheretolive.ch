@@ -113,7 +113,7 @@
             "name": "FTTH Information to DB",
             "type": "python",
             "request": "launch",
-            "module": "wheretolive.jobs.updates.ftth",
+            "module": "wheretolive.jobs.enrichment.ftth",
             "console": "integratedTerminal",
             "env": {
                 "LOGLEVEL": "DEBUG",
