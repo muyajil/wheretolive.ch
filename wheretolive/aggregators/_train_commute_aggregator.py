@@ -178,4 +178,4 @@ class TrainCommuteAggregator:
                             (source, target, commute_type), None
                         )
             except:  # noqa: E722
-                raise RuntimeError("Problem with: " + str(row))
+                print("Problem with: " + str(row))
