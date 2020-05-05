@@ -27,3 +27,4 @@ class FTTHCrawler:
                 acc.ftth_available = False
                 acc.max_upload = result["vdsl_down"] / 1000
                 acc.max_download = result["vdsl_up"] / 1000
+            yield acc
