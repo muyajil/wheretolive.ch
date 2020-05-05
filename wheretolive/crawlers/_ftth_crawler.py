@@ -16,6 +16,7 @@ class FTTHCrawler:
             .filter(~Accomodation.house_number.is_(None))
             .filter(~Accomodation.street_name.is_(None))
             .filter(Accomodation.ftth_available.is_(None))
+            .filter(Accomodation.street_name != "")
         )
 
         for acc in accomodations:
