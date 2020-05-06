@@ -111,10 +111,10 @@ class AccomodationsCrawler:
                 try:
                     splits = listing["Address"][0].split(" ")
                     house_number = int(splits[-1])
-                    street_name = " ".join(splits[:-1])
+                    street_name = " ".join(splits[:-1]).strip()
                 except ValueError:
                     house_number = None
-                    street_name = listing["Address"][0]
+                    street_name = listing["Address"][0].strip()
 
                 _, town_name = listing["Address"][1].split(" ", 1)
                 return town_name, street_name, house_number

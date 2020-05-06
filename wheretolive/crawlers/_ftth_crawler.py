@@ -23,12 +23,12 @@ class FTTHCrawler:
         )
         for acc in accomodations:
             time.sleep(0.1)
-            url = f"{self.base_url}/{acc.zip_code}/{acc.street_name}/{acc.house_number}"
+            url = f"{self.base_url}/{acc.zip_code}/{acc.street_name.strip()}/{acc.house_number}"
             try:
                 result = requests.get(url).json()
                 if "Q03" in map(lambda x: x["code"], result["messages"]):
-                    continue
-                if result["fiber"]:
+                    acc.ftth_available = False
+                elif result["fiber"]:
                     acc.ftth_available = True
                     acc.max_upload = 1000
                     acc.max_download = 1000
