@@ -14,4 +14,4 @@ from
 where
 	train_commute.commute_type = 'closest_station');
 
-create index closest_station_target_zip_idx on agg_closest_station_commute (target_zip_code);
+create index closest_station_target_zip_idx on agg_closest_station_commute (target_zip_code, time);
