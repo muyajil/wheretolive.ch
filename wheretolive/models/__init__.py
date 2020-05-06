@@ -15,6 +15,8 @@ from ._models import (
     TaxRateEffect,
     TrainCommute,
     SBBStationGroup,
+    ClosestStationCommute,
+    ClosestTrainCommute,
 )
 
 __all__ = [
@@ -34,4 +36,6 @@ __all__ = [
     "TaxRateEffect",
     "TrainCommute",
     "SBBStationGroup",
+    "ClosestStationCommute",
+    "ClosestTrainCommute",
 ]

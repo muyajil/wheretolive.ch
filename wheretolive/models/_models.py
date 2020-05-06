@@ -168,3 +168,19 @@ class SBBConnection(db.Model):
     arrival_time = db.Column(db.Time, primary_key=True)
     arrives_next_day = db.Column(db.Boolean, primary_key=True)
     sequence_nr = db.Column(db.Integer, primary_key=True)
+
+
+class ClosestStationCommute(db.Model):
+    __tablename__ = "agg_closest_station_commute"
+    source_zip_code = db.Column(db.Integer)
+    target_zip_code = db.Column(db.Integer)
+    time = db.Column(db.Integer)
+    changes = db.Column(db.Integer)
+
+
+class ClosestTrainCommute(db.Model):
+    __tablename__ = "agg_closest_train_commute"
+    source_zip_code = db.Column(db.Integer)
+    target_zip_code = db.Column(db.Integer)
+    time = db.Column(db.Integer)
+    changes = db.Column(db.Integer)
