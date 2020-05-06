@@ -18,7 +18,9 @@ class FTTHCrawler:
             .filter(Accomodation.ftth_available.is_(None))
             .filter(Accomodation.street_name != "")
         )
-
+        self.logger.info(
+            f"Found {accomodations.count()} listings with missing information"
+        )
         for acc in accomodations:
             time.sleep(0.1)
             url = f"{self.base_url}/{acc.zip_code}/{acc.street_name}/{acc.house_number}"
