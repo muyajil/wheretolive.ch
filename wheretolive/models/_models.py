@@ -172,15 +172,15 @@ class SBBConnection(db.Model):
 
 class ClosestStationCommute(db.Model):
     __tablename__ = "agg_closest_station_commute"
-    source_zip_code = db.Column(db.Integer)
-    target_zip_code = db.Column(db.Integer)
+    source_zip_code = db.Column(db.Integer, primary_key=True)
+    target_zip_code = db.Column(db.Integer, primary_key=True)
     time = db.Column(db.Integer)
     changes = db.Column(db.Integer)
 
 
 class ClosestTrainCommute(db.Model):
     __tablename__ = "agg_closest_train_commute"
-    source_zip_code = db.Column(db.Integer)
-    target_zip_code = db.Column(db.Integer)
+    source_zip_code = db.Column(db.Integer, primary_key=True)
+    target_zip_code = db.Column(db.Integer, primary_key=True)
     time = db.Column(db.Integer)
     changes = db.Column(db.Integer)
