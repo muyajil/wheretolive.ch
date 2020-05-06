@@ -36,8 +36,9 @@ class FTTHCrawler:
                     acc.ftth_available = False
                     acc.max_download = result["vdsl_down"] / 1000
                     acc.max_upload = result["vdsl_up"] / 1000
-                yield acc
             except:  # noqa: E722
+                acc.ftth_available = False
                 self.logger.error(
                     f"Problem with getting FTTH Info for accomodation {acc.comparis_id}"
                 )
+            yield acc
