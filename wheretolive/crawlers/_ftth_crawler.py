@@ -1,7 +1,9 @@
-from ..models import Accomodation
 import logging
-import requests
 import time
+
+import requests
+
+from ..models import Accomodation
 
 
 class FTTHCrawler:

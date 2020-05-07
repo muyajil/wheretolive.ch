@@ -1,9 +1,11 @@
-from ...models import Town
 import logging
+import time
+
 import requests
 from bs4 import BeautifulSoup
-import time
 from retry import retry
+
+from ...models import Town
 
 
 class AldiStoreCrawler:

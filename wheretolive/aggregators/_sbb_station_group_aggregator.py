@@ -1,7 +1,9 @@
 import logging
-from ..utils.math import get_distance
-from ..models import SBBStation
+
 import numpy as np
+
+from ..models import SBBStation
+from ..utils.math import get_distance
 
 
 class SBBStationGroupAggregator:

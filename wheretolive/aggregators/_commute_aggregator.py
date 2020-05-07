@@ -1,6 +1,7 @@
 import logging
-from ..utils.math import get_distance
+
 from ..models import Town
+from ..utils.math import get_distance
 
 
 class CommuteAggregator:

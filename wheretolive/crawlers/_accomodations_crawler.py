@@ -1,14 +1,16 @@
-import requests
-import re
-import logging
-from ..models import Town
-from bs4 import BeautifulSoup
-from sqlalchemy.sql.expression import func
 import json
-from datetime import datetime
-from retry import retry
+import logging
+import re
 import time
+from datetime import datetime
+
 import numpy as np
+import requests
+from bs4 import BeautifulSoup
+from retry import retry
+from sqlalchemy.sql.expression import func
+
+from ..models import Town
 
 
 class AccomodationsCrawler:

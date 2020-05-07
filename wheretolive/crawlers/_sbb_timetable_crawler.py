@@ -1,9 +1,10 @@
-import requests
+import csv
 import json
-from datetime import datetime
 import logging
 import zipfile
-import csv
+from datetime import datetime
+
+import requests
 
 
 class SBBTimetableCrawler:

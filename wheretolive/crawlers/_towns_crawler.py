@@ -1,8 +1,9 @@
-import requests
-import zipfile
-import shutil
 import csv
 import logging
+import shutil
+import zipfile
+
+import requests
 
 
 # FileCrawler

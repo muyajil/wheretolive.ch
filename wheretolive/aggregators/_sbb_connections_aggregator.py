@@ -1,5 +1,6 @@
 import logging
-from ..models import SBBStopTime, SBBStation
+
+from ..models import SBBStation, SBBStopTime
 from ..utils import BatchIterator
 
 

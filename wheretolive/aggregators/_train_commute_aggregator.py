@@ -1,11 +1,13 @@
-import logging
-from ..models import SBBTransfer, SBBStationGroup
-import pandas as pd
-import os
-import psycopg2 as pg
 import json
-from subprocess import Popen
+import logging
+import os
 import time
+from subprocess import Popen
+
+import pandas as pd
+import psycopg2 as pg
+
+from ..models import SBBStationGroup, SBBTransfer
 
 
 class TrainCommuteAggregator:

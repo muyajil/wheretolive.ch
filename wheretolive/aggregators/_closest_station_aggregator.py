@@ -1,8 +1,10 @@
 import logging
-from ..models import Town, SBBStation
-from ..utils.math import get_distance
+
 from sqlalchemy import func
 from sqlalchemy.sql import label
+
+from ..models import SBBStation, Town
+from ..utils.math import get_distance
 
 
 class ClosestStationAggregator:

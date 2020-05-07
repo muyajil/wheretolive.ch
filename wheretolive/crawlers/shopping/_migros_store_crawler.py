@@ -1,7 +1,9 @@
-from ...utils.math import get_distance
-from ...models import Town
 import logging
+
 import requests
+
+from ...models import Town
+from ...utils.math import get_distance
 
 
 class MigrosStoreCrawler:

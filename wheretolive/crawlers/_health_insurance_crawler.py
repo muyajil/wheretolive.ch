@@ -1,11 +1,13 @@
-from datetime import datetime
-import requests
 import codecs
-from ..models import Town
 import json
-from bs4 import BeautifulSoup
 import logging
+from datetime import datetime
+
+import requests
+from bs4 import BeautifulSoup
 from retry import retry
+
+from ..models import Town
 
 
 # WebsiteCrawler
