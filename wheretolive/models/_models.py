@@ -1,5 +1,6 @@
 from sqlalchemy import ARRAY
-from ..webapp.app import db
+
+from ..webapp.extensions import db
 
 
 class Town(db.Model):

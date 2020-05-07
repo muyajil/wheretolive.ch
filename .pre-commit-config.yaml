@@ -20,3 +20,13 @@ repos:
       - id: jupyter-notebook-cleanup
         args:
           - --remove-kernel-metadata
+  - repo: https://github.com/Quantco/pre-commit-mirrors-isort
+    rev: ''  # Use the sha / tag you want to point at
+    hooks:
+      - id: isort-conda
+        args:
+          - -w88
+          - -tc
+          - -up
+          - -m3
+          - -fgw0

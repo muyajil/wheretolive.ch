@@ -1,19 +1,26 @@
-from ...aggregators import ClosestStationAggregator
-from ...utils import BatchedDBCommitter
-from ...webapp.app import db
 import logging
 import os
 
+from flask import Blueprint
 
-logger = logging.getLogger(os.path.basename(__file__))
+from ...aggregators import ClosestStationAggregator
+from ...utils import BatchedDBCommitter
+from ...webapp.extensions import db
 
-committer = BatchedDBCommitter(logger, db.session, batch_size=100)
+bp = Blueprint("data_processing.closest_stations", __name__, cli_group=None)
 
-logger.debug("Starting process...")
-aggregator = ClosestStationAggregator(db.session)
 
-logger.debug("Finding closest stations...")
-towns = aggregator.aggregate()
+@bp.cli.command("compute_closest_stations")
+def run_job():
+    logger = logging.getLogger(os.path.basename(__file__))
 
-logger.debug("Committing changes to database...")
-committer.commit(towns)
+    committer = BatchedDBCommitter(logger, db.session, batch_size=100)
+
+    logger.debug("Starting process...")
+    aggregator = ClosestStationAggregator(db.session)
+
+    logger.debug("Finding closest stations...")
+    towns = aggregator.aggregate()
+
+    logger.debug("Committing changes to database...")
+    committer.commit(towns)

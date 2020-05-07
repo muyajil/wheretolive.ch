@@ -12,4 +12,4 @@ ENV PATH /opt/conda/envs/wheretolive.ch/bin:$PATH
 ADD ./wheretolive /wheretolive
 ADD ./csa/ /csa
 
-ENTRYPOINT ["/opt/conda/envs/wheretolive.ch/bin/python"]
+ENTRYPOINT ["/opt/conda/envs/wheretolive.ch/bin/flask"]
