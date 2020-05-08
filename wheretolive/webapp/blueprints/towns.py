@@ -8,5 +8,5 @@ towns_bp = Blueprint("towns", __name__, template_folder="templates")
 @towns_bp.route("/", methods=["POST"])
 def show():
     service = TownsAnalysisService()
-    analysis = service.analyze(request.form)
+    analysis = service.analyze(request.get_json())
     return jsonify(analysis)
