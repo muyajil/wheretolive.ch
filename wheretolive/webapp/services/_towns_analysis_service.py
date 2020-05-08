@@ -1,5 +1,7 @@
 import logging
 
+import plotly.graph_objects as go
+
 from ._accomodation_service import AccomodationService
 from ._commute_service import CommuteService
 from ._health_insurance_service import HealthInsuranceService
@@ -85,4 +87,51 @@ class TownsAnalysisService:
                     + town_stats[town_id]["yearly_cost_health"]
                 )
 
-        return town_stats
+        town_ids = list(town_stats.keys())
+        town_ids = sorted(
+            town_stats.keys(), key=lambda x: town_stats[x]["total_yearly_cost"]
+        )
+
+        town_names = list(
+            map(
+                lambda x: str(town_stats[x]["zip_code"]) + " " + town_stats[x]["name"],
+                town_ids,
+            )
+        )
+        fig = go.Figure(
+            data=[
+                go.Bar(
+                    name="Health Care",
+                    x=town_names,
+                    y=list(
+                        map(
+                            lambda x: round(town_stats[x]["yearly_cost_health"], 2),
+                            town_ids,
+                        )
+                    ),
+                ),
+                go.Bar(
+                    name="Taxes",
+                    x=town_names,
+                    y=list(
+                        map(
+                            lambda x: round(town_stats[x]["yearly_cost_taxes"], 2),
+                            town_ids,
+                        )
+                    ),
+                ),
+                go.Bar(
+                    name="Living Costs",
+                    x=town_names,
+                    y=list(
+                        map(
+                            lambda x: round(town_stats[x]["yearly_cost_home"], 2),
+                            town_ids,
+                        )
+                    ),
+                ),
+            ]
+        )
+        fig.update_layout(barmode="stack")
+        fig.update_xaxes(rangeslider_visible=True)
+        return fig
