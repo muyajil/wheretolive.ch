@@ -1,5 +1,5 @@
 # wheretolive.ch
-
+## Development Setup
 1. Install Miniconda: https://conda.io/projects/conda/en/latest/user-guide/install/linux.html
 2. `cd wheretolive.ch`
 3. `conda create --file environment.yml`
