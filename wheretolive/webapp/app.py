@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_bootstrap import Bootstrap
 
 from ..jobs.data_processing.closest_stations import bp as closest_stations_job_bp
 from ..jobs.data_processing.commute_distances import bp as commute_distances_job_bp
@@ -29,6 +30,8 @@ def create_app():
 
     register_extensions(app)
     register_blueprints(app)
+
+    Bootstrap(app)
 
     return app
 
