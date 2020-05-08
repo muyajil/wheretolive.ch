@@ -3,6 +3,7 @@ create materialized view agg_closest_train_commute as
 	source_town.id as source_town_id,
 	source_town.zip_code as source_zip_code,
 	source_town.name as source_town_name,
+	source_town.bfs_nr as source_town_bfs_nr,
 	target_town.id as target_town_id,
 	target_town.zip_code as target_zip_code,
 	train_commute.time,
