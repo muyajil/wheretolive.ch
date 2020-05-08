@@ -10,7 +10,7 @@ from ...webapp.extensions import db
 bp = Blueprint("enrichtment.aldi", __name__, cli_group=None)
 
 
-@bp.cli.command("import.aldi_stores")
+@bp.cli.command("import_aldi_stores")
 def run_job():
     logger = logging.getLogger(os.path.basename(__file__))
 
