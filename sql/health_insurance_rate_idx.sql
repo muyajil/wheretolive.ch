@@ -1,0 +1,1 @@
+create index health_insurance_rate_idx on health_insurance_rate (zip_code, max_birth_year, franchise);
