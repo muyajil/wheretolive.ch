@@ -74,4 +74,15 @@ class TownsAnalysisService:
             for town_id in bfs_nr_to_id[bfs_nr]:
                 town_stats[town_id]["yearly_cost_taxes"] = taxes[bfs_nr]
 
+        town_ids = list(town_stats.keys())
+        for town_id in town_ids:
+            if len(town_stats[town_id]) < 6:
+                town_stats.pop(town_id)
+            else:
+                town_stats[town_id]["total_yearly_cost"] = (
+                    town_stats[town_id]["yearly_cost_home"]
+                    + town_stats[town_id]["yearly_cost_taxes"]
+                    + town_stats[town_id]["yearly_cost_health"]
+                )
+
         return town_stats
