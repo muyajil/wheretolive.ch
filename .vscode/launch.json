@@ -161,16 +161,18 @@
             "name": "Run Web Application",
             "type": "python",
             "request": "launch",
-            "program": "/home/muy/miniconda3/envs/wheretolive.ch/bin/gunicorn",
-            "gevent": true,
-            "args": ["wheretolive.webapp.wsgi:app", "--bind=127.0.0.1:8989", "--log-level", "DEBUG", "--reload", "-w", "1", "--timeout=7200"],
+            "module": "flask",
+            // "args": ["wheretolive.webapp.app:create_app()", "--bind=127.0.0.1:8989", "--log-level", "DEBUG", "--reload", "-w", "1", "--timeout=7200"],
+            "args": ["run", "--no-debugger", "--no-reload"],
             "env": {
                 "LOGLEVEL": "DEBUG",
                 "DB_CONN": "postgresql://wheretolive:wheretolive@192.168.86.145:5432/wheretolive",
                 "PYTHONPATH": "${workspace}:$PYTHONPATH",
-                "DEBUG": "1",
-                "FLASK_DEBUG": "1"
-            }
+                "FLASK_APP": "wheretolive.webapp.app:create_app()",
+                "FLASK_DEBUG": "0",
+                "FLASK_ENV": "development"
+            },
+            "jinja": true
         }
     ]
 }
