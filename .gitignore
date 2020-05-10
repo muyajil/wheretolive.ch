@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 postgres_data/
 *.png
+
+frontend/node_modules
+frontend/build
