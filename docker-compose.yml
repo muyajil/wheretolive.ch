@@ -3,7 +3,7 @@ version: '3.1'
 services:
   db:
     image: postgres
-    container_name: db
+    container_name: wheretolive-db
     restart: always
     shm_size: '4gb'
     environment:
@@ -14,22 +14,24 @@ services:
     ports:
       - 5432:5432
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pg_admin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: m@wheretolive.ch
-      PGADMIN_DEFAULT_PASSWORD: wheretolive
-    ports:
-      - 8080:80
-
-  wheretolive:
-    image: wheretolive
-    container_name: wheretolive
+  backend:
+    image: wheretolive-backend
+    container_name: wheretolive-backend
     ports:
       - 5000:5000
-    build: ./
-    entrypoint: gunicorn --workers 4 --bind 0.0.0.0:5000 wheretolive.webapp.app:create_app()
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    entrypoint: gunicorn --workers 4 --bind 0.0.0.0:5000 backend.app:create_app()
     environment: 
       DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
       LOGLEVEL: "INFO"
+
+  backend:
+    image: wheretolive-frontend
+    container_name: wheretolive-frontend
+    ports:
+      - 80:3000
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile

@@ -30,6 +30,19 @@
             "problemMatcher": [
                 "$go"
             ]
+        },
+        {
+            "label": "NPM Start",
+            "type": "shell",
+            "command": "npm start",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "problemMatcher": []
         }
     ]
 }

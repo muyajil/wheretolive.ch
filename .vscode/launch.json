@@ -5,174 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Accomodations To Db",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.updates.accomodations",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "Commute Times To Db",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.data_processing.commute_time",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH",
-            }
-        },
-        {
-            "name": "SBB Timetable To Db",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.initial_import.sbb_timetable",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH",
-            }
-        },
-        {
-            "name": "Closest Stations to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.data_processing.closest_station",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "SBB Connections to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.data_processing.sbb_connections",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "Tax Rates Predicted to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.data_processing.tax_rates",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "SBB Station Groups To DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.data_processing.sbb_station_groups",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-			"name": "CSA Go Implementation",
-			"type": "go",
-			"request": "launch",
-			"mode": "auto",
-			"program": "${workspaceFolder}/csa/",
-			"env": {},
-			"args": []
-        },
-        {
-            "name": "Train Commutes to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.data_processing.train_commutes",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "FTTH Information to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.enrichment.ftth",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "Migros Store Availability to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.enrichment.migros",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "Coop Store Availability to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.enrichment.coop",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "Lidl Store Availability to DB",
-            "type": "python",
-            "request": "launch",
-            "module": "wheretolive.jobs.enrichment.lidl",
-            "console": "integratedTerminal",
-            "env": {
-                "LOGLEVEL": "DEBUG",
-                "DB_CONN": "postgresql://wheretolive:wheretolive@localhost:5432/wheretolive",
-                "PYTHONPATH": "${workspace}:$PYTHONPATH"
-            }
-        },
-        {
-            "name": "Run Web Application",
+            "name": "Run Backend",
             "type": "python",
             "request": "launch",
             "module": "flask",
-            // "args": ["wheretolive.webapp.app:create_app()", "--bind=127.0.0.1:8989", "--log-level", "DEBUG", "--reload", "-w", "1", "--timeout=7200"],
             "args": ["run", "--no-debugger", "--no-reload"],
             "env": {
                 "LOGLEVEL": "DEBUG",
                 "DB_CONN": "postgresql://wheretolive:wheretolive@192.168.86.145:5432/wheretolive",
                 "PYTHONPATH": "${workspace}:$PYTHONPATH",
-                "FLASK_APP": "wheretolive.webapp.app:create_app()",
+                "FLASK_APP": "backend.app:create_app()",
                 "FLASK_DEBUG": "0",
                 "FLASK_ENV": "development"
             },
-            "jinja": true
+        },
+        {
+            "name": "Run Frontend",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/frontend",
         }
     ]
 }
