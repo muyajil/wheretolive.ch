@@ -27,11 +27,11 @@ services:
       DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
       LOGLEVEL: "INFO"
 
-  backend:
+  frontend:
     image: wheretolive-frontend
     container_name: wheretolive-frontend
     ports:
-      - 80:3000
+      - 3000:80
     build:
       context: .
       dockerfile: frontend.Dockerfile

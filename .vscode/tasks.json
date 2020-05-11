@@ -32,9 +32,9 @@
             ]
         },
         {
-            "label": "NPM Start",
+            "label": "Start Frontend Server",
             "type": "shell",
-            "command": "npm start",
+            "command": "yarn start",
             "group": {
                 "kind": "build",
                 "isDefault": true
