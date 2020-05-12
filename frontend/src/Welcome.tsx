@@ -6,18 +6,11 @@ import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import { LinkContainer } from "react-router-bootstrap";
-import Image from "react-bootstrap/Image";
-import bgImage from "../bg_image.png";
 
 class WelcomeContent extends React.Component {
   render() {
     return (
       <Container fluid>
-        <Row className="imageRow text-center">
-          <Col>
-            <Image src={bgImage} fluid />
-          </Col>
-        </Row>
         <Row>
           <Col className="text-center mt-5 text-light">
             {/* <h1>#TODO Here we want to show the first page of the search form, compare to immoscout, as on overlay</h1> */}
@@ -25,7 +18,7 @@ class WelcomeContent extends React.Component {
         </Row>
         <Row className="mt-0 mt-md-5">
           {/* TODO: these cards should collapse into a carousel, maybe conditional rendering?*/}
-          <Col className="mt-5 mt-md-0" xs={12} md={2}>
+          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>
@@ -42,7 +35,7 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={2}>
+          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>AI Powered Tax Estimator</Card.Title>
@@ -59,7 +52,7 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={2}>
+          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>Sophisticated Cost Analysis</Card.Title>
@@ -77,7 +70,7 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={2}>
+          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>
@@ -95,7 +88,7 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={2}>
+          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>
