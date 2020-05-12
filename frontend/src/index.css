@@ -11,3 +11,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+body { background: #343a40 !important; font-family: 'Roboto';}
+
+.imageRow {height: 60%; overflow: hidden; max-height: 500px;}

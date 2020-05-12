@@ -3,7 +3,6 @@ version: '3.1'
 services:
   db:
     image: postgres
-    container_name: wheretolive-db
     restart: always
     shm_size: '4gb'
     environment:
@@ -16,7 +15,6 @@ services:
 
   backend:
     image: wheretolive-backend
-    container_name: wheretolive-backend
     ports:
       - 5000:5000
     build:
@@ -29,7 +27,6 @@ services:
 
   frontend:
     image: wheretolive-frontend
-    container_name: wheretolive-frontend
     ports:
       - 3000:80
     build:
