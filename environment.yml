@@ -26,6 +26,7 @@ dependencies:
   - flake8=3.7.9=py38_0
   - flask=1.1.1=py_0
   - flask-bootstrap=3.3.7.1=py_0
+  - flask-cors=3.0.8=py_0
   - flask-sqlalchemy=2.4.1=py_0
   - flask-wtf=0.14.2=py_1
   - fontconfig=2.13.0=h9420a91_0

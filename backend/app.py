@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_cors import CORS
 
 from .blueprints.tax_calculator import tax_calculator_bp
 from .blueprints.towns import towns_bp
@@ -33,6 +34,7 @@ def create_app():
     register_blueprints(app)
 
     Bootstrap(app)
+    CORS(app)
 
     return app
 
