@@ -63,7 +63,7 @@ class TaxCalculator extends React.Component<Props, State> {
 
   renderTaxes () {
     if (this.state.taxesComputed) {
-      return (<h3 className="text-light">Taxes for {this.state.targetTownName}: {new Intl.NumberFormat('ch').format(this.state.targetTownTaxes)}.- </h3>);
+      return (<h3 className="text-light">Taxes for {this.state.targetTownName}: CHF {new Intl.NumberFormat('ch').format(this.state.targetTownTaxes)}.- </h3>);
     }
   }
 
