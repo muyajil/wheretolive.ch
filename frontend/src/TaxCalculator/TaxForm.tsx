@@ -1,5 +1,6 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
 import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -22,6 +23,7 @@ interface State {
   married: boolean;
   doubleSalary: boolean;
   validated: boolean;
+  incomeValid?: boolean;
 }
 
 class TaxForm extends React.Component<Props, State> {
@@ -34,7 +36,8 @@ class TaxForm extends React.Component<Props, State> {
       numChildren: 0,
       married: false,
       doubleSalary: false,
-      validated: false
+      validated: false,
+      incomeValid: undefined,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,15 +49,22 @@ class TaxForm extends React.Component<Props, State> {
       event.stopPropagation();
     }
 
-    this.setState({validated: true});
+    if (
+      this.state.income !== 0 &&
+      (this.state.income < 12500 || this.state.income > 10000000)
+    ) {
+      this.setState({ incomeValid: false });
+    } else {
+      this.setState({ validated: true, incomeValid: true });
 
-    this.props.handleTaxFormSubmission(
-      this.state.selectedTown[0],
-      this.state.income,
-      this.state.numChildren,
-      this.state.married,
-      this.state.doubleSalary
-    );
+      this.props.handleTaxFormSubmission(
+        this.state.selectedTown[0],
+        this.state.income,
+        this.state.numChildren,
+        this.state.married,
+        this.state.doubleSalary
+      );
+    }
     event.preventDefault();
   }
 
@@ -75,6 +85,33 @@ class TaxForm extends React.Component<Props, State> {
     this.setState(newState as { [P in T]: State[P] });
   }
 
+  renderDoubleSalaryCheckbox() {
+    if (this.state.married) {
+      return (
+        <Form.Group controlId="doubleSalary">
+          <Form.Check
+            checked={this.state.doubleSalary}
+            onChange={this.handleChange}
+            type="checkbox"
+            label="Double Earner"
+          />
+        </Form.Group>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  renderIncomeAlert() {
+    if (!this.state.incomeValid && typeof this.state.incomeValid !== 'undefined') {
+      return (
+        <Alert className="mt-5" key="incomeAlert" variant="danger">
+          Please enter an income between CHF 12'500 and 10'000'000
+        </Alert>
+      );
+    }
+  }
+
   render() {
     return (
       <Form validated={this.state.validated} onSubmit={this.handleSubmit}>
@@ -87,12 +124,13 @@ class TaxForm extends React.Component<Props, State> {
           />
         </Form.Group>
         <Form.Group controlId="income">
-          <Form.Label>Income</Form.Label>
+          <Form.Label>Gross Income</Form.Label>
           <Form.Control
             value={this.state.income}
             onChange={this.handleChange}
             type="number"
             placeholder="Enter income"
+            isValid={this.state.incomeValid}
           />
         </Form.Group>
 
@@ -116,21 +154,13 @@ class TaxForm extends React.Component<Props, State> {
               />
             </Form.Group>
           </Col>
-          <Col>
-            <Form.Group controlId="doubleSalary">
-              <Form.Check
-                checked={this.state.doubleSalary}
-                onChange={this.handleChange}
-                type="checkbox"
-                label="Double Earner"
-              />
-            </Form.Group>
-          </Col>
+          <Col>{this.renderDoubleSalaryCheckbox()}</Col>
         </Row>
 
         <Button variant="primary" type="submit">
           Calculate Taxes!
         </Button>
+        {this.renderIncomeAlert()}
       </Form>
     );
   }

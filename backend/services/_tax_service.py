@@ -1,7 +1,7 @@
 import numpy as np
-import plotly.graph_objects as go
 
 from ..models import TaxRate, TaxRateEffect, Town
+from ..utils.math import add_thousands_sep
 
 
 class TaxService:
@@ -52,9 +52,29 @@ class TaxService:
 
         for tax_rate in tax_rates:
             taxes[tax_rate[0]] = max(
-                round(((tax_rate[1] + children_diff * tax_rate[2]) / 100) * income), 0.0
+                int(((tax_rate[1] + children_diff * tax_rate[2]) / 100) * income), 0.0
             )
         return taxes
+
+    def get_histogram_bins(self, all_taxes):
+        max_taxes = max(all_taxes.values())
+        if max_taxes <= 100:
+            bin_width = 10
+        elif max_taxes <= 5000:
+            bin_width = 100
+        elif max_taxes <= 10000:
+            bin_width = 500
+        elif max_taxes <= 25000:
+            bin_width = 1000
+        elif max_taxes <= 50000:
+            bin_width = 5000
+        elif max_taxes <= 100000:
+            bin_width = 10000
+        else:
+            bin_width = 10000
+
+        right_edge = ((max_taxes // bin_width) + 1) * bin_width
+        return list(range(0, right_edge, bin_width))
 
     def calculate_taxes(
         self, married, double_salary, num_children, income, target_town_id
@@ -62,19 +82,23 @@ class TaxService:
         all_taxes = self.get_taxes(married, double_salary, num_children, income)
         target_bfs_nr = Town.query.get(target_town_id).bfs_nr
 
-        colors = ["lightslategray"] * 200
+        histogram_bins = self.get_histogram_bins(all_taxes)
 
-        counts, bins = np.histogram(list(all_taxes.values()), bins=100)
-        x = []
-        for idx, (lower, upper) in enumerate(zip(bins[:-1], bins[1:])):
-            x.append((lower, upper))
+        counts, bins = np.histogram(list(all_taxes.values()), bins=histogram_bins)
+        data = []
+        target_town_idx = None
+
+        for idx, (lower, upper, count) in enumerate(zip(bins[:-1], bins[1:], counts)):
+            data.append(
+                {
+                    "range": add_thousands_sep(str(int(lower)))
+                    + "-"
+                    + add_thousands_sep(str(int(upper))),
+                    "count": int(count),
+                }
+            )
+
             if lower <= all_taxes[target_bfs_nr] and upper >= all_taxes[target_bfs_nr]:
-                colors[idx] = "crimson"
+                target_town_idx = idx
 
-        fig = go.Figure(go.Bar(x=x, y=counts, marker_color=colors))
-
-        fig.update_layout(
-            title="Taxes", xaxis_title="Tax Amount", yaxis_title="Count",
-        )
-
-        return all_taxes[target_bfs_nr], fig
+        return all_taxes[target_bfs_nr], target_town_idx, data

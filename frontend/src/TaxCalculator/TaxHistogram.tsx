@@ -1,32 +1,61 @@
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import React from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  XAxis,
+  YAxis,
+  Cell,
+  Tooltip,
+  Bar,
+} from "recharts";
 
-class TaxHistogram extends React.Component {
+interface Props {
+  data: Map<string, Object>[];
+  targetTownIdx: number;
+}
+
+interface State {
+  data: Map<string, Object>[];
+}
+
+class TaxHistogram extends React.Component<Props, State> {
+
+  formatTooltip(value:any, name:any, props:any){
+    return [new Intl.NumberFormat('ch').format(value), "Number of Towns"]
+  }
+
+  formatLabel(label:any){
+
+    return ("Tax Bracket (CHF): " + label)
+  }
+
   render() {
     return (
-      <Form>
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" />
-          <Form.Text className="text-muted">
-            We'll never share your email with anyone else.
-          </Form.Text>
-        </Form.Group>
-
-        <Form.Group controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" />
-        </Form.Group>
-        <Form.Group controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label="Check me out" />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
+      <ResponsiveContainer width="100%" height={450}>
+        <BarChart
+          data={this.props.data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <XAxis dataKey="range" name="Tax Brackets"/>
+          <YAxis name="Number of towns in tax bracket"/>
+          <Tooltip formatter={this.formatTooltip} labelFormatter={this.formatLabel}/>
+          <Bar dataKey="count">
+            {this.props.data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={index === this.props.targetTownIdx ? "#DC143C" : "#D3D3D3"}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     );
   }
 }
 
-export default TaxHistogram
+export default TaxHistogram;
