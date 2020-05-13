@@ -13,11 +13,11 @@ def show():
     service = TaxService()
     request_json = request.get_json()
     target_town_taxes, figure_data = service.calculate_taxes(
-        married=request_json["married"],
-        double_salary=request_json["doubleSalary"],
-        num_children=request_json["numChildren"],
-        income=request_json["income"],
-        target_town_id=request_json["targetTown"]["id"],
+        married=bool(request_json["married"]),
+        double_salary=bool(request_json["doubleSalary"]),
+        num_children=int(request_json["numChildren"]),
+        income=int(request_json["income"]),
+        target_town_id=int(request_json["targetTown"]["id"]),
     )
     return jsonify(
         {

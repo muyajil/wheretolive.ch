@@ -52,7 +52,7 @@ class TaxService:
 
         for tax_rate in tax_rates:
             taxes[tax_rate[0]] = max(
-                ((tax_rate[1] + children_diff * tax_rate[2]) / 100) * income, 0.0
+                round(((tax_rate[1] + children_diff * tax_rate[2]) / 100) * income), 0.0
             )
         return taxes
 
