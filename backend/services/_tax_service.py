@@ -77,4 +77,4 @@ class TaxService:
             title="Taxes", xaxis_title="Tax Amount", yaxis_title="Count",
         )
 
-        return target_bfs_nr, all_taxes[target_bfs_nr], fig
+        return all_taxes[target_bfs_nr], fig

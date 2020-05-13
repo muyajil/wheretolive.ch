@@ -17,7 +17,7 @@ def run_job():
     db.create_all()
     logger = logging.getLogger(os.path.basename(__file__))
 
-    inserter = BatchedDBInserter(logger, db.session, batch_size=400)
+    inserter = BatchedDBInserter(logger, db.session, batch_size=4000)
 
     logger.debug("Starting process...")
     aggregator = TrainCommuteAggregator(db.session)
