@@ -48,7 +48,7 @@ class TaxHistogram extends React.Component<Props, State> {
             {this.props.data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={index === this.props.targetTownIdx ? "#DC143C" : "#D3D3D3"}
+                fill={index === this.props.targetTownIdx ? "#DC143C" : "#6c757d"}
               />
             ))}
           </Bar>

@@ -16,16 +16,16 @@ interface State {
 }
 
 class TaxCalculator extends React.Component<Props, State> {
-  constructor (props: Props){
-    super(props)
+  constructor(props: Props) {
+    super(props);
     this.state = {
       targetTownIdx: -1,
       targetTownTaxes: 0,
-      targetTownName: '',
+      targetTownName: "",
       taxesComputed: false,
-      figureData: ''
-    }
-    this.handleTaxFormSubmission = this.handleTaxFormSubmission.bind(this)
+      figureData: "",
+    };
+    this.handleTaxFormSubmission = this.handleTaxFormSubmission.bind(this);
   }
 
   handleTaxFormSubmission(
@@ -55,21 +55,39 @@ class TaxCalculator extends React.Component<Props, State> {
           targetTownTaxes: data["target_town_taxes"],
           targetTownName: data["target_town_name"],
           figureData: data["figure_data"],
-          taxesComputed: true
+          taxesComputed: true,
         });
-        console.log(data["figure_data"])
+        console.log(data["figure_data"]);
       });
   }
 
-  renderTaxes () {
+  renderTaxes() {
     if (this.state.taxesComputed) {
-      return (<h3 className="text-light">Taxes for {this.state.targetTownName}: CHF {new Intl.NumberFormat('ch').format(this.state.targetTownTaxes)}.- </h3>);
+      return (
+        <h3 className="text-light">
+          People with your profile in{" "}
+          <strong>{this.state.targetTownName}</strong> pay on average{" "}
+          <strong>
+            CHF {new Intl.NumberFormat("ch").format(this.state.targetTownTaxes)}
+            .-
+          </strong>{" "}
+          in taxes per year.
+        </h3>
+      );
     }
   }
 
-  renderHistogram () {
+  renderHistogram() {
     if (this.state.taxesComputed) {
-      return <TaxHistogram data={JSON.parse(this.state.figureData)} targetTownIdx={this.state.targetTownIdx} />
+      return (
+        <div>
+          <h4 className="text-light">Switzerland wide comparison:</h4>
+          <TaxHistogram
+            data={JSON.parse(this.state.figureData)}
+            targetTownIdx={this.state.targetTownIdx}
+          />
+        </div>
+      );
     }
   }
 

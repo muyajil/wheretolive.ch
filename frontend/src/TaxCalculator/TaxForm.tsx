@@ -43,6 +43,7 @@ class TaxForm extends React.Component<Props, State> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
   handleSubmit(event: any) {
     if (event.target.checkValidity() === false) {
       event.preventDefault();
@@ -103,7 +104,10 @@ class TaxForm extends React.Component<Props, State> {
   }
 
   renderIncomeAlert() {
-    if (!this.state.incomeValid && typeof this.state.incomeValid !== 'undefined') {
+    if (
+      !this.state.incomeValid &&
+      typeof this.state.incomeValid !== "undefined"
+    ) {
       return (
         <Alert className="mt-5" key="incomeAlert" variant="danger">
           Please enter an income between CHF 12'500 and 10'000'000
