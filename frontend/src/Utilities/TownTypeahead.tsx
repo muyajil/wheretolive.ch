@@ -3,6 +3,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 
 interface Props {
     onChange: (selected: Array<Object|string>) => void;
+    selectedTown: Array<Object|string>;
 }
 
 interface State {
@@ -32,6 +33,8 @@ class TownTypeahead extends React.Component<Props, State> {
         options={this.state.typeaheadData}
         placeholder="Choose a town"
         onChange={this.state.onChange}
+        inputProps={{required: true}}
+        defaultSelected={this.props.selectedTown}
       />
     );
   }

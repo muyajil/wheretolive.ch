@@ -1,8 +1,7 @@
 import React from "react";
-import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import TaxForm from "./TaxForm";
+import TaxForm, {State as TaxFormState} from "./TaxForm";
 import TaxHistogram from "./TaxHistogram";
 
 interface Props {}
@@ -29,21 +28,17 @@ class TaxCalculator extends React.Component<Props, State> {
   }
 
   handleTaxFormSubmission(
-    selectedTown: Object | string,
-    income: number,
-    numChildren: number,
-    married: boolean,
-    doubleSalary: boolean
+    taxFormState: TaxFormState
   ) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        targetTown: selectedTown,
-        income: income,
-        numChildren: numChildren,
-        married: married,
-        doubleSalary: doubleSalary,
+        targetTown: taxFormState.selectedTown[0],
+        income: taxFormState.income,
+        numChildren: taxFormState.numChildren,
+        married: taxFormState.married,
+        doubleSalary: taxFormState.doubleSalary,
       }),
     };
 
@@ -93,17 +88,17 @@ class TaxCalculator extends React.Component<Props, State> {
 
   render() {
     return (
-      <Container fluid>
+      <div>
         <Row className="mt-5 max-h-500">
-          <Col className="text-light" xs={12} md={4}>
+          <Col className="text-light" xs={12} lg={4}>
             <TaxForm handleTaxFormSubmission={this.handleTaxFormSubmission} />
           </Col>
-          <Col xs={12} md={8}>
+          <Col xs={12} lg={8}>
             {this.renderTaxes()}
             {this.renderHistogram()}
           </Col>
         </Row>
-      </Container>
+      </div>
     );
   }
 }

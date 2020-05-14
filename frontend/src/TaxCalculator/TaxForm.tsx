@@ -1,6 +1,5 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import Alert from "react-bootstrap/Alert";
 import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -8,37 +7,38 @@ import TownTypeahead from "../Utilities/TownTypeahead";
 
 interface Props {
   handleTaxFormSubmission: (
-    townId: Object | string,
-    income: number,
-    numChildren: number,
-    married: boolean,
-    doubleSalary: boolean
+    formState: State
   ) => void;
 }
 
-interface State {
+export interface State {
   selectedTown: Array<Object | string>;
-  income: number;
-  numChildren: number;
+  income?: number;
+  numChildren?: number;
   married: boolean;
   doubleSalary: boolean;
   validated: boolean;
-  incomeValid?: boolean;
 }
 
 class TaxForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = {
-      selectedTown: [],
-      income: 0,
-      numChildren: 0,
-      married: false,
-      doubleSalary: false,
-      validated: false,
-      incomeValid: undefined,
-    };
+    const state = localStorage.getItem("taxFormState");
+    if (state) {
+      const state_parsed = JSON.parse(state);
+      this.state = state_parsed;
+      this.props.handleTaxFormSubmission(this.state);
+    } else {
+      this.state = {
+        selectedTown: [],
+        income: undefined,
+        numChildren: undefined,
+        married: false,
+        doubleSalary: false,
+        validated: false,
+      };
+    }
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -48,23 +48,10 @@ class TaxForm extends React.Component<Props, State> {
     if (event.target.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
-    }
-
-    if (
-      this.state.income !== 0 &&
-      (this.state.income < 12500 || this.state.income > 10000000)
-    ) {
-      this.setState({ incomeValid: false });
     } else {
-      this.setState({ validated: true, incomeValid: true });
+      this.setState({ validated: true });
 
-      this.props.handleTaxFormSubmission(
-        this.state.selectedTown[0],
-        this.state.income,
-        this.state.numChildren,
-        this.state.married,
-        this.state.doubleSalary
-      );
+      this.props.handleTaxFormSubmission(this.state);
     }
     event.preventDefault();
   }
@@ -86,6 +73,10 @@ class TaxForm extends React.Component<Props, State> {
     this.setState(newState as { [P in T]: State[P] });
   }
 
+  componentDidUpdate() {
+    localStorage.setItem("taxFormState", JSON.stringify(this.state));
+  }
+
   renderDoubleSalaryCheckbox() {
     if (this.state.married) {
       return (
@@ -93,26 +84,13 @@ class TaxForm extends React.Component<Props, State> {
           <Form.Check
             checked={this.state.doubleSalary}
             onChange={this.handleChange}
-            type="checkbox"
+            type="switch"
             label="Double Earner"
           />
         </Form.Group>
       );
     } else {
       return null;
-    }
-  }
-
-  renderIncomeAlert() {
-    if (
-      !this.state.incomeValid &&
-      typeof this.state.incomeValid !== "undefined"
-    ) {
-      return (
-        <Alert className="mt-5" key="incomeAlert" variant="danger">
-          Please enter an income between CHF 12'500 and 10'000'000
-        </Alert>
-      );
     }
   }
 
@@ -125,6 +103,7 @@ class TaxForm extends React.Component<Props, State> {
             onChange={(selected: Array<Object | string>) => {
               this.setState({ selectedTown: selected });
             }}
+            selectedTown={this.state.selectedTown}
           />
         </Form.Group>
         <Form.Group controlId="income">
@@ -134,7 +113,9 @@ class TaxForm extends React.Component<Props, State> {
             onChange={this.handleChange}
             type="number"
             placeholder="Enter income"
-            isValid={this.state.incomeValid}
+            min={12500}
+            max={10000000}
+            required={true}
           />
         </Form.Group>
 
@@ -145,6 +126,7 @@ class TaxForm extends React.Component<Props, State> {
             onChange={this.handleChange}
             type="number"
             placeholder="Enter number of children"
+            required={true}
           />
         </Form.Group>
         <Row>
@@ -153,7 +135,7 @@ class TaxForm extends React.Component<Props, State> {
               <Form.Check
                 checked={this.state.married}
                 onChange={this.handleChange}
-                type="checkbox"
+                type="switch"
                 label="Married"
               />
             </Form.Group>
@@ -164,7 +146,6 @@ class TaxForm extends React.Component<Props, State> {
         <Button variant="primary" type="submit">
           Calculate Taxes!
         </Button>
-        {this.renderIncomeAlert()}
       </Form>
     );
   }
