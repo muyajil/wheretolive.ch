@@ -11,12 +11,14 @@ tax_calculator_bp = Blueprint("tax_calculator", __name__, template_folder="templ
 def show():
     service = TaxService()
     request_json = request.get_json()
+    target_town_name = request_json["targetTown"]["label"].split(" ", 1)[1]
     target_town_taxes, target_town_idx, figure_data = service.calculate_taxes(
         married=bool(request_json["married"]),
         double_salary=bool(request_json["doubleSalary"]),
         num_children=int(request_json["numChildren"]),
         income=int(request_json["income"]),
         target_town_id=int(request_json["targetTown"]["id"]),
+        target_town_name=target_town_name,
     )
     return jsonify(
         {

@@ -79,9 +79,11 @@ class TaxRateCrawler:
                     continue
 
                 row = list(row)
+                state = row[0]
                 bfs_nr = row[1]
+                name = row[2].replace("(", "").replace(")", "")
                 if sheet_name == "REN":
-                    rates = rates = zip(
+                    rates = zip(
                         self.income_brackets[3:-1], self.income_brackets[4:], row[3:]
                     )
                 else:
@@ -91,6 +93,8 @@ class TaxRateCrawler:
                 for rate in rates:
                     yield {
                         "bfs_nr": bfs_nr,
+                        "name": name,
+                        "state": state,
                         "profile": profile,
                         "min_income": rate[0],
                         "max_income": rate[1],

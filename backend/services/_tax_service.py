@@ -35,7 +35,7 @@ class TaxService:
 
         tax_rates = (
             TaxRate.query.with_entities(
-                TaxRate.bfs_nr, TaxRate.rate, TaxRateEffect.child_effect
+                TaxRate.bfs_nr, TaxRate.name, TaxRate.rate, TaxRateEffect.child_effect
             )
             .join(TaxRateEffect, TaxRateEffect.bfs_nr == TaxRate.bfs_nr)
             .filter(TaxRate.min_income <= income)
@@ -51,9 +51,11 @@ class TaxService:
         taxes = {}
 
         for tax_rate in tax_rates:
-            taxes[tax_rate[0]] = max(
-                int(((tax_rate[1] + children_diff * tax_rate[2]) / 100) * income), 0.0
+            tax_amount = max(
+                int(((tax_rate[2] + children_diff * tax_rate[3]) / 100) * income), 0.0
             )
+            taxes[tax_rate[0]] = tax_amount
+            taxes[tax_rate[1]] = tax_amount
         return taxes
 
     def get_histogram_bins(self, all_taxes):
@@ -77,10 +79,26 @@ class TaxService:
         return list(range(0, right_edge, bin_width))
 
     def calculate_taxes(
-        self, married, double_salary, num_children, income, target_town_id
+        self,
+        married,
+        double_salary,
+        num_children,
+        income,
+        target_town_id,
+        target_town_name,
     ):
+        if not married:
+            double_salary = False
         all_taxes = self.get_taxes(married, double_salary, num_children, income)
         target_bfs_nr = Town.query.get(target_town_id).bfs_nr
+
+        try:
+            target_town_taxes = all_taxes[target_bfs_nr]
+        except KeyError:
+            try:
+                target_town_taxes = all_taxes[target_town_name]
+            except KeyError:
+                target_town_taxes = None
 
         histogram_bins = self.get_histogram_bins(all_taxes)
 
@@ -98,7 +116,7 @@ class TaxService:
                 }
             )
 
-            if lower <= all_taxes[target_bfs_nr] and upper >= all_taxes[target_bfs_nr]:
+            if lower <= target_town_taxes and upper >= target_town_taxes:
                 target_town_idx = idx
 
-        return all_taxes[target_bfs_nr], target_town_idx, data
+        return target_town_taxes, target_town_idx, data

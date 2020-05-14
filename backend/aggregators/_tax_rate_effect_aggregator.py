@@ -13,7 +13,7 @@ class TaxRateEffectAggregator:
         self.__tax_rates = None
         self.__sql = """
                     select
-                        bfs_nr_state.state,
+                        s.state,
                         s.bfs_nr,
                         s.min_income,
                         s.max_income,
@@ -35,9 +35,6 @@ class TaxRateEffectAggregator:
                     (select * from tax_rate
                     where profile = 'married_2_children_2_salaries') as m2c2s
                     on m2c2s.bfs_nr = s.bfs_nr and m2c2s.min_income = s.min_income and m2c2s.max_income = s.max_income
-                    join
-                    (select distinct bfs_nr, state from town) as bfs_nr_state
-                    on bfs_nr_state.bfs_nr = s.bfs_nr
                     order by s.bfs_nr, s.min_income
                     """
 

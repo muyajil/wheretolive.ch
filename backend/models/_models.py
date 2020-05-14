@@ -25,6 +25,8 @@ class TaxRate(db.Model):
     __tablename__ = "tax_rate"
     profile = db.Column(db.String, primary_key=True)
     bfs_nr = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, primary_key=True)
+    state = db.Column(db.String, primary_key=True)
     min_income = db.Column(db.Integer, primary_key=True)
     max_income = db.Column(db.Integer, primary_key=True)
     rate = db.Column(db.Float)
