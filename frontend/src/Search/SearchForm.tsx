@@ -6,9 +6,7 @@ import Row from "react-bootstrap/Row";
 import TownTypeahead from "../Utilities/TownTypeahead";
 
 interface Props {
-  handleSearchFormSubmission: (
-    formState: State
-  ) => void;
+  handleSearchFormSubmission: (formState: State) => void;
 }
 
 export interface State {
@@ -27,6 +25,7 @@ export interface State {
   maxRooms?: number;
   minArea?: number;
   maxArea?: number;
+  offerType: string;
 }
 
 class SearchForm extends React.Component<Props, State> {
@@ -36,7 +35,7 @@ class SearchForm extends React.Component<Props, State> {
     const state = localStorage.getItem("searchFormState");
     if (state) {
       this.state = JSON.parse(state);
-      if (this.state.validated){
+      if (this.state.validated) {
         this.props.handleSearchFormSubmission(this.state);
       }
     } else {
@@ -56,6 +55,7 @@ class SearchForm extends React.Component<Props, State> {
         maxRooms: undefined,
         minArea: undefined,
         maxArea: undefined,
+        offerType: "",
       };
     }
 
@@ -76,7 +76,7 @@ class SearchForm extends React.Component<Props, State> {
       event.stopPropagation();
     } else {
       this.setState({ validated: true });
-      this.props.handleSearchFormSubmission(this.state)
+      this.props.handleSearchFormSubmission(this.state);
     }
     event.preventDefault();
   }
@@ -148,7 +148,7 @@ class SearchForm extends React.Component<Props, State> {
       }
       if (this.state.franchises[personId] === undefined) {
         const currentEntries = this.state.franchises;
-        currentEntries[personId] = Math.min(...choices)
+        currentEntries[personId] = Math.min(...choices);
         this.setState({ franchises: currentEntries });
       }
       return (
@@ -232,7 +232,8 @@ class SearchForm extends React.Component<Props, State> {
               <TownTypeahead // check if value equivalent is offered by typeahead
                 onChange={(selected: Array<Object | string>) => {
                   this.setState({ selectedTown: selected });
-                }} selectedTown={this.state.selectedTown}
+                }}
+                selectedTown={this.state.selectedTown}
               />
             </Form.Group>
             <Form.Group controlId="commuteTime">
@@ -376,6 +377,23 @@ class SearchForm extends React.Component<Props, State> {
                   />
                 </Form.Group>
               </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group controlId="offerType">
+                  <Form.Label>Offer Type</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={this.state.offerType}
+                    onChange={this.handleChange}
+                    required={true}
+                  >
+                    <option>Rent</option>
+                    <option>Purchase</option>
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+              <Col></Col>
             </Row>
           </Col>
         </Row>
