@@ -69,9 +69,9 @@ class TaxService:
         elif max_taxes <= 25000:
             bin_width = 1000
         elif max_taxes <= 50000:
-            bin_width = 5000
+            bin_width = 2500
         elif max_taxes <= 100000:
-            bin_width = 10000
+            bin_width = 5000
         else:
             bin_width = 10000
 
