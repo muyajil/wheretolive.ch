@@ -14,4 +14,4 @@ code {
 
 body { background: #343a40 !important; font-family: 'Roboto';}
 
-.imageRow {height: 40%; overflow: hidden; max-height: 400px;}
+.imageRow {height: 40%; overflow: hidden; max-height: 300px;}

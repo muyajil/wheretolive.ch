@@ -16,9 +16,9 @@ class WelcomeContent extends React.Component {
             {/* <h1>#TODO Here we want to show the first page of the search form, compare to immoscout, as on overlay</h1> */}
           </Col>
         </Row>
-        <Row className="mt-0 mt-md-5">
+        <Row className="mt-0 mt-lg-5">
           {/* TODO: these cards should collapse into a carousel, maybe conditional rendering?*/}
-          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
+          <Col className="mt-5 mt-lg-0" xs={12} lg={3}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>
@@ -35,7 +35,7 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
+          <Col className="mt-5 mt-lg-0" xs={12} lg={3}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>AI Powered Tax Estimator</Card.Title>
@@ -52,7 +52,7 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
+          <Col className="mt-5 mt-lg-0" xs={12} lg={3}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>Sophisticated Cost Analysis</Card.Title>
@@ -70,7 +70,7 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
+          <Col className="mt-5 mt-lg-0" xs={12} lg={3}>
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>
@@ -88,27 +88,11 @@ class WelcomeContent extends React.Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col className="mt-5 mt-md-0" xs={12} md={3} lg={2}>
-            <Card className="h-100">
-              <Card.Body>
-                <Card.Title>
-                  Map Overview of Switzerland's 2022 towns.
-                </Card.Title>
-                <Card.Text>
-                  You can view a map visualizing the cost of living each town in
-                  Switzerland.
-                </Card.Text>
-                <LinkContainer to="/search">
-                  <Button variant="secondary">Check it out!</Button>
-                </LinkContainer>
-              </Card.Body>
-            </Card>
-          </Col>
         </Row>
         <Row className="mt-5">
           <Col xs={12} className="text-center">
             <LinkContainer to="/search">
-              <Button variant="secondary">Start your search now!</Button>
+              <Button variant="primary">Start your search now!</Button>
             </LinkContainer>
           </Col>
         </Row>
