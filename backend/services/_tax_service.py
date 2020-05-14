@@ -28,7 +28,7 @@ class TaxService:
 
         return base_profile, children_diff
 
-    def get_taxes(self, married, double_salary, num_children, income, bfs_nrs=None):
+    def get_taxes(self, married, double_salary, num_children, income):
         base_profile, children_diff = self.get_tax_base_profile(
             married, double_salary, num_children
         )
@@ -44,9 +44,6 @@ class TaxService:
             .filter(TaxRateEffect.max_income > income)
             .filter(TaxRate.profile == base_profile)
         )
-
-        if bfs_nrs:
-            tax_rates = tax_rates.filter(TaxRate.bfs_nr.in_(bfs_nrs))
 
         taxes = {}
 
@@ -78,7 +75,7 @@ class TaxService:
         right_edge = ((max_taxes // bin_width) + 1) * bin_width
         return list(range(0, right_edge, bin_width))
 
-    def calculate_taxes(
+    def calculate_tax_histogram(
         self,
         married,
         double_salary,

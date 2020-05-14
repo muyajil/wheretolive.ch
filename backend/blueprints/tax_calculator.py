@@ -12,7 +12,7 @@ def show():
     service = TaxService()
     request_json = request.get_json()
     target_town_name = request_json["targetTown"]["label"].split(" ", 1)[1]
-    target_town_taxes, target_town_idx, figure_data = service.calculate_taxes(
+    target_town_taxes, target_town_idx, figure_data = service.calculate_tax_histogram(
         married=bool(request_json["married"]),
         double_salary=bool(request_json["doubleSalary"]),
         num_children=int(request_json["numChildren"]),
