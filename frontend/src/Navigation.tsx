@@ -22,7 +22,9 @@ class Navigation extends React.Component {
             <LinkContainer exact to="/">
               <Nav.Link>Home</Nav.Link>
             </LinkContainer>
-
+            <LinkContainer to="/search">
+              <Nav.Link>Search</Nav.Link>
+            </LinkContainer>
             <LinkContainer to="/taxes">
               <Nav.Link>Tax Calculator</Nav.Link>
             </LinkContainer>
