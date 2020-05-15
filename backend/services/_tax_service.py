@@ -57,7 +57,7 @@ class TaxService:
 
     def get_histogram_bins(self, all_taxes):
         max_taxes = max(all_taxes.values())
-        if max_taxes <= 100:
+        if max_taxes <= 2500:
             bin_width = 10
         elif max_taxes <= 5000:
             bin_width = 100
@@ -84,6 +84,7 @@ class TaxService:
         target_town_id,
         target_town_name,
     ):
+        # TODO Eventually we just return the data and compute the histogram in the frontend
         if not married:
             double_salary = False
         all_taxes = self.get_taxes(married, double_salary, num_children, income)

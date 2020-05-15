@@ -30,18 +30,22 @@ class TaxForm extends React.Component<Props, State> {
       this.state = state_parsed;
       this.props.handleTaxFormSubmission(this.state);
     } else {
-      this.state = {
-        selectedTown: [],
-        income: undefined,
-        numChildren: undefined,
-        married: false,
-        doubleSalary: false,
-        validated: false,
-      };
+      this.state = this.getEmptyState();
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  getEmptyState(){
+    return {
+      selectedTown: [],
+      income: undefined,
+      numChildren: undefined,
+      married: false,
+      doubleSalary: false,
+      validated: false,
+    };
   }
 
   handleSubmit(event: any) {
@@ -146,6 +150,9 @@ class TaxForm extends React.Component<Props, State> {
         <Button variant="primary" type="submit">
           Calculate Taxes!
         </Button>
+        <Button className="ml-2" variant="primary" type="reset" onClick={() => this.setState(this.getEmptyState())}>
+              Reset Form
+            </Button>
       </Form>
     );
   }

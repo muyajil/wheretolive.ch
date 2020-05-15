@@ -6,11 +6,13 @@ import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import { LinkContainer } from "react-router-bootstrap";
+import Banner from "./Utilities/Banner";
 
 class WelcomeContent extends React.Component {
   render() {
     return (
       <Container fluid>
+        <Banner />
         <Row>
           <Col className="text-center mt-5 text-light">
             {/* <h1>#TODO Here we want to show the first page of the search form, compare to immoscout, as on overlay</h1> */}

@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./logo.svg";
+import icon from "./icon.png";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { LinkContainer } from "react-router-bootstrap";
@@ -8,10 +8,10 @@ class Navigation extends React.Component {
   render() {
     return (
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href="/">
           <img
             alt=""
-            src={logo}
+            src={icon}
             width="30"
             height="30"
             className="d-inline-block align-top"

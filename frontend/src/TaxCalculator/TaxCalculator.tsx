@@ -1,8 +1,10 @@
 import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Container from "react-bootstrap/Container";
 import TaxForm, {State as TaxFormState} from "./TaxForm";
 import TaxHistogram from "./TaxHistogram";
+import Banner from "../Utilities/Banner";
 
 interface Props {}
 
@@ -88,7 +90,8 @@ class TaxCalculator extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <Container fluid>
+        <Banner />
         <Row className="mt-5 max-h-500">
           <Col className="text-light" xs={12} lg={4}>
             <TaxForm handleTaxFormSubmission={this.handleTaxFormSubmission} />
@@ -98,7 +101,7 @@ class TaxCalculator extends React.Component<Props, State> {
             {this.renderHistogram()}
           </Col>
         </Row>
-      </div>
+      </Container>
     );
   }
 }

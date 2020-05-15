@@ -35,28 +35,8 @@ class SearchForm extends React.Component<Props, State> {
     const state = localStorage.getItem("searchFormState");
     if (state) {
       this.state = JSON.parse(state);
-      if (this.state.validated) {
-        this.props.handleSearchFormSubmission(this.state);
-      }
     } else {
-      this.state = {
-        selectedTown: [],
-        income: undefined,
-        numChildren: undefined,
-        married: false,
-        doubleSalary: false,
-        validated: false,
-        commuteTime: 0,
-        onlyTrainCommute: false,
-        birthYears: [undefined],
-        franchises: [undefined],
-        numPeople: 1,
-        minRooms: undefined,
-        maxRooms: undefined,
-        minArea: undefined,
-        maxArea: undefined,
-        offerType: "",
-      };
+      this.state = this.getEmptyState()
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -64,6 +44,27 @@ class SearchForm extends React.Component<Props, State> {
     this.handleHealthInsuranceChange = this.handleHealthInsuranceChange.bind(
       this
     );
+  }
+
+  getEmptyState() {
+    return {
+      selectedTown: [],
+      income: undefined,
+      numChildren: undefined,
+      married: false,
+      doubleSalary: false,
+      validated: false,
+      commuteTime: 0,
+      onlyTrainCommute: false,
+      birthYears: [undefined],
+      franchises: [undefined],
+      numPeople: 1,
+      minRooms: undefined,
+      maxRooms: undefined,
+      minArea: undefined,
+      maxArea: undefined,
+      offerType: "",
+    };
   }
 
   componentDidUpdate() {
@@ -76,6 +77,7 @@ class SearchForm extends React.Component<Props, State> {
       event.stopPropagation();
     } else {
       this.setState({ validated: true });
+      console.log(JSON.stringify(this.state));
       this.props.handleSearchFormSubmission(this.state);
     }
     event.preventDefault();
@@ -257,7 +259,7 @@ class SearchForm extends React.Component<Props, State> {
               />
             </Form.Group>
           </Col>
-          <Col xs={12} lg={3} className="pl-lg-5 pr-lg-5 border-right">
+          <Col xs={12} lg={3} className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5 border-right">
             <h5>
               <strong>Tax Information:</strong>
             </h5>
@@ -298,7 +300,7 @@ class SearchForm extends React.Component<Props, State> {
               <Col>{this.renderDoubleSalaryCheckbox()}</Col>
             </Row>
           </Col>
-          <Col xs={12} lg={3} className="pl-lg-5 pr-lg-5 border-right">
+          <Col xs={12} lg={3} className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5 border-right">
             <h5>
               <strong>Health Insurance Information:</strong>
             </h5>
@@ -317,16 +319,21 @@ class SearchForm extends React.Component<Props, State> {
               <Col className="text-center">
                 <Button
                   variant="secondary"
-                  onClick={() =>
-                    this.setState({ numPeople: this.state.numPeople - 1 })
-                  }
+                  onClick={() => {
+                    const numPeople = Math.max(this.state.numPeople - 1, 1);
+                    this.setState({
+                      numPeople: numPeople,
+                      birthYears: this.state.birthYears.slice(0, numPeople),
+                      franchises: this.state.franchises.slice(0, numPeople),
+                    });
+                  }}
                 >
                   Remove Person
                 </Button>
               </Col>
             </Row>
           </Col>
-          <Col xs={12} lg={3} className="pl-lg-5 pr-lg-5">
+          <Col xs={12} lg={3} className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5">
             <h5>
               <strong>Accomodation Information:</strong>
             </h5>
@@ -399,8 +406,11 @@ class SearchForm extends React.Component<Props, State> {
         </Row>
         <Row className="mt-5">
           <Col xs={12} className="text-center">
-            <Button variant="primary" type="submit">
+            <Button className="ml-n2" variant="primary" type="submit">
               Begin Search!
+            </Button>
+            <Button className="ml-2" variant="primary" type="reset" onClick={() => this.setState(this.getEmptyState())}>
+              Reset Form
             </Button>
           </Col>
         </Row>
