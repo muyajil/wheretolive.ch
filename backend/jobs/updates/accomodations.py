@@ -53,7 +53,11 @@ def run_job():
     db.session.commit()
 
     # Update listings that are not active anymore
-    old_listings = db.session.query(Accomodation).filter(Accomodation.last_seen < start)
+    old_listings = (
+        db.session.query(Accomodation)
+        .filter(Accomodation.last_seen < start)
+        .filter(Accomodation.is_active.is_(True))
+    )
     for old_listing in old_listings:
         old_listing.is_active = False
     db.session.commit()
