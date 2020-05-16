@@ -1,5 +1,9 @@
 # build environment
 FROM node:13.12.0-alpine as build
+ARG BACKEND_HOST
+ARG BACKEND_PORT
+ENV REACT_APP_BACKEND_HOST $BACKEND_HOST
+ENV REACT_APP_BACKEND_PORT $BACKEND_PORT
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY frontend/package.json ./

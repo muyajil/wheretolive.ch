@@ -1,0 +1,166 @@
+version: '3.1'
+
+services:
+  update_accomodations:
+    image: wheretolive-backend
+    command: update_accomodations
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  update_ftth:
+    image: wheretolive-backend
+    command: update_ftth
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_towns:
+    image: wheretolive-backend
+    command: import_towns
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_tax_rates:
+    image: wheretolive-backend
+    command: import_tax_rates
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_sbb_timetable:
+    image: wheretolive-backend
+    command: import_sbb_timetable
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_migros_stores:
+    image: wheretolive-backend
+    command: import_migros_stores
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_aldi_stores:
+    image: wheretolive-backend
+    command: import_aldi_stores
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_coop_stores:
+    image: wheretolive-backend
+    command: import_coop_stores
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_lidl_stores:
+    image: wheretolive-backend
+    command: import_lidl_stores
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  import_health_insurance_rates:
+    image: wheretolive-backend
+    command: import_health_insurance_rates
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  compute_train_commutes:
+    image: wheretolive-backend
+    command: compute_train_commutes
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  compute_tax_rate_effects:
+    image: wheretolive-backend
+    command: compute_tax_rate_effects
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  compute_sbb_station_groups:
+    image: wheretolive-backend
+    command: compute_sbb_station_groups
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  compute_sbb_connections:
+    image: wheretolive-backend
+    command: compute_sbb_connections
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  compute_commute_distances:
+    image: wheretolive-backend
+    command: compute_commute_distances
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+  compute_closest_stations:
+    image: wheretolive-backend
+    command: compute_closest_stations
+    environment: 
+      DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
+      LOGLEVEL: "INFO"
+      FLASK_APP: backend.app:create_app()
+    networks:
+      - db-network
+
+networks:
+  db-network:
+    external: true

@@ -19,7 +19,7 @@ class TownTypeahead extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    fetch("http://localhost:5000/towns/typeahead")
+    fetch("http://" + process.env.REACT_APP_BACKEND_HOST +":" + process.env.REACT_APP_BACKEND_PORT +"/towns/typeahead")
       .then((response) => response.json())
       .then((data) => {
         this.setState({ typeaheadData: data });

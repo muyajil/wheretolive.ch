@@ -40,7 +40,11 @@
                 "isDefault": true
             },
             "options": {
-                "cwd": "${workspaceFolder}/frontend"
+                "cwd": "${workspaceFolder}/frontend",
+                "env": {
+                    "BACKEND_HOST": "localhost",
+                    "BACKEND_PORT": "5000"
+                }
             },
             "problemMatcher": []
         }
