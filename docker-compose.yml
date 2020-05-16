@@ -43,6 +43,7 @@ services:
       args:
         BACKEND_HOST: ${BACKEND_HOST}
         BACKEND_PORT: ${BACKEND_PORT}
+        BACKEND_PROTOCOL: ${BACKEND_PROTOCOL}
     environment:
       VIRTUAL_HOST: wheretolive.${TLD}
       LETSENCRYPT_HOST: wheretolive.${TLD}
