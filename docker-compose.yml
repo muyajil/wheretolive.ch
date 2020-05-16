@@ -32,6 +32,8 @@ services:
     networks:
       - base-network
       - db-network
+    depends_on:
+      - db
 
   frontend:
     image: wheretolive-frontend
@@ -49,6 +51,8 @@ services:
       - 3000:80
     networks: 
       - base-network
+    depends_on:
+      - backend
 
 networks:
   base-network:
