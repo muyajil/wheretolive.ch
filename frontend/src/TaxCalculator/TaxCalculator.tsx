@@ -44,7 +44,7 @@ class TaxCalculator extends React.Component<Props, State> {
       }),
     };
 
-    fetch(process.env.REACT_APP_BACKEND_PROTOCOL + "://" + process.env.REACT_APP_BACKEND_HOST +":" + process.env.REACT_APP_BACKEND_PORT +"/tax_calculator/", requestOptions)
+    fetch(process.env.REACT_APP_BACKEND_URL +"/tax_calculator/", requestOptions)
       .then((response) => response.json())
       .then((data) => {
         this.setState({

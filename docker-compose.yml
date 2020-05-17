@@ -41,9 +41,7 @@ services:
       context: .
       dockerfile: frontend.Dockerfile
       args:
-        BACKEND_HOST: ${BACKEND_HOST}
-        BACKEND_PORT: ${BACKEND_PORT}
-        BACKEND_PROTOCOL: ${BACKEND_PROTOCOL}
+        BACKEND_URL: ${BACKEND_URL}
     environment:
       VIRTUAL_HOST: wheretolive.${TLD}
       LETSENCRYPT_HOST: wheretolive.${TLD}
