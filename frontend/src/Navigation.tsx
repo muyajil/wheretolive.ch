@@ -7,7 +7,7 @@ import { LinkContainer } from "react-router-bootstrap";
 class Navigation extends React.Component {
   render() {
     return (
-      <Navbar bg="dark" variant="dark">
+      <Navbar bg="dark" variant="dark" expand="lg">
         <Navbar.Brand href="/">
           <img
             alt=""
