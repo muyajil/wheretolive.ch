@@ -54,7 +54,6 @@ class TaxCalculator extends React.Component<Props, State> {
           figureData: data["figure_data"],
           taxesComputed: true,
         });
-        console.log(data["figure_data"]);
       });
   }
 
