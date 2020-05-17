@@ -97,12 +97,12 @@ class TaxCalculator extends React.Component<Props, State> {
       <Container fluid>
         <Banner />
         <Row className="mt-5 max-h-500">
-          <Col className="text-light" xs={12} lg={4}>
-            <TaxForm resetCalculator={this.reset} handleTaxFormSubmission={this.handleTaxFormSubmission} />
-          </Col>
-          <Col xs={12} lg={8} className="mt-5 mt-lg-0">
+         <Col xs={{span: 12, order:1}} lg={{span: 8, order:12}} className="mt-5 mt-lg-0">
             {this.renderTaxes()}
             {this.renderHistogram()}
+          </Col>
+          <Col className="text-light col-lg-pull-8" xs={{span: 12, order:12}} lg={{span: 4, order:1}}>
+            <TaxForm resetCalculator={this.reset} handleTaxFormSubmission={this.handleTaxFormSubmission} />
           </Col>
         </Row>
       </Container>
