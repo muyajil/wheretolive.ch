@@ -1,5 +1,7 @@
 import React from "react";
 import SearchForm, {State as SearchFormState} from "./SearchForm";
+import Container from "react-bootstrap/Container";
+import Banner from "../Utilities/Banner";
 
 interface Props {}
 
@@ -18,7 +20,12 @@ class Search extends React.Component<Props, State> {
     }
 
     render(){
-        return <SearchForm handleSearchFormSubmission={this.handleSearchFormSubmission}/>
+        return (
+            <Container fluid>
+                <Banner />
+                <SearchForm handleSearchFormSubmission={this.handleSearchFormSubmission}/>
+            </Container>
+        );
     }
 }
 
