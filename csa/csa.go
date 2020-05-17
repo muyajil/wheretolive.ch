@@ -166,6 +166,7 @@ func computeJourney(commute commute, eA *map[string]int, iC *map[string]connecti
 }
 
 func worker(jobs <-chan commute, results chan<- []string) {
+	defer close(results)
 	for c := range jobs {
 		earliestArrival := make(map[string]int)
 		inConnection := make(map[string]connection)
@@ -180,7 +181,7 @@ func csvWriter(results <-chan []string, finished chan<- bool) {
 		fmt.Print(err)
 	}
 	defer file.Close()
-
+	defer close(finished)
 	writer := csv.NewWriter(file)
 
 	for result := range results {

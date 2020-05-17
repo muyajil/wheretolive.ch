@@ -7,7 +7,6 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY frontend/package.json ./
 COPY frontend/yarn.lock ./
 RUN yarn install --silent
-# RUN yarn global add react-scripts@3.4.1 --silent
 ADD frontend ./
 RUN yarn build
 
