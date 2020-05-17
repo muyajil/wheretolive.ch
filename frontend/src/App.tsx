@@ -14,7 +14,7 @@ class App extends React.Component {
     return (
       <div>
         <Navigation />
-        <Container fluid>
+        <Container className="mb-5" fluid>
         <Switch>
           <Route exact path="/" component={WelcomeContent} />
           <Route path="/search" component={Search} />
