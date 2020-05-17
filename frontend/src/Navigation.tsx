@@ -7,7 +7,7 @@ import { LinkContainer } from "react-router-bootstrap";
 class Navigation extends React.Component {
   render() {
     return (
-      <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar collapseOnSelect bg="dark" variant="dark" expand="lg">
         <Navbar.Brand href="/">
           <img
             alt=""
@@ -18,6 +18,8 @@ class Navigation extends React.Component {
           />{" "}
           wheretolive
         </Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbar"/>
+        <Navbar.Collapse id="navbar">
         <Nav className="mr-auto">
             <LinkContainer exact to="/">
               <Nav.Link>Home</Nav.Link>
@@ -29,6 +31,7 @@ class Navigation extends React.Component {
               <Nav.Link>Tax Calculator</Nav.Link>
             </LinkContainer>
         </Nav>
+        </Navbar.Collapse>
       </Navbar>
     );
   }

@@ -7,6 +7,11 @@ import Search from "./Search/Search";
 import TaxCalculator from "./TaxCalculator/TaxCalculator";
 import { Route, Switch } from "react-router-dom";
 import Container from "react-bootstrap/Container";
+// eslint-disable-next-line
+import $ from 'jquery';
+// eslint-disable-next-line
+import Popper from 'popper.js';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 
 class App extends React.Component {
