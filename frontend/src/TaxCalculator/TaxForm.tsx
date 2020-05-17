@@ -13,6 +13,7 @@ interface Props {
 
 interface TaxForm {
   typeaheadRef: any;
+  formRef: any;
 }
 
 export interface State {
@@ -40,6 +41,7 @@ class TaxForm extends React.Component<Props, State> {
     }
 
     this.typeaheadRef = React.createRef();
+    this.formRef = React.createRef();
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -86,7 +88,7 @@ class TaxForm extends React.Component<Props, State> {
 
     this.setState(newState as { [P in T]: State[P] });
     if (this.state.validated) {
-      this.debounceHandleSubmit(event.target.form);
+      this.debounceHandleSubmit();
     }
   }
 
@@ -97,7 +99,7 @@ class TaxForm extends React.Component<Props, State> {
     this.setState(this.getEmptyState());
   }
 
-  debounceHandleSubmit = debounce((form) => form.dispatchEvent(new Event('submit')), 500);
+  debounceHandleSubmit = debounce(() => this.formRef.current.dispatchEvent(new Event('submit')), 500);
 
   componentDidUpdate() {
     localStorage.setItem("taxFormState", JSON.stringify(this.state));
@@ -127,13 +129,14 @@ class TaxForm extends React.Component<Props, State> {
           validated={this.state.validated}
           onSubmit={this.handleSubmit}
           onReset={this.handleReset}
-          id="taxForm"
+          ref={this.formRef}
         >
           <Form.Group controlId="town">
             <Form.Label>Town</Form.Label>
             <TownTypeahead
               onChange={(selected: Array<Object | string>) => {
                 this.setState({ selectedTown: selected });
+                this.debounceHandleSubmit();
               }}
               selectedTown={this.state.selectedTown}
               typeaheadRef={this.typeaheadRef}
