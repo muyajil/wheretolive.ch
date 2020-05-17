@@ -9,6 +9,10 @@ interface Props {
   handleSearchFormSubmission: (formState: State) => void;
 }
 
+interface SearchForm {
+  typeaheadRef: any;
+}
+
 export interface State {
   selectedTown: Array<Object | string>;
   income?: number;
@@ -26,6 +30,7 @@ export interface State {
   minArea?: number;
   maxArea?: number;
   offerType: string;
+  key: number;
 }
 
 class SearchForm extends React.Component<Props, State> {
@@ -35,12 +40,17 @@ class SearchForm extends React.Component<Props, State> {
     const state = localStorage.getItem("searchFormState");
     if (state) {
       this.state = JSON.parse(state);
+      if (this.state.validated) {
+        this.props.handleSearchFormSubmission(this.state);
+      }
     } else {
-      this.state = this.getEmptyState()
+      this.state = this.getEmptyState();
     }
+    this.typeaheadRef = React.createRef();
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleReset = this.handleReset.bind(this);
     this.handleHealthInsuranceChange = this.handleHealthInsuranceChange.bind(
       this
     );
@@ -64,6 +74,7 @@ class SearchForm extends React.Component<Props, State> {
       minArea: undefined,
       maxArea: undefined,
       offerType: "",
+      key: Date.now()
     };
   }
 
@@ -81,6 +92,12 @@ class SearchForm extends React.Component<Props, State> {
       this.props.handleSearchFormSubmission(this.state);
     }
     event.preventDefault();
+  }
+
+  handleReset(event: any) {
+    event.target.reset();
+    this.typeaheadRef.current.clear();
+    this.setState(this.getEmptyState());
   }
 
   handleHealthInsuranceChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -219,202 +236,219 @@ class SearchForm extends React.Component<Props, State> {
 
   render() {
     return (
-      <Form
-        className="text-light"
-        validated={this.state.validated}
-        onSubmit={this.handleSubmit}
-      >
-        <Row className="mt-5">
-          <Col xs={12} lg={3} className="pl-lg-5 pr-lg-5 border-right">
-            <h5>
-              <strong>Commute Information:</strong>
-            </h5>
-            <Form.Group controlId="town">
-              <Form.Label>Workplace Town</Form.Label>
-              <TownTypeahead // check if value equivalent is offered by typeahead
-                onChange={(selected: Array<Object | string>) => {
-                  this.setState({ selectedTown: selected });
-                }}
-                selectedTown={this.state.selectedTown}
-              />
-            </Form.Group>
-            <Form.Group controlId="commuteTime">
-              <Form.Label>Maximum Commute Time</Form.Label>
-              {this.renderMinutes()}
-              <Form.Control
-                value={this.state.commuteTime}
-                onChange={this.handleChange}
-                min={0}
-                max={600}
-                step={5}
-                type="range"
-              />
-            </Form.Group>
-            <Form.Group controlId="onlyTrainCommute">
-              <Form.Check
-                checked={this.state.onlyTrainCommute}
-                onChange={this.handleChange}
-                type="switch"
-                label="Only consider time spent in train"
-              />
-            </Form.Group>
-          </Col>
-          <Col xs={12} lg={3} className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5 border-right">
-            <h5>
-              <strong>Tax Information:</strong>
-            </h5>
-            <Form.Group controlId="income">
-              <Form.Label>Gross Income</Form.Label>
-              <Form.Control
-                value={this.state.income}
-                onChange={this.handleChange}
-                type="number"
-                placeholder="Enter income"
-                required={true}
-                min={12500}
-                max={10000000}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="numChildren">
-              <Form.Label>Number of children</Form.Label>
-              <Form.Control
-                value={this.state.numChildren}
-                onChange={this.handleChange}
-                type="number"
-                placeholder="Enter number of children"
-                required={true}
-              />
-            </Form.Group>
-            <Row>
-              <Col>
-                <Form.Group controlId="married">
-                  <Form.Check
-                    checked={this.state.married}
-                    onChange={this.handleChange}
-                    type="switch"
-                    label="Married"
-                  />
-                </Form.Group>
-              </Col>
-              <Col>{this.renderDoubleSalaryCheckbox()}</Col>
-            </Row>
-          </Col>
-          <Col xs={12} lg={3} className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5 border-right">
-            <h5>
-              <strong>Health Insurance Information:</strong>
-            </h5>
-            {this.renderHealthInsuranceForm()}
-            <Row className="mb-5">
-              <Col className="text-center">
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    this.setState({ numPeople: this.state.numPeople + 1 })
-                  }
-                >
-                  Add Person
-                </Button>
-              </Col>
-              <Col className="text-center">
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    const numPeople = Math.max(this.state.numPeople - 1, 1);
-                    this.setState({
-                      numPeople: numPeople,
-                      birthYears: this.state.birthYears.slice(0, numPeople),
-                      franchises: this.state.franchises.slice(0, numPeople),
-                    });
+      <div key={this.state.key}>
+        <Form
+          className="text-light"
+          validated={this.state.validated}
+          onSubmit={this.handleSubmit}
+          onReset={this.handleReset}
+        >
+          <Row className="mt-5">
+            <Col xs={12} lg={3} className="pl-lg-5 pr-lg-5 border-right">
+              <h5>
+                <strong>Commute Information:</strong>
+              </h5>
+              <Form.Group controlId="town">
+                <Form.Label>Workplace Town</Form.Label>
+                <TownTypeahead // check if value equivalent is offered by typeahead
+                  onChange={(selected: Array<Object | string>) => {
+                    this.setState({ selectedTown: selected });
                   }}
-                >
-                  Remove Person
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={12} lg={3} className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5">
-            <h5>
-              <strong>Accomodation Information:</strong>
-            </h5>
-            <Row>
-              <Col>
-                <Form.Group controlId="minRooms">
-                  <Form.Label>Minimum Rooms</Form.Label>
-                  <Form.Control
-                    value={this.state.minRooms}
-                    onChange={this.handleChange}
-                    type="decimal"
-                    placeholder="Minimum Rooms"
-                  />
-                </Form.Group>
-              </Col>
-              <Col>
-                <Form.Group controlId="maxRooms">
-                  <Form.Label>Maximum Rooms</Form.Label>
-                  <Form.Control
-                    value={this.state.maxRooms}
-                    onChange={this.handleChange}
-                    type="decimal"
-                    placeholder="Maximum Rooms"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group controlId="minArea">
-                  <Form.Label>Minimum Area</Form.Label>
-                  <Form.Control
-                    value={this.state.minArea}
-                    onChange={this.handleChange}
-                    type="number"
-                    placeholder="Minimum Area"
-                  />
-                </Form.Group>
-              </Col>
-              <Col>
-                <Form.Group controlId="maxArea">
-                  <Form.Label>Maximum Area</Form.Label>
-                  <Form.Control
-                    value={this.state.maxArea}
-                    onChange={this.handleChange}
-                    type="number"
-                    placeholder="Maximum Area"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group controlId="offerType">
-                  <Form.Label>Offer Type</Form.Label>
-                  <Form.Control
-                    as="select"
-                    value={this.state.offerType}
-                    onChange={this.handleChange}
-                    required={true}
+                  selectedTown={this.state.selectedTown}
+                  typeaheadRef={this.typeaheadRef}
+                />
+              </Form.Group>
+              <Form.Group controlId="commuteTime">
+                <Form.Label>Maximum Commute Time</Form.Label>
+                {this.renderMinutes()}
+                <Form.Control
+                  value={this.state.commuteTime}
+                  onChange={this.handleChange}
+                  min={0}
+                  max={600}
+                  step={5}
+                  type="range"
+                />
+              </Form.Group>
+              <Form.Group controlId="onlyTrainCommute">
+                <Form.Check
+                  checked={this.state.onlyTrainCommute}
+                  onChange={this.handleChange}
+                  type="switch"
+                  label="Only consider time spent in train"
+                />
+              </Form.Group>
+            </Col>
+            <Col
+              xs={12}
+              lg={3}
+              className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5 border-right"
+            >
+              <h5>
+                <strong>Tax Information:</strong>
+              </h5>
+              <Form.Group controlId="income">
+                <Form.Label>Gross Income</Form.Label>
+                <Form.Control
+                  value={this.state.income}
+                  onChange={this.handleChange}
+                  type="number"
+                  placeholder="Enter income"
+                  required={true}
+                  min={12500}
+                  max={10000000}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="numChildren">
+                <Form.Label>Number of children</Form.Label>
+                <Form.Control
+                  value={this.state.numChildren}
+                  onChange={this.handleChange}
+                  type="number"
+                  placeholder="Enter number of children"
+                  required={true}
+                />
+              </Form.Group>
+              <Row>
+                <Col>
+                  <Form.Group controlId="married">
+                    <Form.Check
+                      checked={this.state.married}
+                      onChange={this.handleChange}
+                      type="switch"
+                      label="Married"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col>{this.renderDoubleSalaryCheckbox()}</Col>
+              </Row>
+            </Col>
+            <Col
+              xs={12}
+              lg={3}
+              className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5 border-right"
+            >
+              <h5>
+                <strong>Health Insurance Information:</strong>
+              </h5>
+              {this.renderHealthInsuranceForm()}
+              <Row className="mb-5">
+                <Col className="text-center">
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      this.setState({ numPeople: this.state.numPeople + 1 })
+                    }
                   >
-                    <option>Rent</option>
-                    <option>Purchase</option>
-                  </Form.Control>
-                </Form.Group>
-              </Col>
-              <Col></Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className="mt-5">
-          <Col xs={12} className="text-center">
-            <Button className="ml-n2" variant="primary" type="submit">
-              Begin Search!
-            </Button>
-            <Button className="ml-2" variant="primary" type="reset" onClick={() => this.setState(this.getEmptyState())}>
-              Reset Form
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+                    Add Person
+                  </Button>
+                </Col>
+                <Col className="text-center">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      const numPeople = Math.max(this.state.numPeople - 1, 1);
+                      this.setState({
+                        numPeople: numPeople,
+                        birthYears: this.state.birthYears.slice(0, numPeople),
+                        franchises: this.state.franchises.slice(0, numPeople),
+                      });
+                    }}
+                  >
+                    Remove Person
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12} lg={3} className="mt-5 mt-lg-0 pl-lg-5 pr-lg-5">
+              <h5>
+                <strong>Accomodation Information:</strong>
+              </h5>
+              <Row>
+                <Col>
+                  <Form.Group controlId="minRooms">
+                    <Form.Label>Minimum Rooms</Form.Label>
+                    <Form.Control
+                      value={this.state.minRooms}
+                      onChange={this.handleChange}
+                      type="decimal"
+                      placeholder="Minimum Rooms"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group controlId="maxRooms">
+                    <Form.Label>Maximum Rooms</Form.Label>
+                    <Form.Control
+                      value={this.state.maxRooms}
+                      onChange={this.handleChange}
+                      type="decimal"
+                      placeholder="Maximum Rooms"
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Form.Group controlId="minArea">
+                    <Form.Label>Minimum Area</Form.Label>
+                    <Form.Control
+                      value={this.state.minArea}
+                      onChange={this.handleChange}
+                      type="number"
+                      placeholder="Minimum Area"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group controlId="maxArea">
+                    <Form.Label>Maximum Area</Form.Label>
+                    <Form.Control
+                      value={this.state.maxArea}
+                      onChange={this.handleChange}
+                      type="number"
+                      placeholder="Maximum Area"
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Form.Group controlId="offerType">
+                    <Form.Label>Offer Type</Form.Label>
+                    <Form.Control
+                      as="select"
+                      value={this.state.offerType}
+                      onChange={this.handleChange}
+                      required={true}
+                    >
+                      <option>Rent</option>
+                      <option>Purchase</option>
+                    </Form.Control>
+                  </Form.Group>
+                </Col>
+                <Col></Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className="mt-5">
+            <Col xs={12} className="text-center">
+              <Button className="ml-n2" variant="primary" type="submit">
+                Begin Search!
+              </Button>
+              <Button
+                className="ml-2"
+                variant="primary"
+                type="reset"
+                onClick={() => this.setState(this.getEmptyState())}
+              >
+                Reset Form
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </div>
     );
   }
 }

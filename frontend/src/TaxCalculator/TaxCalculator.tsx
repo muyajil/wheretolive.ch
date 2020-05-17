@@ -27,6 +27,7 @@ class TaxCalculator extends React.Component<Props, State> {
       figureData: "",
     };
     this.handleTaxFormSubmission = this.handleTaxFormSubmission.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   handleTaxFormSubmission(
@@ -73,6 +74,10 @@ class TaxCalculator extends React.Component<Props, State> {
     }
   }
 
+  reset(){
+    this.setState({taxesComputed: false});
+  }
+
   renderHistogram() {
     if (this.state.taxesComputed) {
       return (
@@ -93,9 +98,9 @@ class TaxCalculator extends React.Component<Props, State> {
         <Banner />
         <Row className="mt-5 max-h-500">
           <Col className="text-light" xs={12} lg={4}>
-            <TaxForm handleTaxFormSubmission={this.handleTaxFormSubmission} />
+            <TaxForm resetCalculator={this.reset} handleTaxFormSubmission={this.handleTaxFormSubmission} />
           </Col>
-          <Col xs={12} lg={8}>
+          <Col xs={12} lg={8} className="mt-5 mt-lg-0">
             {this.renderTaxes()}
             {this.renderHistogram()}
           </Col>

@@ -2,20 +2,20 @@ import React from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 
 interface Props {
-    onChange: (selected: Array<Object|string>) => void;
-    selectedTown: Array<Object|string>;
+  onChange: (selected: Array<Object | string>) => void;
+  selectedTown: Array<Object | string>;
+  typeaheadRef: any;
 }
 
 interface State {
-  typeaheadData: Map<string, string|number>[];
-  onChange: (selected: Array<Object|string>) => void;
+  typeaheadData: Map<string, string | number>[];
+  onChange: (selected: Array<Object | string>) => void;
 }
 
 class TownTypeahead extends React.Component<Props, State> {
-
   constructor(props: Props) {
-      super(props);
-      this.state = {typeaheadData: [], onChange: this.props.onChange}
+    super(props);
+    this.state = { typeaheadData: [], onChange: this.props.onChange };
   }
 
   componentDidMount() {
@@ -33,8 +33,10 @@ class TownTypeahead extends React.Component<Props, State> {
         options={this.state.typeaheadData}
         placeholder="Choose a town"
         onChange={this.state.onChange}
-        inputProps={{required: true}}
+        inputProps={{ required: true }}
         defaultSelected={this.props.selectedTown}
+        flip={true}
+        ref={this.props.typeaheadRef}
       />
     );
   }

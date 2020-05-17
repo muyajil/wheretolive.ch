@@ -17,12 +17,6 @@ body {
   font-family: "Roboto";
 }
 
-.imageRow {
-  /* height: 40%; */
-  /* overflow: hidden; */
-  /* max-height: 300px; */
-}
-
 :required::after {
   content: "*";
   position: absolute;

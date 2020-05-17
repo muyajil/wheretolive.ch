@@ -31,15 +31,9 @@ class TaxHistogram extends React.Component<Props, State> {
 
   render() {
     return (
-      <ResponsiveContainer width="100%" height={450}>
+      <ResponsiveContainer width="100%" aspect={3}>
         <BarChart
           data={this.props.data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
         >
           <XAxis dataKey="range" name="Tax Brackets"/>
           <YAxis name="Number of towns in tax bracket"/>
