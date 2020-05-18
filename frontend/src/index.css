@@ -21,6 +21,9 @@ body {
   .border-right-lg {
     border-right: none !important;
   }
+  .border-right-xl {
+    border-right: none !important;
+  }
 }
 
 @media (min-width: 992px) {
