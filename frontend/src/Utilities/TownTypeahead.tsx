@@ -31,12 +31,12 @@ class TownTypeahead extends React.Component<Props, State> {
       <Typeahead
         id="town-typeahead"
         options={this.state.typeaheadData}
-        placeholder="Choose a town"
         onChange={this.state.onChange}
         inputProps={{ required: true }}
         defaultSelected={this.props.selectedTown}
         flip={true}
         ref={this.props.typeaheadRef}
+        clearButton={true}
       />
     );
   }

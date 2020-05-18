@@ -148,7 +148,6 @@ class TaxForm extends React.Component<Props, State> {
               value={this.state.income}
               onChange={this.handleChange}
               type="number"
-              placeholder="Enter income"
               min={12500}
               max={10000000}
               required={true}
@@ -161,7 +160,6 @@ class TaxForm extends React.Component<Props, State> {
               value={this.state.numChildren}
               onChange={this.handleChange}
               type="number"
-              placeholder="Enter number of children"
               required={true}
             />
           </Form.Group>

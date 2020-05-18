@@ -293,7 +293,6 @@ class SearchForm extends React.Component<Props, State> {
                   value={this.state.income}
                   onChange={this.handleChange}
                   type="number"
-                  placeholder="Enter income"
                   required={true}
                   min={12500}
                   max={10000000}
@@ -306,7 +305,6 @@ class SearchForm extends React.Component<Props, State> {
                   value={this.state.numChildren}
                   onChange={this.handleChange}
                   type="number"
-                  placeholder="Enter number of children"
                   required={true}
                 />
               </Form.Group>
@@ -373,7 +371,6 @@ class SearchForm extends React.Component<Props, State> {
                       value={this.state.minRooms}
                       onChange={this.handleChange}
                       type="decimal"
-                      placeholder="Minimum Rooms"
                     />
                   </Form.Group>
                 </Col>
@@ -384,7 +381,6 @@ class SearchForm extends React.Component<Props, State> {
                       value={this.state.maxRooms}
                       onChange={this.handleChange}
                       type="decimal"
-                      placeholder="Maximum Rooms"
                     />
                   </Form.Group>
                 </Col>
@@ -392,23 +388,21 @@ class SearchForm extends React.Component<Props, State> {
               <Row>
                 <Col>
                   <Form.Group controlId="minArea">
-                    <Form.Label>Minimum Area</Form.Label>
+                    <Form.Label>Minimum m<sup>2</sup></Form.Label>
                     <Form.Control
                       value={this.state.minArea}
                       onChange={this.handleChange}
                       type="number"
-                      placeholder="Minimum Area"
                     />
                   </Form.Group>
                 </Col>
                 <Col>
                   <Form.Group controlId="maxArea">
-                    <Form.Label>Maximum Area</Form.Label>
+                    <Form.Label>Maximum m<sup>2</sup></Form.Label>
                     <Form.Control
                       value={this.state.maxArea}
                       onChange={this.handleChange}
                       type="number"
-                      placeholder="Maximum Area"
                     />
                   </Form.Group>
                 </Col>
