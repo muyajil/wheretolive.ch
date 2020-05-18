@@ -9,4 +9,5 @@ class TownService:
             typeahead_data.append(
                 {"id": town[0], "label": str(town[1]) + " " + town[2]}
             )
+        typeahead_data = sorted(typeahead_data, key=lambda x: x["label"])
         return typeahead_data
