@@ -59,7 +59,7 @@ class WelcomeContent extends React.Component {
               <Card.Body>
                 <Card.Title>Sophisticated Cost Analysis</Card.Title>
                 <Card.Text>
-                  In switzerland there are 3 main drivers that determine cost of
+                  In Switzerland there are 3 main drivers that determine cost of
                   living:
                   <ul>
                     <li>Cost of accomodation</li>

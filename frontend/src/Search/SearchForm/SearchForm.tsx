@@ -77,7 +77,7 @@ class SearchForm extends React.Component<Props, State> {
       maxRooms: undefined,
       minArea: undefined,
       maxArea: undefined,
-      offerType: "",
+      offerType: "Rent",
       key: Date.now(),
     };
   }
