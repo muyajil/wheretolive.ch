@@ -17,9 +17,23 @@ body {
   font-family: "Roboto";
 }
 
-:required::after {
-  content: "*";
-  position: absolute;
-  right: 0px;
-  top: 10px;
+@media (max-width: 992px) {
+  .border-right-lg {
+    border-right: none !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .border-right-lg {
+    border-right: 1px solid #f8f9fa !important;
+  }
+  .border-right-xl{
+    border-right: none !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .border-right-xl {
+    border-right: 1px solid #f8f9fa !important;
+  }
 }

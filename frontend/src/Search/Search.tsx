@@ -1,5 +1,5 @@
 import React from "react";
-import SearchForm, {State as SearchFormState} from "./SearchForm";
+import SearchForm, {State as SearchFormState} from "./SearchForm/SearchForm";
 import Container from "react-bootstrap/Container";
 import Banner from "../Utilities/Banner";
 
