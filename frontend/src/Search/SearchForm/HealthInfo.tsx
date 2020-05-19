@@ -23,7 +23,12 @@ class HealthInfo extends React.Component<Props, State> {
     const birthYear = this.props.birthYears[personId];
     let choices = [];
 
-    if (birthYear !== undefined && !isNaN(birthYear) && birthYear !== null) {
+    if (
+      birthYear !== undefined &&
+      !isNaN(birthYear) &&
+      birthYear !== null &&
+      birthYear >= 1900
+    ) {
       if (currentYear - birthYear >= 18) {
         choices = adultChoices;
       } else {
