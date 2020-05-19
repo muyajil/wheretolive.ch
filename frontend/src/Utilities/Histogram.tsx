@@ -42,6 +42,9 @@
         [250000, 5000],
         [500000, 10000],
         [1000000, 25000],
+        [2500000, 50000],
+        [5000000, 100000],
+        [10000000, 250000],
       ];
       for (let [maxValue, binWidth] of maxValueToBinWidth) {
         if (maxInputValue <= maxValue) {

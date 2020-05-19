@@ -149,7 +149,7 @@ class TaxForm extends React.Component<Props, State> {
               onChange={this.handleChange}
               type="number"
               min={12500}
-              max={10000000}
+              max={9999999}
               required={true}
             />
           </Form.Group>
