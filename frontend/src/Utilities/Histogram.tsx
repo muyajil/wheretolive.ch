@@ -14,10 +14,6 @@
     [key: string]: number;
   }
 
-  interface HistogramData {
-    [key: string]: number;
-  }
-
   interface Props {
     data: Row[];
     formatTooltip: (value: any, name: any, props: any) => string[];
