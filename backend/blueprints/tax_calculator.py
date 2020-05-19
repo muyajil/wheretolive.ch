@@ -1,30 +1,22 @@
-import json
-
 from flask import Blueprint, jsonify, request
 
 from ..services import TaxService
 
-tax_calculator_bp = Blueprint("tax_calculator", __name__, template_folder="templates")
+tax_calculator_bp = Blueprint("tax_calculator", __name__)
 
 
 @tax_calculator_bp.route("/", methods=["POST"])
 def show():
-    service = TaxService()
+    tax_service = TaxService()
     request_json = request.get_json()
-    target_town_name = request_json["targetTown"]["label"].split(" ", 1)[1]
-    target_town_taxes, target_town_idx, figure_data = service.calculate_tax_histogram(
-        married=bool(request_json["married"]),
-        double_salary=bool(request_json["doubleSalary"]),
-        num_children=int(request_json["numChildren"]),
-        income=int(request_json["income"]),
-        target_town_id=int(request_json["targetTown"]["id"]),
-        target_town_name=target_town_name,
+    tax_info = {
+        "married": bool(request_json["married"]),
+        "doubleSalary": bool(request_json["doubleSalary"]),
+        "numChildren": int(request_json["numChildren"]),
+        "income": int(request_json["income"]),
+        "targetTown": request_json["targetTown"]["label"],
+    }
+    taxes, target_town_tax_amount = tax_service.get_all_taxes(
+        tax_info, target_town_id=int(request_json["targetTown"]["id"])
     )
-    return jsonify(
-        {
-            "target_town_name": request_json["targetTown"]["label"],
-            "target_town_taxes": target_town_taxes,
-            "target_town_idx": target_town_idx,
-            "figure_data": json.dumps(figure_data),
-        }
-    )
+    return jsonify({"taxData": taxes, "targetTownTaxAmount": target_town_tax_amount})
