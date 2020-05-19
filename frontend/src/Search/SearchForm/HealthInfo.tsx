@@ -88,7 +88,12 @@ class HealthInfo extends React.Component<Props, State> {
   }
   render() {
     return (
-      <Col xs={12} lg={6} xl={3} className="mt-5 mt-xl-0 pl-lg-5 pr-lg-5 border-right-lg">
+      <Col
+        xs={12}
+        lg={6}
+        xl={3}
+        className="mt-5 mt-xl-0 pl-lg-5 pr-lg-5 border-right-lg"
+      >
         <h5>
           <strong>Health Insurance Information:</strong>
         </h5>
@@ -98,7 +103,9 @@ class HealthInfo extends React.Component<Props, State> {
             <Button
               variant="secondary"
               onClick={() =>
-                this.props.setStateInParent({ numPeople: this.props.numPeople + 1 })
+                this.props.setStateInParent({
+                  numPeople: this.props.numPeople + 1,
+                })
               }
             >
               Add Person
@@ -109,11 +116,11 @@ class HealthInfo extends React.Component<Props, State> {
               variant="secondary"
               onClick={() => {
                 const numPeople = Math.max(this.props.numPeople - 1, 1);
-    this.props.setStateInParent({
-      numPeople: numPeople,
-      birthYears: this.props.birthYears.slice(0, numPeople),
-      franchises: this.props.franchises.slice(0, numPeople),
-    })
+                this.props.setStateInParent({
+                  numPeople: numPeople,
+                  birthYears: this.props.birthYears.slice(0, numPeople),
+                  franchises: this.props.franchises.slice(0, numPeople),
+                });
               }}
             >
               Remove Person
