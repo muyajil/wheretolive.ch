@@ -82,7 +82,7 @@
     getIntervalNames(edges: number[]){
       const intervalNames = new Array(edges.length - 1)
 
-      for (let idx = 0; idx < edges.length-2; idx++){
+      for (let idx = 0; idx < edges.length-1; idx++){
         const leftEdge = edges[idx];
         const rightEdge = edges[idx + 1];
         const interval =
