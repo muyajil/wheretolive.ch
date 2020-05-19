@@ -100,6 +100,7 @@ class SearchForm extends React.Component<Props, State> {
       console.log(JSON.stringify(this.state));
       this.props.handleSearchFormSubmission(this.state);
     }
+    window.focus();
     event.preventDefault();
   }
 

@@ -69,6 +69,7 @@ class TaxForm extends React.Component<Props, State> {
 
       this.props.handleTaxFormSubmission(this.state);
     }
+    window.focus();
     event.preventDefault();
   }
 
