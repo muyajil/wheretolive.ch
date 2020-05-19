@@ -2,9 +2,9 @@ from ..models import ClosestStationCommute, ClosestTrainCommute
 
 
 class CommuteService:
-    def get_towns_in_range(self, target_zip_code, commute_type, max_commute_h):
-        max_commute_secs = int(float(max_commute_h) * 3600)
-        if commute_type == "closest_station":
+    def get_towns_in_range(self, commute_info):
+        max_commute_secs = int(commute_info["commute_minutes"]) * 60
+        if commute_info["only_train_commute"]:
             source_zips = (
                 ClosestStationCommute.query.with_entities(
                     ClosestStationCommute.source_town_id,
@@ -12,7 +12,7 @@ class CommuteService:
                     ClosestStationCommute.source_town_name,
                     ClosestStationCommute.source_town_bfs_nr,
                 )
-                .filter_by(target_zip_code=target_zip_code)
+                .filter_by(target_zip_code=commute_info["target_zip_code"])
                 .filter(ClosestStationCommute.time <= max_commute_secs)
             )
 
@@ -24,7 +24,7 @@ class CommuteService:
                     ClosestTrainCommute.source_town_name,
                     ClosestTrainCommute.source_town_bfs_nr,
                 )
-                .filter_by(target_zip_code=target_zip_code)
+                .filter_by(target_zip_code=commute_info["target_zip_code"])
                 .filter(ClosestTrainCommute.time <= max_commute_secs)
             )
         return [x for x in source_zips]

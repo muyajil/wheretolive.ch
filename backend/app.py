@@ -4,6 +4,7 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_cors import CORS
 
+from .blueprints.search import search_bp
 from .blueprints.tax_calculator import tax_calculator_bp
 from .blueprints.towns import towns_bp
 from .extensions import db
@@ -42,6 +43,7 @@ def create_app():
 def register_blueprints(app):
     app.register_blueprint(towns_bp, url_prefix="/towns")
     app.register_blueprint(tax_calculator_bp, url_prefix="/tax_calculator")
+    app.register_blueprint(search_bp, url_prefix="/search")
     app.register_blueprint(accomodations_job_bp)
     app.register_blueprint(health_insurance_job_bp)
     app.register_blueprint(sbb_timetable_job_bp)

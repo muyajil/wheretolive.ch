@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 
 from ..services import TownService
 
-towns_bp = Blueprint("towns", __name__, template_folder="templates")
+towns_bp = Blueprint("towns", __name__)
 
 
 @towns_bp.route("/typeahead", methods=["GET"])

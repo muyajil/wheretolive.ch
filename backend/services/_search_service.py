@@ -8,7 +8,7 @@ from ._health_insurance_service import HealthInsuranceService
 from ._tax_service import TaxService
 
 
-class TownsAnalysisService:
+class SearchService:
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.commute_service = CommuteService()
@@ -16,7 +16,15 @@ class TownsAnalysisService:
         self.accomodation_service = AccomodationService()
         self.health_insurance_service = HealthInsuranceService()
 
-    def analyze(self, search_profile):
+    def search_towns(self, commute_info, tax_info, health_info, accomodation_info):
+        town_info = {}
+        towns_in_range = self.commute_service.get_towns_in_range(commute_info)
+
+        for town in towns_in_range:
+            id, zip_code, name, bfs_nr = town
+            town_info[id] = {"zip_code": zip_code, "name": name, "bfs_nr": bfs_nr}
+
+    def search(self, search_profile):
         town_stats = {}
         zip_to_id = {}
         bfs_nr_to_id = {}
@@ -64,7 +72,7 @@ class TownsAnalysisService:
 
         relevant_bfs_nrs = set(map(lambda x: town_stats[x]["bfs_nr"], town_stats))
 
-        taxes = self.tax_service.get_taxes(
+        taxes = self.tax_service.get_all_taxes(
             search_profile["married"],
             search_profile["double_salary"],
             search_profile["num_children"],
