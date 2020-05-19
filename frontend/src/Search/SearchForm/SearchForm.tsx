@@ -55,6 +55,7 @@ class SearchForm extends React.Component<Props, State> {
     this.handleChange = this.handleChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
     this.handleTypeaheadChange = this.handleTypeaheadChange.bind(this);
+    this.setStateInParent = this.setStateInParent.bind(this);
     this.handleHealthInsuranceChange = this.handleHealthInsuranceChange.bind(
       this
     );
@@ -80,6 +81,10 @@ class SearchForm extends React.Component<Props, State> {
       offerType: "Rent",
       key: Date.now(),
     };
+  }
+
+  setStateInParent(state: object){
+    this.setState(state);
   }
 
   componentDidUpdate() {
@@ -168,6 +173,7 @@ class SearchForm extends React.Component<Props, State> {
             />
             <HealthInfo
               handleChange={this.handleHealthInsuranceChange}
+              setStateInParent={this.setStateInParent}
               franchises={this.state.franchises}
               birthYears={this.state.birthYears}
               numPeople={this.state.numPeople}

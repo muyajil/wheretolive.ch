@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 
 interface Props {
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  setStateInParent: (state: object) => void;
   birthYears: Array<number | undefined>;
   franchises: Array<number | undefined>;
   numPeople: number;
@@ -31,7 +32,7 @@ class HealthInfo extends React.Component<Props, State> {
       if (this.props.franchises[personId] === undefined) {
         const currentEntries = this.props.franchises;
         currentEntries[personId] = Math.min(...choices);
-        this.setState({ franchises: currentEntries });
+        this.props.setStateInParent({ franchises: currentEntries });
       }
       return (
         <Form.Group controlId={controlId}>
@@ -97,7 +98,7 @@ class HealthInfo extends React.Component<Props, State> {
             <Button
               variant="secondary"
               onClick={() =>
-                this.setState({ numPeople: this.props.numPeople + 1 })
+                this.props.setStateInParent({ numPeople: this.props.numPeople + 1 })
               }
             >
               Add Person
@@ -108,11 +109,11 @@ class HealthInfo extends React.Component<Props, State> {
               variant="secondary"
               onClick={() => {
                 const numPeople = Math.max(this.props.numPeople - 1, 1);
-                this.setState({
-                  numPeople: numPeople,
-                  birthYears: this.props.birthYears.slice(0, numPeople),
-                  franchises: this.props.franchises.slice(0, numPeople),
-                });
+    this.props.setStateInParent({
+      numPeople: numPeople,
+      birthYears: this.props.birthYears.slice(0, numPeople),
+      franchises: this.props.franchises.slice(0, numPeople),
+    })
               }}
             >
               Remove Person
