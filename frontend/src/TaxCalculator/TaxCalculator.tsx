@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import TaxForm, { State as TaxFormState } from "./TaxForm";
 import TaxHistogram from "./TaxHistogram";
 import Banner from "../Utilities/Banner";
+import publicIp from "public-ip";
 
 interface Props {}
 
@@ -31,6 +32,7 @@ class TaxCalculator extends React.Component<Props, State> {
   }
 
   handleTaxFormSubmission(taxFormState: TaxFormState) {
+    const ipAddress = publicIp.v4();
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -40,6 +42,7 @@ class TaxCalculator extends React.Component<Props, State> {
         numChildren: taxFormState.numChildren,
         married: taxFormState.married,
         doubleSalary: taxFormState.doubleSalary,
+        public_ip: ipAddress,
       }),
     };
 

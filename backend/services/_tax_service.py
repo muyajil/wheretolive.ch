@@ -68,7 +68,6 @@ class TaxService:
             taxes[bfs_nr] = tax_amount
             taxes[name] = tax_amount
         taxes_mapped = self.map_to_town_ids(taxes, target_town_id, bfs_nrs, names)
-        self.logger.info(f"Completed Tax Calculation for: {tax_info}")
         return taxes_mapped
 
     def map_to_town_ids(self, taxes, target_town_id=None, bfs_nrs=[], names=[]):
@@ -84,7 +83,7 @@ class TaxService:
             elif name in taxes:
                 tax_amount = taxes[name]
             else:
-                self.logger.warn(
+                self.logger.debug(
                     f"Could not find taxes for town: Id: {town_id}, Name: {name}, BFS Nr: {bfs_nr}"
                 )
                 continue
