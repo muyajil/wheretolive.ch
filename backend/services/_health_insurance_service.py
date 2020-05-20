@@ -8,18 +8,18 @@ from ..models import HealthInsuranceRate
 class HealthInsuranceService:
     def set_max_birth_year(self, person):
         cur_year = datetime.now().year
-        if cur_year - person["birth_year"] <= 18:
-            person["max_birth_year"] = cur_year - 18
-        elif cur_year - person["birth_year"] <= 25:
-            person["max_birth_year"] = cur_year - 25
+        if cur_year - person["birthYear"] <= 18:
+            person["maxBirthYear"] = cur_year - 18
+        elif cur_year - person["birthYear"] <= 25:
+            person["maxBirthYear"] = cur_year - 25
         else:
-            person["max_birth_year"] = 1940
+            person["maxBirthYear"] = 1940
         return person
 
-    def get_health_insurance_cost(self, people, relevant_zip_codes):
+    def get_health_insurance_cost(self, relevant_zip_codes, health_info):
         health_insurance_cost = {}
-        people = list(map(lambda x: self.set_max_birth_year(x), people))
-        max_birth_years = list(map(lambda x: x["max_birth_year"], people))
+        people = list(map(lambda x: self.set_max_birth_year(x), health_info["people"]))
+        max_birth_years = list(map(lambda x: x["maxBirthYear"], people))
         franchises = set(map(lambda x: x["franchise"], people))
         rates = (
             HealthInsuranceRate.query.with_entities(
@@ -41,10 +41,7 @@ class HealthInsuranceService:
             if rate[0] not in health_insurance_cost:
                 health_insurance_cost[rate[0]] = 0
             for person in people:
-                if (
-                    rate[1] == person["max_birth_year"]
-                    and rate[2] == person["franchise"]
-                ):
+                if rate[1] == person["maxBirthYear"] and rate[2] == person["franchise"]:
                     health_insurance_cost[rate[0]] += rate[3] * 12
 
         return health_insurance_cost

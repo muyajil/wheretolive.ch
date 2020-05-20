@@ -1,11 +1,10 @@
 import logging
 
-import plotly.graph_objects as go
-
 from ._accomodation_service import AccomodationService
 from ._commute_service import CommuteService
 from ._health_insurance_service import HealthInsuranceService
 from ._tax_service import TaxService
+from ._town_service import TownService
 
 
 class SearchService:
@@ -15,131 +14,123 @@ class SearchService:
         self.tax_service = TaxService()
         self.accomodation_service = AccomodationService()
         self.health_insurance_service = HealthInsuranceService()
+        self.town_service = TownService()
 
-    def search_towns(self, commute_info, tax_info, health_info, accomodation_info):
-        town_info = {}
+    def get_towns_in_range(self, commute_info):
+        towns_by_id = {}
+        zip_to_id = {}
+        bfs_nr_to_id = {}
         towns_in_range = self.commute_service.get_towns_in_range(commute_info)
 
         for town in towns_in_range:
-            id, zip_code, name, bfs_nr = town
-            town_info[id] = {"zip_code": zip_code, "name": name, "bfs_nr": bfs_nr}
+            towns_by_id[town["sourceTownId"]] = town
 
-    def search(self, search_profile):
-        town_stats = {}
-        zip_to_id = {}
-        bfs_nr_to_id = {}
-        relevant_towns = self.commute_service.get_towns_in_range(
-            search_profile["workplace_zip_code"],
-            search_profile["commute_type"],
-            search_profile["max_commute_h"],
+            if town["sourceTownZip"] in zip_to_id:
+                zip_to_id[town["sourceTownZip"]].append(town["sourceTownId"])
+            else:
+                zip_to_id[town["sourceTownZip"]] = [town["sourceTownId"]]
+
+            if town["sourceTownBFSNr"] in bfs_nr_to_id:
+                bfs_nr_to_id[town["sourceTownBFSNr"]].append(town["sourceTownId"])
+            else:
+                bfs_nr_to_id[town["sourceTownBFSNr"]] = [town["sourceTownId"]]
+
+        return towns_by_id, zip_to_id, bfs_nr_to_id
+
+    def get_average_home_cost_and_update(
+        self, accomodation_info, towns_by_id, zip_to_id
+    ):
+        relevant_zip_codes = set(
+            map(lambda x: towns_by_id[x]["sourceTownZip"], towns_by_id)
         )
 
-        for relevant_town in relevant_towns:
-            town_stats[relevant_town[0]] = {
-                "zip_code": relevant_town[1],
-                "name": relevant_town[2],
-                "bfs_nr": relevant_town[3],
-            }
-            if relevant_town[1] in zip_to_id:
-                zip_to_id[relevant_town[1]].append(relevant_town[0])
-            else:
-                zip_to_id[relevant_town[1]] = [relevant_town[0]]
-
-            if relevant_town[3] in bfs_nr_to_id:
-                bfs_nr_to_id[relevant_town[3]].append(relevant_town[0])
-            else:
-                bfs_nr_to_id[relevant_town[3]] = [relevant_town[0]]
-
-        relevant_zip_codes = set(map(lambda x: town_stats[x]["zip_code"], town_stats))
-
         average_home_cost = self.accomodation_service.get_average_home_cost(
-            relevant_zip_codes, search_profile["max_rooms"], search_profile["min_rooms"]
+            relevant_zip_codes, accomodation_info
         )
 
         for zip_code in average_home_cost:
             for town_id in zip_to_id[zip_code]:
-                town_stats[town_id]["yearly_cost_home"] = average_home_cost[zip_code]
-
-        health_insurance_cost = self.health_insurance_service.get_health_insurance_cost(
-            search_profile["people"], relevant_zip_codes
-        )
-
-        for zip_code in health_insurance_cost:
-            for town_id in zip_to_id[zip_code]:
-                town_stats[town_id]["yearly_cost_health"] = health_insurance_cost[
-                    zip_code
-                ]
-
-        relevant_bfs_nrs = set(map(lambda x: town_stats[x]["bfs_nr"], town_stats))
-
-        taxes = self.tax_service.get_all_taxes(
-            search_profile["married"],
-            search_profile["double_salary"],
-            search_profile["num_children"],
-            search_profile["income"],
-            relevant_bfs_nrs,
-        )
-
-        for bfs_nr in taxes:
-            for town_id in bfs_nr_to_id[bfs_nr]:
-                town_stats[town_id]["yearly_cost_taxes"] = taxes[bfs_nr]
-
-        town_ids = list(town_stats.keys())
-        for town_id in town_ids:
-            if len(town_stats[town_id]) < 6:
-                town_stats.pop(town_id)
-            else:
-                town_stats[town_id]["total_yearly_cost"] = (
-                    town_stats[town_id]["yearly_cost_home"]
-                    + town_stats[town_id]["yearly_cost_taxes"]
-                    + town_stats[town_id]["yearly_cost_health"]
+                towns_by_id[town_id]["yearlyCostHome"] = int(
+                    average_home_cost[zip_code]
                 )
 
-        town_ids = list(town_stats.keys())
-        town_ids = sorted(
-            town_stats.keys(), key=lambda x: town_stats[x]["total_yearly_cost"]
+        return towns_by_id
+
+    def get_average_health_cost_and_update(self, health_info, towns_by_id, zip_to_id):
+        relevant_zip_codes = set(
+            map(lambda x: towns_by_id[x]["sourceTownZip"], towns_by_id)
         )
 
-        town_names = list(
-            map(
-                lambda x: str(town_stats[x]["zip_code"]) + " " + town_stats[x]["name"],
-                town_ids,
-            )
+        average_health_cost = self.health_insurance_service.get_health_insurance_cost(
+            relevant_zip_codes, health_info
         )
-        fig = go.Figure(
-            data=[
-                go.Bar(
-                    name="Health Care",
-                    x=town_names,
-                    y=list(
-                        map(
-                            lambda x: round(town_stats[x]["yearly_cost_health"], 2),
-                            town_ids,
-                        )
-                    ),
-                ),
-                go.Bar(
-                    name="Taxes",
-                    x=town_names,
-                    y=list(
-                        map(
-                            lambda x: round(town_stats[x]["yearly_cost_taxes"], 2),
-                            town_ids,
-                        )
-                    ),
-                ),
-                go.Bar(
-                    name="Living Costs",
-                    x=town_names,
-                    y=list(
-                        map(
-                            lambda x: round(town_stats[x]["yearly_cost_home"], 2),
-                            town_ids,
-                        )
-                    ),
-                ),
-            ]
+
+        for zip_code in average_health_cost:
+            for town_id in zip_to_id[zip_code]:
+                towns_by_id[town_id]["yearlyCostHealth"] = int(
+                    average_health_cost[zip_code]
+                )
+
+        return towns_by_id
+
+    def get_average_taxes_and_update(self, tax_info, towns_by_id):
+        relevant_bfs_nrs = set(
+            map(lambda x: towns_by_id[x]["sourceTownBFSNr"], towns_by_id)
         )
-        fig.update_layout(barmode="stack")
-        fig.update_xaxes(rangeslider_visible=True)
-        return town_stats, fig
+        relevant_names = set(
+            map(lambda x: towns_by_id[x]["sourceTownName"], towns_by_id)
+        )
+        taxes_by_bfs_nr_and_name = self.tax_service.get_taxes_by_bfs_nr_and_name(
+            tax_info, bfs_nrs=relevant_bfs_nrs, names=relevant_names
+        )
+
+        town_ids = list(towns_by_id.keys())
+        for town_id in town_ids:
+            bfs_nr = towns_by_id[town_id]["sourceTownBFSNr"]
+            name = towns_by_id[town_id]["sourceTownName"]
+            if bfs_nr in taxes_by_bfs_nr_and_name:
+                towns_by_id[town_id]["yearlyCostTaxes"] = taxes_by_bfs_nr_and_name[
+                    bfs_nr
+                ]
+            elif name in taxes_by_bfs_nr_and_name:
+                towns_by_id[town_id]["yearlyCostTaxes"] = taxes_by_bfs_nr_and_name[name]
+            else:
+                self.logger.debug(
+                    f"Could not find taxes for town: Id: {town_id}, Name: {name}, BFS Nr: {bfs_nr}"
+                )
+
+        return towns_by_id
+
+    def get_shopping_info_and_update(self, towns_by_id):
+        town_ids = list(towns_by_id.keys())
+        towns = self.town_service.get_shopping_info(town_ids=town_ids)
+        for town in towns:
+            towns_by_id[town["id"]]["migros"] = True if town["migros"] else False
+            towns_by_id[town["id"]]["coop"] = True if town["coop"] else False
+            towns_by_id[town["id"]]["lidl"] = True if town["lidl"] else False
+            towns_by_id[town["id"]]["aldi"] = True if town["aldi"] else False
+
+        return towns_by_id
+
+    def search_towns(self, commute_info, tax_info, health_info, accomodation_info):
+
+        towns_by_id, zip_to_id, bfs_nr_to_id = self.get_towns_in_range(commute_info)
+
+        towns_by_id = self.get_average_home_cost_and_update(
+            accomodation_info, towns_by_id, zip_to_id
+        )
+
+        towns_by_id = self.get_average_health_cost_and_update(
+            health_info, towns_by_id, zip_to_id
+        )
+
+        towns_by_id = self.get_average_taxes_and_update(tax_info, towns_by_id)
+
+        towns_by_id = self.get_shopping_info_and_update(towns_by_id)
+
+        town_ids = list(towns_by_id.keys())
+        for town_id in town_ids:
+            if len(towns_by_id[town_id]) < 12:
+                towns_by_id.pop(town_id)
+
+        return towns_by_id

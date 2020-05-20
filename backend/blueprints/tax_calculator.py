@@ -16,7 +16,7 @@ def show():
         "income": int(request_json["income"]),
         "targetTown": request_json["targetTown"]["label"],
     }
-    taxes, target_town_tax_amount = tax_service.get_all_taxes(
+    taxes, target_town_tax_amount = tax_service.get_tax_histo_data(
         tax_info, target_town_id=int(request_json["targetTown"]["id"])
     )
     return jsonify({"taxData": taxes, "targetTownTaxAmount": target_town_tax_amount})

@@ -17,7 +17,7 @@ class AccomodationService:
                 self.mortgage_rate * self.loan_percentage + self.maintenance_cost
             ) * price
 
-    def get_average_home_cost(self, relevant_zip_codes, max_rooms, min_rooms):
+    def get_average_home_cost(self, relevant_zip_codes, accomodation_info):
         average_prices = (
             Accomodation.query.with_entities(
                 Accomodation.zip_code,
@@ -26,17 +26,38 @@ class AccomodationService:
                 func.count(Accomodation.price),
             )
             .filter(Accomodation.zip_code.in_(relevant_zip_codes))
-            .filter(Accomodation.rooms >= min_rooms)
-            .filter(Accomodation.rooms <= max_rooms)
             .filter(
                 ~Accomodation.property_type_id.in_(
                     [5, 8, 9, 10, 23, 24, 25, 26, 27, 28]
                 )
             )
             .filter(Accomodation.price > 0)
-            .group_by(Accomodation.zip_code, Accomodation.is_rent)
-            .order_by(Accomodation.zip_code)
+            .filter(Accomodation.is_rent.is_(accomodation_info["isRent"]))
         )
+
+        if accomodation_info["minRooms"] is not None:
+            average_prices = average_prices.filter(
+                Accomodation.rooms >= accomodation_info["minRooms"]
+            )
+
+        if accomodation_info["maxRooms"] is not None:
+            average_prices = average_prices.filter(
+                Accomodation.rooms <= accomodation_info["maxRooms"]
+            )
+
+        if accomodation_info["minArea"] is not None:
+            average_prices = average_prices.filter(
+                Accomodation.area >= accomodation_info["minArea"]
+            )
+
+        if accomodation_info["maxArea"] is not None:
+            average_prices = average_prices.filter(
+                Accomodation.rooms <= accomodation_info["maxArea"]
+            )
+
+        average_prices = average_prices.group_by(
+            Accomodation.zip_code, Accomodation.is_rent
+        ).order_by(Accomodation.zip_code)
         average_home_cost = {}
         cur_zip = ""
         weighted_sum = 0

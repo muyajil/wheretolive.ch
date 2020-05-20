@@ -1,5 +1,7 @@
 import logging
 
+from sqlalchemy import or_
+
 from ..models import TaxRate, TaxRateEffect
 from ._town_service import TownService
 
@@ -32,10 +34,9 @@ class TaxService:
 
         return base_profile, children_diff
 
-    def get_all_taxes(self, tax_info, target_town_id=None):
-        return self.get_taxes(tax_info, target_town_id=target_town_id)
-
-    def get_taxes(self, tax_info, target_town_id=None, bfs_nrs=[], names=[]):
+    def get_taxes_by_bfs_nr_and_name(
+        self, tax_info, target_town_id=None, bfs_nrs=[], names=[]
+    ):
         base_profile, children_diff = self.get_tax_base_profile(
             tax_info["married"], tax_info["doubleSalary"], tax_info["numChildren"]
         )
@@ -54,7 +55,7 @@ class TaxService:
 
         if bfs_nrs and names:
             tax_rates = tax_rates.filter(
-                TaxRate.bfs_nr.in_(bfs_nrs) or TaxRate.name.in_(names)
+                or_(TaxRate.bfs_nr.in_(bfs_nrs), TaxRate.name.in_(names))
             )
 
         taxes = {}
@@ -63,33 +64,39 @@ class TaxService:
             bfs_nr, name, rate, child_effect = tax_rate
             tax_amount = max(
                 int(((rate + children_diff * child_effect) / 100) * tax_info["income"]),
-                0.0,
+                0,
             )
             taxes[bfs_nr] = tax_amount
             taxes[name] = tax_amount
+        return taxes
+
+    def get_tax_histo_data(self, tax_info, target_town_id=None, bfs_nrs=[], names=[]):
+        taxes = self.get_taxes_by_bfs_nr_and_name(
+            tax_info, target_town_id=target_town_id, bfs_nrs=bfs_nrs, names=names
+        )
         taxes_mapped = self.map_to_town_ids(taxes, target_town_id, bfs_nrs, names)
         return taxes_mapped
 
     def map_to_town_ids(self, taxes, target_town_id=None, bfs_nrs=[], names=[]):
         taxes_mapped = []
         target_town_tax_amount = 0
-        towns = self.town_service.get_towns(bfs_nrs, names)
+        towns = self.town_service.get_town_identifiers(bfs_nrs, names)
         for town in towns:
-            town_id, name, bfs_nr = town
+            if town["bfs_nr"] in taxes:
+                tax_amount = taxes[town["bfs_nr"]]
 
-            if bfs_nr in taxes:
-                tax_amount = taxes[bfs_nr]
-
-            elif name in taxes:
-                tax_amount = taxes[name]
+            elif town["name"] in taxes:
+                tax_amount = taxes[town["name"]]
             else:
                 self.logger.debug(
-                    f"Could not find taxes for town: Id: {town_id}, Name: {name}, BFS Nr: {bfs_nr}"
+                    "Could not find taxes for town: Id: {}, Name: {}, BFS Nr: {}".format(
+                        town["id"], town["name"], town["bfs_nr"]
+                    )
                 )
                 continue
 
-            if town_id == target_town_id:
+            if town["id"] == target_town_id:
                 target_town_tax_amount = tax_amount
-            taxes_mapped.append({"id": town_id, "taxAmount": tax_amount})
+            taxes_mapped.append({"id": town["id"], "taxAmount": tax_amount})
 
         return taxes_mapped, target_town_tax_amount
