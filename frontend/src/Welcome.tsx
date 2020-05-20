@@ -7,6 +7,7 @@ import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import { LinkContainer } from "react-router-bootstrap";
 import Banner from "./Utilities/Banner";
+import Nav from "react-bootstrap/Nav";
 
 class WelcomeContent extends React.Component {
   render() {
@@ -94,7 +95,9 @@ class WelcomeContent extends React.Component {
         <Row className="mt-5">
           <Col xs={12} className="text-center">
             <LinkContainer to="/search">
-              <Button variant="primary">Start your search now!</Button>
+              <Nav.Link>
+                <Button variant="primary">Start your search now!</Button>
+              </Nav.Link>
             </LinkContainer>
           </Col>
         </Row>
