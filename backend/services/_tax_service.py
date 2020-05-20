@@ -21,7 +21,7 @@ class TaxService:
                     base_profile = "married_2_children"
                     included_children = 2
                 else:
-                    base_profile = "married_0_children"
+                    base_profile = "married_no_children"
                     included_children = 0
         else:
             base_profile = "single"
