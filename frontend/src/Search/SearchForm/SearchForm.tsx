@@ -43,9 +43,9 @@ class SearchForm extends React.Component<Props, State> {
     const state = localStorage.getItem("searchFormState");
     if (state) {
       this.state = JSON.parse(state);
-      if (this.state.validated) {
-        this.props.handleSearchFormSubmission(this.state);
-      }
+      // if (this.state.validated) {
+      //   this.props.handleSearchFormSubmission(this.state);
+      // }
     } else {
       this.state = this.getEmptyState();
     }

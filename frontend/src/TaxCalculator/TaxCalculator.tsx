@@ -6,6 +6,7 @@ import TaxForm, { State as TaxFormState } from "./TaxForm";
 import TaxHistogram from "./TaxHistogram";
 import Banner from "../Utilities/Banner";
 import publicIp from "public-ip";
+import Spinner from "react-bootstrap/Spinner";
 
 interface Props {}
 
@@ -15,6 +16,7 @@ interface State {
   targetTownName: string;
   taxesComputed: boolean;
   taxData: string;
+  loading: boolean;
 }
 
 class TaxCalculator extends React.Component<Props, State> {
@@ -26,13 +28,14 @@ class TaxCalculator extends React.Component<Props, State> {
       targetTownName: "",
       taxesComputed: false,
       taxData: "",
+      loading: false,
     };
     this.handleTaxFormSubmission = this.handleTaxFormSubmission.bind(this);
     this.reset = this.reset.bind(this);
   }
 
   handleTaxFormSubmission(taxFormState: TaxFormState) {
-    if (taxFormState.selectedTown.length >= 1){
+    if (taxFormState.selectedTown.length >= 1) {
       const ipAddress = publicIp.v4();
       const requestOptions = {
         method: "POST",
@@ -46,23 +49,28 @@ class TaxCalculator extends React.Component<Props, State> {
           public_ip: ipAddress,
         }),
       };
-  
-      fetch(
-        process.env.REACT_APP_BACKEND_URL + "/tax_calculator/",
-        requestOptions
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          this.setState({
-            targetTownId: JSON.parse(JSON.stringify(taxFormState.selectedTown[0]))["id"],
-            targetTownTaxes: data["targetTownTaxAmount"],
-            targetTownName: JSON.parse(JSON.stringify(taxFormState.selectedTown[0]))[
-              "label"
-            ],
-            taxData: JSON.stringify(data["taxData"]),
-            taxesComputed: true,
-          });
-        });
+
+      this.setState({ loading: true }, () =>
+        fetch(
+          process.env.REACT_APP_BACKEND_URL + "/tax_calculator/",
+          requestOptions
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            this.setState({
+              targetTownId: JSON.parse(
+                JSON.stringify(taxFormState.selectedTown[0])
+              )["id"],
+              targetTownTaxes: data["targetTownTaxAmount"],
+              targetTownName: JSON.parse(
+                JSON.stringify(taxFormState.selectedTown[0])
+              )["label"],
+              taxData: JSON.stringify(data["taxData"]),
+              taxesComputed: true,
+              loading: false,
+            });
+          })
+      );
     }
   }
 
@@ -73,7 +81,7 @@ class TaxCalculator extends React.Component<Props, State> {
           People with your profile in{" "}
           <strong>{this.state.targetTownName}</strong> pay on average{" "}
           <strong>
-            CHF {new Intl.NumberFormat("ch").format(this.state.targetTownTaxes)} 
+            CHF {new Intl.NumberFormat("ch").format(this.state.targetTownTaxes)}
             .-
           </strong>{" "}
           in taxes per year.
@@ -111,7 +119,7 @@ class TaxCalculator extends React.Component<Props, State> {
             className="mt-5 mt-lg-0"
           >
             {this.renderTaxes()}
-            {this.renderHistogram()}
+            {this.state.loading ? <Spinner animation="border" variant="light"/> : this.renderHistogram()}
           </Col>
           <Col
             className="text-light col-lg-pull-8"

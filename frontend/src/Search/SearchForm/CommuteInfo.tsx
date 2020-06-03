@@ -45,7 +45,7 @@ class CommuteInfo extends React.Component<Props, State> {
             value={this.props.commuteTime}
             onChange={this.props.handleChange}
             min={0}
-            max={600}
+            max={240}
             step={5}
             type="range"
           />
