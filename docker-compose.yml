@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: backend.Dockerfile
-    entrypoint: gunicorn --workers 4 --bind 0.0.0.0:5000 backend.app:create_app()
+    entrypoint: gunicorn --timeout 120 --workers 4 --bind 0.0.0.0:5000 backend.app:create_app()
     environment: 
       DB_CONN: "postgresql://wheretolive:wheretolive@db:5432/wheretolive"
       LOGLEVEL: "INFO"
