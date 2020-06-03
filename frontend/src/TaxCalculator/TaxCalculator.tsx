@@ -32,36 +32,38 @@ class TaxCalculator extends React.Component<Props, State> {
   }
 
   handleTaxFormSubmission(taxFormState: TaxFormState) {
-    const ipAddress = publicIp.v4();
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        targetTown: taxFormState.selectedTown[0],
-        income: taxFormState.income,
-        numChildren: taxFormState.numChildren,
-        married: taxFormState.married,
-        doubleSalary: taxFormState.doubleSalary,
-        public_ip: ipAddress,
-      }),
-    };
-
-    fetch(
-      process.env.REACT_APP_BACKEND_URL + "/tax_calculator/",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({
-          targetTownId: JSON.parse(JSON.stringify(taxFormState.selectedTown[0]))["id"],
-          targetTownTaxes: data["targetTownTaxAmount"],
-          targetTownName: JSON.parse(JSON.stringify(taxFormState.selectedTown[0]))[
-            "label"
-          ],
-          taxData: JSON.stringify(data["taxData"]),
-          taxesComputed: true,
+    if (taxFormState.selectedTown.length < 1){
+      const ipAddress = publicIp.v4();
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetTown: taxFormState.selectedTown[0],
+          income: taxFormState.income,
+          numChildren: taxFormState.numChildren,
+          married: taxFormState.married,
+          doubleSalary: taxFormState.doubleSalary,
+          public_ip: ipAddress,
+        }),
+      };
+  
+      fetch(
+        process.env.REACT_APP_BACKEND_URL + "/tax_calculator/",
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          this.setState({
+            targetTownId: JSON.parse(JSON.stringify(taxFormState.selectedTown[0]))["id"],
+            targetTownTaxes: data["targetTownTaxAmount"],
+            targetTownName: JSON.parse(JSON.stringify(taxFormState.selectedTown[0]))[
+              "label"
+            ],
+            taxData: JSON.stringify(data["taxData"]),
+            taxesComputed: true,
+          });
         });
-      });
+    }
   }
 
   renderTaxes() {
