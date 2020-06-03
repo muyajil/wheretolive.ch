@@ -37,6 +37,7 @@ class TownTypeahead extends React.Component<Props, State> {
         flip={true}
         ref={this.props.typeaheadRef}
         clearButton={true}
+        minLength={3}
       />
     );
   }
