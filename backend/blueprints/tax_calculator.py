@@ -9,6 +9,8 @@ tax_calculator_bp = Blueprint("tax_calculator", __name__)
 def show():
     tax_service = TaxService()
     request_json = request.get_json()
+    if "targetTown" not in request_json:
+        return jsonify({"error": "Target town not set"}), 404
     tax_info = {
         "married": bool(request_json["married"]),
         "doubleSalary": bool(request_json["doubleSalary"]),

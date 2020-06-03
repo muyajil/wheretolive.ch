@@ -94,7 +94,6 @@
     }
 
     getPlotData() {
-      console.log('getPlotData was called.')
       const maxValue = this.getMaxValue();
       const edges = this.getNiceEdges(maxValue);
       const intervalWidth = edges[1] - edges[0]
