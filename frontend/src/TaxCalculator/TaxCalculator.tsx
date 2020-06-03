@@ -32,7 +32,7 @@ class TaxCalculator extends React.Component<Props, State> {
   }
 
   handleTaxFormSubmission(taxFormState: TaxFormState) {
-    if (taxFormState.selectedTown.length < 1){
+    if (taxFormState.selectedTown.length >= 1){
       const ipAddress = publicIp.v4();
       const requestOptions = {
         method: "POST",
