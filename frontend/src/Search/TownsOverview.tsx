@@ -13,6 +13,7 @@ import {
   ValueFormatterParams,
   CellMouseOverEvent,
   CellMouseOutEvent,
+  VirtualColumnsChangedEvent,
 } from "ag-grid-community";
 import StackedBarChart from "./StackedBarChart";
 import debounce from "lodash.debounce";
@@ -102,6 +103,7 @@ class TownsOverview extends React.Component<Props, State> {
     this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
     this.onMouseOverHandler = this.onMouseOverHandler.bind(this);
     this.firstDataRenderedHandler = this.firstDataRenderedHandler.bind(this);
+    this.onVirtualColumnsChangedHandler = this.onVirtualColumnsChangedHandler.bind(this);
   }
 
   renderBarPlot() {
@@ -167,6 +169,10 @@ class TownsOverview extends React.Component<Props, State> {
     this.debounceSetState({ hoveredTownId: -1 });
   }
 
+  onVirtualColumnsChangedHandler(event: VirtualColumnsChangedEvent) {
+    event.columnApi.autoSizeAllColumns();
+  }
+
   renderOverview(searchResults: TownInfo[]) {
     return (
       <div>
@@ -195,6 +201,7 @@ class TownsOverview extends React.Component<Props, State> {
               firstDataRenderedHandler={this.firstDataRenderedHandler}
               onMouseOutHandler={this.onMouseOutHandler}
               onMouseOverHandler={this.onMouseOverHandler}
+              onVirtualColumnsChanged={this.onVirtualColumnsChangedHandler}
               rowData={searchResults}
               columnDefs={this.state.columnDefs}
               width={this.state.gridWidth}
