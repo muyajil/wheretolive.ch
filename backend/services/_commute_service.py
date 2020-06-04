@@ -1,4 +1,4 @@
-from ..models import ClosestStationCommute, ClosestTrainCommute
+from ..models import ClosestStationCommute, ClosestTrainCommute, Town
 
 
 class CommuteService:
@@ -28,7 +28,8 @@ class CommuteService:
                 .filter_by(target_town_id=commute_info["workplaceTownId"])
                 .filter(ClosestStationCommute.time <= commute_info["maxCommuteSecs"])
             )
-        return [
+
+        towns_in_range = [
             {
                 "sourceTownId": x[0],
                 "sourceTownZip": x[1],
@@ -38,3 +39,17 @@ class CommuteService:
             }
             for x in source_towns
         ]
+
+        workplaceTown = Town.query.get(commute_info["workplaceTownId"])
+
+        towns_in_range.append(
+            {
+                "sourceTownId": workplaceTown.id,
+                "sourceTownZip": workplaceTown.zip_code,
+                "sourceTownBFSNr": workplaceTown.bfs_nr,
+                "sourceTownName": workplaceTown.name,
+                "commuteTime": 0,
+            }
+        )
+
+        return towns_in_range

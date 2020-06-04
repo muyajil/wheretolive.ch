@@ -105,13 +105,10 @@ class SearchService:
         town_ids = list(towns_by_id.keys())
         towns = self.town_service.get_shopping_info(town_ids=town_ids)
         for town in towns:
-            try:
-                towns_by_id[town["id"]]["migros"] = True if town["migros"] else False
-                towns_by_id[town["id"]]["coop"] = True if town["coop"] else False
-                towns_by_id[town["id"]]["lidl"] = True if town["lidl"] else False
-                towns_by_id[town["id"]]["aldi"] = True if town["aldi"] else False
-            except KeyError:
-                continue
+            towns_by_id[town["id"]]["migros"] = True if town["migros"] else False
+            towns_by_id[town["id"]]["coop"] = True if town["coop"] else False
+            towns_by_id[town["id"]]["lidl"] = True if town["lidl"] else False
+            towns_by_id[town["id"]]["aldi"] = True if town["aldi"] else False
 
         return towns_by_id
 
