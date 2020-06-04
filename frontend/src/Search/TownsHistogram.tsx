@@ -1,30 +1,42 @@
 import React from "react";
 import Histogram from "../Utilities/Histogram";
+import TownInfo from "./TownInfo";
 
 interface Props {
-  data: string;
+  selectedTowns: TownInfo[];
   targetTownId: number;
 }
 
-interface State {
-}
+interface State {}
 
 class TownsHistogram extends React.Component<Props, State> {
 
-  formatTooltip(value:any, name:any, props:any){
-    return [new Intl.NumberFormat('ch').format(value), "Number of Towns"]
+  formatTooltip(value: any, name: any, props: any) {
+    return [new Intl.NumberFormat("ch").format(value), "Number of Towns"];
   }
 
-  formatLabel(label:any){
-    return ("Total Cost Of Living (CHF): " + label)
+  formatLabel(label: any) {
+    return "Total Cost Of Living (CHF): " + label;
+  }
+
+  getRelevantFieldsHisto() {
+    const relevantData = new Array(this.props.selectedTowns.length);
+    for (let idx = 0; idx < this.props.selectedTowns.length; idx++) {
+      relevantData[idx] = {
+        yearlyCostHealth: this.props.selectedTowns[idx]["yearlyCostHealth"],
+        yearlyCostHome: this.props.selectedTowns[idx]["yearlyCostHome"],
+        yearlyCostTaxes: this.props.selectedTowns[idx]["yearlyCostTaxes"],
+      };
+    }
+    return relevantData;
   }
 
   render() {
     return (
-      <Histogram 
+      <Histogram
         formatTooltip={this.formatTooltip}
         formatLabel={this.formatLabel}
-        data={JSON.parse(this.props.data)}
+        data={this.getRelevantFieldsHisto()}
         idToMark={this.props.targetTownId}
         xName="Total Cost of Living"
         yName="Number of towns in bracket"

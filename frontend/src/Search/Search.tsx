@@ -3,7 +3,7 @@ import SearchForm, { State as SearchFormState } from "./SearchForm/SearchForm";
 import Container from "react-bootstrap/Container";
 import Banner from "../Utilities/Banner";
 import publicIp from "public-ip";
-import TownsOverview from "./TownsOverview";
+import {Redirect} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 
 interface Props {}
@@ -13,7 +13,6 @@ interface State {
   showBanner: boolean;
   searchExecuted: boolean;
   loading: boolean;
-  responseData: Map<string, object>;
 }
 
 class Search extends React.Component<Props, State> {
@@ -24,7 +23,6 @@ class Search extends React.Component<Props, State> {
       showBanner: true,
       searchExecuted: false,
       loading: false,
-      responseData: new Map<string, object>(),
     };
     this.handleSearchFormSubmission = this.handleSearchFormSubmission.bind(
       this
@@ -59,10 +57,10 @@ class Search extends React.Component<Props, State> {
           .then((response) => response.json())
           .then((data) => {
             this.setState({
-              responseData: data,
               searchExecuted: true,
               loading: false,
             });
+            localStorage.setItem("searchResults", JSON.stringify(data));
           })
       );
     }
@@ -84,24 +82,24 @@ class Search extends React.Component<Props, State> {
     }
   }
 
-  renderTownsOverview() {
+  redirectToTownsOverview() {
     if (this.state.searchExecuted) {
       return (
-        <TownsOverview rowData={Object.values(this.state.responseData)} />
+        <Redirect to="/search/towns" />
       );
     }
   }
 
+
+  // TODO: Is it possible to redirect to another route and pass props?
   render() {
     return (
       <Container fluid>
         {this.renderBanner()}
         {this.renderSearchForm()}
         {this.state.loading ? (
-          <Spinner animation="border" variant="light"/>
-        ) : (
-          this.renderTownsOverview()
-        )}
+          <Spinner className="mx-auto" animation="border" variant="light"/>
+        ) : this.redirectToTownsOverview()}
       </Container>
     );
   }
