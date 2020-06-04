@@ -170,7 +170,7 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   onVirtualColumnsChangedHandler(event: VirtualColumnsChangedEvent) {
-    event.columnApi.autoSizeAllColumns();
+    debounce(() => event.columnApi.autoSizeAllColumns(), 50)()
   }
 
   renderOverview(searchResults: TownInfo[]) {
