@@ -75,4 +75,6 @@ class AccomodationService:
             )
             total_obs += average_price[3]
 
+        average_home_cost[cur_zip] = weighted_sum / total_obs
+
         return average_home_cost
