@@ -19,7 +19,8 @@ interface Props {
   firstDataRenderedHandler: (event: FirstDataRenderedEvent) => void;
   onMouseOutHandler: (event: CellMouseOutEvent) => void;
   onMouseOverHandler: (event: CellMouseOverEvent) => void;
-  width:number;
+  width: number;
+  displayGrid: boolean;
 }
 
 interface State {}
@@ -30,7 +31,7 @@ class Table extends React.Component<Props, State> {
   render() {
     return (
       <div
-        className="ag-theme-alpine mx-auto"
+        className={`ag-theme-alpine mx-auto ${this.props.displayGrid ? "" : "hidden" }`}
         style={{ height: 500, width: "100%", maxWidth: this.props.width}}
       >
         <AgGridReact

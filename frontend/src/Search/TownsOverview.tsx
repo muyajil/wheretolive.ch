@@ -25,6 +25,7 @@ interface State {
   selectedTowns: TownInfo[];
   hoveredTownId: number;
   gridWidth: number;
+  displayGrid: boolean;
 }
 
 class TownsOverview extends React.Component<Props, State> {
@@ -95,6 +96,7 @@ class TownsOverview extends React.Component<Props, State> {
       selectedTowns: [],
       hoveredTownId: -1,
       gridWidth: 2000,
+      displayGrid: false,
     };
     this.dataUpdateHandler = this.dataUpdateHandler.bind(this);
     this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
@@ -154,7 +156,7 @@ class TownsOverview extends React.Component<Props, State> {
       .filter((col) => col.isVisible())
       .map((col) => col.getActualWidth())
       .reduce((result, num) => result + num) + 20;
-    this.setState({gridWidth: gridWidth})
+    this.setState({gridWidth: gridWidth, displayGrid: true})
   }
 
   onMouseOverHandler(event: CellMouseOverEvent) {
@@ -196,6 +198,7 @@ class TownsOverview extends React.Component<Props, State> {
               rowData={searchResults}
               columnDefs={this.state.columnDefs}
               width={this.state.gridWidth}
+              displayGrid={this.state.displayGrid}
             />
           </Col>
         </Row>

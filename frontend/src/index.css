@@ -40,3 +40,7 @@ body {
     border-right: 1px solid #f8f9fa !important;
   }
 }
+
+.hidden {
+  visibility: hidden;
+}
