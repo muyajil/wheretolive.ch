@@ -128,7 +128,7 @@ class TownsOverview extends React.Component<Props, State> {
 
   timeFormatter(params: ValueFormatterParams) {
     const minutes = Math.floor((params.value / 60) % 60);
-    const hours = Math.floor(minutes / 60);
+    const hours = Math.floor(params.value / 3600);
     return ("0" + hours).slice(-2) + ":" + ("0" + minutes).slice(-2) + " h";
   }
 
