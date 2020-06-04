@@ -23,6 +23,7 @@ class TownsHistogram extends React.Component<Props, State> {
     const relevantData = new Array(this.props.selectedTowns.length);
     for (let idx = 0; idx < this.props.selectedTowns.length; idx++) {
       relevantData[idx] = {
+        id: this.props.selectedTowns[idx]["sourceTownId"],
         yearlyCostHealth: this.props.selectedTowns[idx]["yearlyCostHealth"],
         yearlyCostHome: this.props.selectedTowns[idx]["yearlyCostHome"],
         yearlyCostTaxes: this.props.selectedTowns[idx]["yearlyCostTaxes"],

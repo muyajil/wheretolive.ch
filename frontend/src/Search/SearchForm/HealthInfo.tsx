@@ -113,7 +113,7 @@ class HealthInfo extends React.Component<Props, State> {
                 })
               }
             >
-              Add Person
+              +
             </Button>
           </Col>
           <Col className="text-center">
@@ -128,7 +128,7 @@ class HealthInfo extends React.Component<Props, State> {
                 });
               }}
             >
-              Remove Person
+              &#8210;
             </Button>
           </Col>
         </Row>

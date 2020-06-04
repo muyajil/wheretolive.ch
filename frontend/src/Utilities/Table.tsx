@@ -1,4 +1,4 @@
-import React, { Ref } from "react";
+import React from "react";
 import { AgGridReact } from "ag-grid-react";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -6,16 +6,19 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import {
   FirstDataRenderedEvent,
   ModelUpdatedEvent,
-  GridReadyEvent,
+  CellMouseOutEvent,
+  CellMouseOverEvent,
 } from "ag-grid-community";
 
 interface Props {
   rowData: object[];
   columnDefs: object[];
   dataUpdateHandler: (
-    event: FirstDataRenderedEvent | ModelUpdatedEvent
+    event: ModelUpdatedEvent
   ) => void;
-  gridReadyHandler: (event: GridReadyEvent) => void;
+  firstDataRenderedHandler: (event: FirstDataRenderedEvent) => void;
+  onMouseOutHandler: (event: CellMouseOutEvent) => void;
+  onMouseOverHandler: (event: CellMouseOverEvent) => void;
 }
 
 interface State {}
@@ -26,15 +29,17 @@ class Table extends React.Component<Props, State> {
   render() {
     return (
       <div
-        className="ag-theme-alpine-dark mx-auto"
-        style={{ height: "500px", width: "100%" }}
+        className="ag-theme-alpine mx-auto"
+        style={{ height: "500px", width: "100%"}}
       >
         <AgGridReact
-          onFirstDataRendered={this.props.dataUpdateHandler}
+          onFirstDataRendered={this.props.firstDataRenderedHandler}
           onModelUpdated={this.props.dataUpdateHandler}
-          onGridReady={this.props.gridReadyHandler}
+          onCellMouseOut={this.props.onMouseOutHandler}
+          onCellMouseOver={this.props.onMouseOverHandler}
           columnDefs={this.props.columnDefs}
           rowData={this.props.rowData}
+          animateRows={true}
         ></AgGridReact>
       </div>
     );

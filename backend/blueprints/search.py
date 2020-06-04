@@ -34,16 +34,16 @@ def show():
 
     accomodation_info = {
         "minRooms": float(request_json["minRooms"])
-        if "minRooms" in request_json
+        if "minRooms" in request_json and request_json["minRooms"] != ""
         else None,
         "maxRooms": float(request_json["maxRooms"])
-        if "maxRooms" in request_json
+        if "maxRooms" in request_json and request_json["maxRooms"] != ""
         else None,
         "minArea": int(float(request_json["minArea"]))
-        if "minArea" in request_json
+        if "minArea" in request_json and request_json["minArea"] != ""
         else None,
         "maxArea": int(float(request_json["maxArea"]))
-        if "maxArea" in request_json
+        if "maxArea" in request_json and request_json["maxArea"] != ""
         else None,
         "isRent": request_json["offerType"] == "Rent",
     }

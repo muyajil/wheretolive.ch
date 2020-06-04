@@ -10,17 +10,18 @@ import TownInfo from "./TownInfo";
 import {
   ModelUpdatedEvent,
   FirstDataRenderedEvent,
-  GridReadyEvent,
   ValueFormatterParams,
+  CellMouseOverEvent,
+  CellMouseOutEvent,
 } from "ag-grid-community";
 
-interface Props {
-}
+interface Props {}
 
 interface State {
   columnDefs: object[];
   searchResultsString: string | null;
   selectedTowns: TownInfo[];
+  hoveredTownId: number;
 }
 
 class TownsOverview extends React.Component<Props, State> {
@@ -29,43 +30,77 @@ class TownsOverview extends React.Component<Props, State> {
     const searchResults = localStorage.getItem("searchResults");
     this.state = {
       columnDefs: [
+        { headerName: "Id", field: "sourceTownId", hide: true},
         { headerName: "Zip Code", field: "sourceTownZip" },
         { headerName: "Town", field: "sourceTownName" },
         {
           headerName: "Commute",
           field: "commuteTime",
           valueFormatter: this.timeFormatter,
+          sortable: true,
+          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Yearly Cost Health",
           field: "yearlyCostHealth",
           valueFormatter: this.currencyFormatter,
+          sortable: true,
+          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Yearly Cost Home",
           field: "yearlyCostHome",
           valueFormatter: this.currencyFormatter,
+          sortable: true,
+          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Yearly Cost Taxes",
           field: "yearlyCostTaxes",
           valueFormatter: this.currencyFormatter,
+          sortable: true,
+          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Total Yearly Cost",
           field: "yearlyCostTotal",
           valueFormatter: this.currencyFormatter,
+          sortable: true,
+          filter: 'agNumberColumnFilter'
         },
-        { headerName: "Migros", field: "migros" },
-        { headerName: "Coop", field: "coop" },
-        { headerName: "Aldi", field: "aldi" },
-        { headerName: "Lidl", field: "lidl" },
+        {
+          headerName: "Migros",
+          field: "migros",
+          cellRenderer: this.booleanFormatter,
+          sortable: true
+        },
+        {
+          headerName: "Coop",
+          field: "coop",
+          cellRenderer: this.booleanFormatter,
+          sortable: true
+        },
+        {
+          headerName: "Aldi",
+          field: "aldi",
+          cellRenderer: this.booleanFormatter,
+          sortable: true
+        },
+        {
+          headerName: "Lidl",
+          field: "lidl",
+          cellRenderer: this.booleanFormatter,
+          sortable: true
+        },
       ],
       searchResultsString: searchResults,
-      selectedTowns: []
+      selectedTowns: [],
+      hoveredTownId: -1,
     };
     this.dataUpdateHandler = this.dataUpdateHandler.bind(this);
-    this.gridReadyHandler = this.gridReadyHandler.bind(this);
+    this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
+    this.onMouseOverHandler = this.onMouseOverHandler.bind(this);
+    this.firstDataRenderedHandler = this.firstDataRenderedHandler.bind(this);
   }
 
   renderBarPlot() {
@@ -86,16 +121,33 @@ class TownsOverview extends React.Component<Props, State> {
     return ("0" + hours).slice(-2) + ":" + ("0" + minutes).slice(-2) + " h";
   }
 
-  dataUpdateHandler(event: FirstDataRenderedEvent | ModelUpdatedEvent) {
-    const selectedTowns = new Array();
-    event.api.forEachNodeAfterFilter((rowNode, index) => {
-      selectedTowns.push(rowNode.data)
-    })
-    this.setState({selectedTowns: selectedTowns});
+  booleanFormatter(params: ValueFormatterParams) {
+    if (params.value) {
+      return "&#10004;";
+    } else {
+      return "&#10006;";
+    }
   }
 
-  gridReadyHandler(event: GridReadyEvent) {
+  dataUpdateHandler(event: ModelUpdatedEvent) {
+    // eslint-disable-next-line
+    const selectedTowns = new Array();
+    event.api.forEachNodeAfterFilter((rowNode, index) => {
+      selectedTowns.push(rowNode.data);
+    });
+    this.setState({ selectedTowns: selectedTowns });
+  }
+
+  firstDataRenderedHandler(event: FirstDataRenderedEvent){
     event.api.sizeColumnsToFit();
+  }
+
+  onMouseOverHandler(event: CellMouseOverEvent){
+    this.setState({hoveredTownId: event.data.sourceTownId})
+  }
+
+  onMouseOutHandler(event: CellMouseOutEvent){
+    this.setState({hoveredTownId: -1})
   }
 
   renderOverview(searchResults: TownInfo[]) {
@@ -110,7 +162,10 @@ class TownsOverview extends React.Component<Props, State> {
         </Row>
         <Row>
           <Col xs={12} lg={6}>
-            <TownsHistogram selectedTowns={this.state.selectedTowns} targetTownId={1} />
+            <TownsHistogram
+              selectedTowns={this.state.selectedTowns}
+              targetTownId={this.state.hoveredTownId}
+            />
           </Col>
           <Col xs={12} lg={6}>
             {this.renderBarPlot()}
@@ -120,7 +175,9 @@ class TownsOverview extends React.Component<Props, State> {
           <Col xs={12}>
             <Table
               dataUpdateHandler={this.dataUpdateHandler}
-              gridReadyHandler={this.gridReadyHandler}
+              firstDataRenderedHandler={this.firstDataRenderedHandler}
+              onMouseOutHandler={this.onMouseOutHandler}
+              onMouseOverHandler={this.onMouseOverHandler}
               rowData={searchResults}
               columnDefs={this.state.columnDefs}
             />
@@ -134,7 +191,9 @@ class TownsOverview extends React.Component<Props, State> {
     if (this.state.searchResultsString === null) {
       return <Redirect to="/search" />;
     } else {
-      return this.renderOverview(Object.values(JSON.parse(this.state.searchResultsString)));
+      return this.renderOverview(
+        Object.values(JSON.parse(this.state.searchResultsString))
+      );
     }
   }
 }

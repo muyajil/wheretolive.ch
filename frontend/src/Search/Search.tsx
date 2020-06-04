@@ -56,11 +56,11 @@ class Search extends React.Component<Props, State> {
         fetch(process.env.REACT_APP_BACKEND_URL + "/search/", requestOptions)
           .then((response) => response.json())
           .then((data) => {
+            localStorage.setItem("searchResults", JSON.stringify(data));
             this.setState({
               searchExecuted: true,
               loading: false,
             });
-            localStorage.setItem("searchResults", JSON.stringify(data));
           })
       );
     }
@@ -82,26 +82,22 @@ class Search extends React.Component<Props, State> {
     }
   }
 
-  redirectToTownsOverview() {
-    if (this.state.searchExecuted) {
+  render() {
+    if (this.state.searchExecuted){
       return (
         <Redirect to="/search/towns" />
       );
-    }
-  }
-
-
-  // TODO: Is it possible to redirect to another route and pass props?
-  render() {
-    return (
-      <Container fluid>
+    } else {
+      return (
+        <Container fluid>
         {this.renderBanner()}
         {this.renderSearchForm()}
         {this.state.loading ? (
           <Spinner className="mx-auto" animation="border" variant="light"/>
-        ) : this.redirectToTownsOverview()}
-      </Container>
+        ) : null}
+        </Container>
     );
+    }
   }
 }
 
