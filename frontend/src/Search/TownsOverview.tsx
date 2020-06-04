@@ -15,6 +15,7 @@ import {
   CellMouseOutEvent,
 } from "ag-grid-community";
 import StackedBarChart from "./StackedBarChart";
+import debounce from "lodash.debounce";
 
 interface Props {}
 
@@ -23,6 +24,7 @@ interface State {
   searchResultsString: string | null;
   selectedTowns: TownInfo[];
   hoveredTownId: number;
+  gridWidth: number;
 }
 
 class TownsOverview extends React.Component<Props, State> {
@@ -31,7 +33,7 @@ class TownsOverview extends React.Component<Props, State> {
     const searchResults = localStorage.getItem("searchResults");
     this.state = {
       columnDefs: [
-        { headerName: "Id", field: "sourceTownId", hide: true},
+        { headerName: "Id", field: "sourceTownId", hide: true },
         { headerName: "Zip Code", field: "sourceTownZip" },
         { headerName: "Town", field: "sourceTownName" },
         {
@@ -39,64 +41,60 @@ class TownsOverview extends React.Component<Props, State> {
           field: "commuteTime",
           valueFormatter: this.timeFormatter,
           sortable: true,
-          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Yearly Cost Health",
           field: "yearlyCostHealth",
           valueFormatter: this.currencyFormatter,
           sortable: true,
-          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Yearly Cost Home",
           field: "yearlyCostHome",
           valueFormatter: this.currencyFormatter,
           sortable: true,
-          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Yearly Cost Taxes",
           field: "yearlyCostTaxes",
           valueFormatter: this.currencyFormatter,
           sortable: true,
-          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Total Yearly Cost",
           field: "yearlyCostTotal",
           valueFormatter: this.currencyFormatter,
           sortable: true,
-          filter: 'agNumberColumnFilter'
         },
         {
           headerName: "Migros",
           field: "migros",
           cellRenderer: this.booleanFormatter,
-          sortable: true
+          sortable: true,
         },
         {
           headerName: "Coop",
           field: "coop",
           cellRenderer: this.booleanFormatter,
-          sortable: true
+          sortable: true,
         },
         {
           headerName: "Aldi",
           field: "aldi",
           cellRenderer: this.booleanFormatter,
-          sortable: true
+          sortable: true,
         },
         {
           headerName: "Lidl",
           field: "lidl",
           cellRenderer: this.booleanFormatter,
-          sortable: true
+          sortable: true,
         },
       ],
       searchResultsString: searchResults,
       selectedTowns: [],
       hoveredTownId: -1,
+      gridWidth: 2000,
     };
     this.dataUpdateHandler = this.dataUpdateHandler.bind(this);
     this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
@@ -105,10 +103,22 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   renderBarPlot() {
-    return <StackedBarChart 
-            data={JSON.parse(JSON.stringify(this.state.selectedTowns))}
-            idToMark={this.state.hoveredTownId}/>
+    if (this.state.selectedTowns.length > 200) {
+      return (
+        <h4 className="text-light">
+          Please filter fewer than 200 towns to display detailed analysis{" "}
+        </h4>
+      );
+    }
+    return (
+      <StackedBarChart
+        data={JSON.parse(JSON.stringify(this.state.selectedTowns))}
+        idToMark={this.state.hoveredTownId}
+      />
+    );
   }
+
+  debounceSetState = debounce((state) => this.setState(state), 50);
 
   currencyFormatter(params: ValueFormatterParams) {
     return "CHF " + new Intl.NumberFormat("ch").format(params.value);
@@ -137,16 +147,22 @@ class TownsOverview extends React.Component<Props, State> {
     this.setState({ selectedTowns: selectedTowns });
   }
 
-  firstDataRenderedHandler(event: FirstDataRenderedEvent){
-    event.api.sizeColumnsToFit();
+  firstDataRenderedHandler(event: FirstDataRenderedEvent) {
+    event.columnApi.autoSizeAllColumns();
+    const gridWidth = event.columnApi
+      .getAllColumns()
+      .filter((col) => col.isVisible())
+      .map((col) => col.getActualWidth())
+      .reduce((result, num) => result + num) + 20;
+    this.setState({gridWidth: gridWidth})
   }
 
-  onMouseOverHandler(event: CellMouseOverEvent){
-    this.setState({hoveredTownId: event.data.sourceTownId})
+  onMouseOverHandler(event: CellMouseOverEvent) {
+    this.debounceSetState({ hoveredTownId: event.data.sourceTownId });
   }
 
-  onMouseOutHandler(event: CellMouseOutEvent){
-    this.setState({hoveredTownId: -1})
+  onMouseOutHandler(event: CellMouseOutEvent) {
+    this.debounceSetState({ hoveredTownId: -1 });
   }
 
   renderOverview(searchResults: TownInfo[]) {
@@ -179,13 +195,16 @@ class TownsOverview extends React.Component<Props, State> {
               onMouseOverHandler={this.onMouseOverHandler}
               rowData={searchResults}
               columnDefs={this.state.columnDefs}
+              width={this.state.gridWidth}
             />
           </Col>
         </Row>
         <Row>
           <Col xs={12} className="text-center pt-5">
             <LinkContainer to="/accomodation">
-              <Button variant="primary">Browse Apartements in this selection!</Button>
+              <Button variant="primary">
+                Browse Apartements in this selection!
+              </Button>
             </LinkContainer>
           </Col>
         </Row>

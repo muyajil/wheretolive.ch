@@ -19,6 +19,7 @@ interface Props {
   firstDataRenderedHandler: (event: FirstDataRenderedEvent) => void;
   onMouseOutHandler: (event: CellMouseOutEvent) => void;
   onMouseOverHandler: (event: CellMouseOverEvent) => void;
+  width:number;
 }
 
 interface State {}
@@ -30,7 +31,7 @@ class Table extends React.Component<Props, State> {
     return (
       <div
         className="ag-theme-alpine mx-auto"
-        style={{ height: "500px", width: "100%"}}
+        style={{ height: 500, width: "100%", maxWidth: this.props.width}}
       >
         <AgGridReact
           onFirstDataRendered={this.props.firstDataRenderedHandler}
