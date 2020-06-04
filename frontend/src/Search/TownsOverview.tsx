@@ -14,6 +14,7 @@ import {
   CellMouseOverEvent,
   CellMouseOutEvent,
   VirtualColumnsChangedEvent,
+  GridReadyEvent,
 } from "ag-grid-community";
 import StackedBarChart from "./StackedBarChart";
 import debounce from "lodash.debounce";
@@ -104,6 +105,7 @@ class TownsOverview extends React.Component<Props, State> {
     this.onMouseOverHandler = this.onMouseOverHandler.bind(this);
     this.firstDataRenderedHandler = this.firstDataRenderedHandler.bind(this);
     this.onVirtualColumnsChangedHandler = this.onVirtualColumnsChangedHandler.bind(this);
+    this.onGridReadyHandler = this.onGridReadyHandler.bind(this);
   }
 
   renderBarPlot() {
@@ -158,7 +160,11 @@ class TownsOverview extends React.Component<Props, State> {
       .filter((col) => col.isVisible())
       .map((col) => col.getActualWidth())
       .reduce((result, num) => result + num) + 20;
-    this.setState({gridWidth: gridWidth, displayGrid: true})
+    event.api.setSortModel([{colId: 'yearlyCostTotal', sort: 'asc'}]);
+    this.setState({gridWidth: gridWidth, displayGrid: true});
+  }
+
+  onGridReadyHandler(event: GridReadyEvent){
   }
 
   onMouseOverHandler(event: CellMouseOverEvent) {
@@ -201,7 +207,8 @@ class TownsOverview extends React.Component<Props, State> {
               firstDataRenderedHandler={this.firstDataRenderedHandler}
               onMouseOutHandler={this.onMouseOutHandler}
               onMouseOverHandler={this.onMouseOverHandler}
-              onVirtualColumnsChanged={this.onVirtualColumnsChangedHandler}
+              onVirtualColumnsChangedHandler={this.onVirtualColumnsChangedHandler}
+              onGridReadyHandler={this.onGridReadyHandler}
               rowData={searchResults}
               columnDefs={this.state.columnDefs}
               width={this.state.gridWidth}

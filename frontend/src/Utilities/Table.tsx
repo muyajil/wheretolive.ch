@@ -9,6 +9,7 @@ import {
   CellMouseOutEvent,
   CellMouseOverEvent,
   VirtualColumnsChangedEvent,
+  GridReadyEvent,
 } from "ag-grid-community";
 
 interface Props {
@@ -20,7 +21,8 @@ interface Props {
   firstDataRenderedHandler: (event: FirstDataRenderedEvent) => void;
   onMouseOutHandler: (event: CellMouseOutEvent) => void;
   onMouseOverHandler: (event: CellMouseOverEvent) => void;
-  onVirtualColumnsChanged: (event: VirtualColumnsChangedEvent) => void;
+  onVirtualColumnsChangedHandler: (event: VirtualColumnsChangedEvent) => void;
+  onGridReadyHandler: (event: GridReadyEvent) => void;
   width: number;
   displayGrid: boolean;
 }
@@ -41,7 +43,7 @@ class Table extends React.Component<Props, State> {
           onModelUpdated={this.props.dataUpdateHandler}
           onCellMouseOut={this.props.onMouseOutHandler}
           onCellMouseOver={this.props.onMouseOverHandler}
-          onVirtualColumnsChanged={this.props.onVirtualColumnsChanged}
+          onVirtualColumnsChanged={this.props.onVirtualColumnsChangedHandler}
           columnDefs={this.props.columnDefs}
           rowData={this.props.rowData}
           animateRows={true}

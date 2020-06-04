@@ -32,6 +32,11 @@ class StackedBarChart extends React.Component<Props, State> {
     }
     return ["CHF " + new Intl.NumberFormat("ch").format(value), formattedName];
   }
+
+  formatLabel(name: any){
+    return <strong>{name}</strong>
+  }
+
   render() {
     return (
       <ResponsiveContainer width="100%" aspect={3}>
@@ -41,7 +46,7 @@ class StackedBarChart extends React.Component<Props, State> {
             name="Total Cost"
             tickFormatter={(value) => new Intl.NumberFormat("ch").format(value)}
           />
-          <Tooltip formatter={this.formatTooltip} />
+          <Tooltip labelFormatter={this.formatLabel} formatter={this.formatTooltip} />
           <Bar dataKey="yearlyCostTaxes" stackId="a">
             {this.props.data.map((entry, index) => (
               <Cell
