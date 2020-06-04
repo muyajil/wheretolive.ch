@@ -133,4 +133,11 @@ class SearchService:
             if len(towns_by_id[town_id]) < 12:
                 towns_by_id.pop(town_id)
 
+        for town_id in towns_by_id:
+            towns_by_id[town_id]["yearlyCostTotal"] = (
+                towns_by_id[town_id]["yearlyCostHealth"]
+                + towns_by_id[town_id]["yearlyCostTaxes"]
+                + towns_by_id[town_id]["yearlyCostHome"]
+            )
+
         return towns_by_id
