@@ -14,6 +14,7 @@ import {
   CellMouseOverEvent,
   CellMouseOutEvent,
 } from "ag-grid-community";
+import StackedBarChart from "./StackedBarChart";
 
 interface Props {}
 
@@ -104,11 +105,9 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   renderBarPlot() {
-    return (
-      <h3 className="text-center text-light mt-5">
-        Select less than 50 towns to display detailed data.
-      </h3>
-    );
+    return <StackedBarChart 
+            data={JSON.parse(JSON.stringify(this.state.selectedTowns))}
+            idToMark={this.state.hoveredTownId}/>
   }
 
   currencyFormatter(params: ValueFormatterParams) {
@@ -132,7 +131,7 @@ class TownsOverview extends React.Component<Props, State> {
   dataUpdateHandler(event: ModelUpdatedEvent) {
     // eslint-disable-next-line
     const selectedTowns = new Array();
-    event.api.forEachNodeAfterFilter((rowNode, index) => {
+    event.api.forEachNodeAfterFilterAndSort((rowNode, index) => {
       selectedTowns.push(rowNode.data);
     });
     this.setState({ selectedTowns: selectedTowns });
@@ -181,6 +180,13 @@ class TownsOverview extends React.Component<Props, State> {
               rowData={searchResults}
               columnDefs={this.state.columnDefs}
             />
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} className="text-center pt-5">
+            <LinkContainer to="/accomodation">
+              <Button variant="primary">Browse Apartements in this selection!</Button>
+            </LinkContainer>
           </Col>
         </Row>
       </div>
