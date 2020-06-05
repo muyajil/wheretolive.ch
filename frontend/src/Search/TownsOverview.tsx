@@ -294,14 +294,14 @@ class TownsOverview extends React.Component<Props, State> {
     return (
       <div>
         <Row>
-          <Col xs={4}>
+          <Col xs={6}>
             <LinkContainer to="/search">
               <Button variant="primary">&#10094; Change search</Button>
             </LinkContainer>
           </Col>
-          <Col xs={4} className="ml-auto text-right">
+          <Col xs={6} className="ml-auto text-right">
             <LinkContainer to="/search/accomodations">
-              <Button variant="primary">Browse Accomodations &#10095;</Button>
+              <Button variant="primary">Accomodations &#10095;</Button>
             </LinkContainer>
           </Col>
         </Row>
