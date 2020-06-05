@@ -180,7 +180,7 @@ class TownsOverview extends React.Component<Props, State> {
     event.api.forEachNodeAfterFilterAndSort((rowNode, index) => {
       selectedTowns.push(rowNode.data);
     });
-    this.setState({ selectedTowns: selectedTowns });
+    this.debounceSetState({ selectedTowns: selectedTowns });
   }
 
   firstDataRenderedHandler(event: FirstDataRenderedEvent) {
@@ -190,7 +190,7 @@ class TownsOverview extends React.Component<Props, State> {
         .getAllColumns()
         .filter((col) => col.isVisible())
         .map((col) => col.getActualWidth())
-        .reduce((result, num) => result + num) + 20;
+        .reduce((result, num) => result + num) + 40;
     event.api.setSortModel([{ colId: "yearlyCostTotal", sort: "asc" }]);
     this.setState({ gridWidth: gridWidth, displayGrid: true });
   }
@@ -252,6 +252,12 @@ class TownsOverview extends React.Component<Props, State> {
           pass =
             pass &&
             this.state.numberFilters[numberKeys[idx]] * 60 >=
+              node.data["commuteTime"];
+            break;
+        case "minCommute":
+          pass =
+            pass &&
+            this.state.numberFilters[numberKeys[idx]] * 60 <=
               node.data["commuteTime"];
             break;
         case "maxTotalYearly":

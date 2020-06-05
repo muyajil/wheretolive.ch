@@ -2,7 +2,7 @@ import Form from "react-bootstrap/Form";
 import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import {renderMinutes} from "../Utilities/UtilityFunctions";
+import { renderMinutes } from "../Utilities/UtilityFunctions";
 
 interface BooleanFilter {
   [key: string]: boolean;
@@ -26,15 +26,42 @@ class TownsOverviewFilter extends React.Component<Props, State> {
     return (
       <div className="text-light">
         <Row>
-          <p>
-            <strong>Commute Filter:</strong>
-          </p>
+          <Col>
+            <p>
+              <strong>Commute Filters:</strong>
+            </p>
+          </Col>
         </Row>
         <Form.Row>
           <Col>
+            <Form.Group controlId="minCommute">
+              <Form.Label>Min Commute</Form.Label>
+              <p>
+                {renderMinutes(
+                  this.props.numberFilters["minCommute"]
+                    ? this.props.numberFilters["minCommute"]
+                    : 0
+                )}
+              </p>
+              <Form.Control
+                value={this.props.numberFilters["minCommute"]}
+                onChange={this.props.handleChange}
+                min={0}
+                max={this.props.maxCommute}
+                defaultValue={0}
+                step={5}
+                type="range"
+              />
+            </Form.Group>
             <Form.Group controlId="maxCommute">
               <Form.Label>Max Commute</Form.Label>
-              <p>{renderMinutes(this.props.numberFilters["maxCommute"] ? this.props.numberFilters["maxCommute"] : this.props.maxCommute)}</p>
+              <p>
+                {renderMinutes(
+                  this.props.numberFilters["maxCommute"]
+                    ? this.props.numberFilters["maxCommute"]
+                    : this.props.maxCommute
+                )}
+              </p>
               <Form.Control
                 value={this.props.numberFilters["maxCommute"]}
                 onChange={this.props.handleChange}
@@ -48,9 +75,11 @@ class TownsOverviewFilter extends React.Component<Props, State> {
           </Col>
         </Form.Row>
         <Row>
-          <p>
-            <strong>Cost Filters:</strong>
-          </p>
+          <Col>
+            <p>
+              <strong>Cost Filters:</strong>
+            </p>
+          </Col>
         </Row>
         <Form.Row>
           <Col>
@@ -97,9 +126,11 @@ class TownsOverviewFilter extends React.Component<Props, State> {
           </Col>
         </Form.Row>
         <Row>
-          <p>
-            <strong>Shopping Filters:</strong>
-          </p>
+          <Col>
+            <p>
+              <strong>Shopping Filters:</strong>
+            </p>
+          </Col>
         </Row>
         <Form.Row>
           <Form.Group className="mr-4" controlId="migros">
