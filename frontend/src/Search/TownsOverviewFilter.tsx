@@ -106,9 +106,9 @@ class TownsOverviewFilter extends React.Component<Props, State> {
                 value={this.props.numberFilters["minTotalYearly"]}
                 onChange={this.props.handleChange}
                 min={0}
-                max={(Math.floor(this.props.maxYearly/100) + 1)*100}
+                max={(Math.floor(this.props.maxYearly/500) + 1)*500}
                 defaultValue={0}
-                step={100}
+                step={500}
                 type="range"
               />
             </Form.Group>
@@ -128,9 +128,9 @@ class TownsOverviewFilter extends React.Component<Props, State> {
                 value={this.props.numberFilters["maxTotalYearly"]}
                 onChange={this.props.handleChange}
                 min={0}
-                max={(Math.floor(this.props.maxYearly/100) + 1)*100}
+                max={(Math.floor(this.props.maxYearly/500) + 1)*500}
                 defaultValue={this.props.maxYearly}
-                step={100}
+                step={500}
                 type="range"
               />
             </Form.Group>
@@ -152,9 +152,9 @@ class TownsOverviewFilter extends React.Component<Props, State> {
                 value={this.props.numberFilters["minTotalMonthly"]}
                 onChange={this.props.handleChange}
                 min={0}
-                max={(Math.floor(this.props.maxMonthly/100) + 1)*100}
+                max={(Math.floor(this.props.maxMonthly/500) + 1)*500}
                 defaultValue={0}
-                step={100}
+                step={500}
                 type="range"
               />
             </Form.Group>
@@ -174,9 +174,9 @@ class TownsOverviewFilter extends React.Component<Props, State> {
                 value={this.props.numberFilters["maxTotalMonthly"]}
                 onChange={this.props.handleChange}
                 min={0}
-                max={(Math.floor(this.props.maxMonthly/100) + 1)*100}
+                max={(Math.floor(this.props.maxMonthly/500) + 1)*500}
                 defaultValue={this.props.maxMonthly}
-                step={100}
+                step={500}
                 type="range"
               />
             </Form.Group>

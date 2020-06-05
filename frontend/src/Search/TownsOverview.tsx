@@ -294,9 +294,14 @@ class TownsOverview extends React.Component<Props, State> {
     return (
       <div>
         <Row>
-          <Col xs={12}>
+          <Col xs={4}>
             <LinkContainer to="/search">
-              <Button variant="link">&#10094; Change search</Button>
+              <Button variant="primary">&#10094; Change search</Button>
+            </LinkContainer>
+          </Col>
+          <Col xs={4} className="ml-auto text-right">
+            <LinkContainer to="/search/accomodations">
+              <Button variant="primary">Browse Accomodations &#10095;</Button>
             </LinkContainer>
           </Col>
         </Row>
@@ -362,7 +367,7 @@ class TownsOverview extends React.Component<Props, State> {
             />
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col xs={12} className="text-center pt-4">
             <LinkContainer to="/accomodation">
               <Button variant="primary">
@@ -370,7 +375,7 @@ class TownsOverview extends React.Component<Props, State> {
               </Button>
             </LinkContainer>
           </Col>
-        </Row>
+        </Row> */}
       </div>
     );
   }
