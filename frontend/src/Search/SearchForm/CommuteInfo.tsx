@@ -2,6 +2,7 @@ import Form from "react-bootstrap/Form";
 import React from "react";
 import Col from "react-bootstrap/Col";
 import TownTypeahead from "../../Utilities/TownTypeahead";
+import {renderMinutes} from "../../Utilities/UtilityFunctions";
 
 interface Props {
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -15,15 +16,6 @@ interface Props {
 interface State {}
 
 class CommuteInfo extends React.Component<Props, State> {
-  renderMinutes() {
-    var hours = Math.floor(this.props.commuteTime / 60);
-    var minutes = this.props.commuteTime % 60;
-    return (
-      <p>
-        {("0" + hours).slice(-2)}:{("0" + minutes).slice(-2)} h
-      </p>
-    );
-  }
   render() {
     return (
       <Col xs={12} lg={6} xl={3} className="pl-lg-5 pr-lg-5 border-right-lg">
@@ -40,7 +32,7 @@ class CommuteInfo extends React.Component<Props, State> {
         </Form.Group>
         <Form.Group controlId="commuteTime">
           <Form.Label>Maximum Commute Time</Form.Label>
-          {this.renderMinutes()}
+          <p>{renderMinutes(this.props.commuteTime)}</p>
           <Form.Control
             value={this.props.commuteTime}
             onChange={this.props.handleChange}

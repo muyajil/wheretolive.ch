@@ -11,10 +11,8 @@ interface TownInfo {
     yearlyCostHome: number;
     yearlyCostTaxes: number;
     commuteTime: number;
-    yearlyCostHealthFormatted: string;
-    yearlyCostHomeFormatted: string;
-    yearlyCostTaxesFormatted: string;
-    commuteTimeFormatted: number;
+    monthlyCostTotal: number;
+    yearlyCostTotal: number;
   }
 
 export default TownInfo;

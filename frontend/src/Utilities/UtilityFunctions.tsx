@@ -22,4 +22,12 @@ function range(start: number, stop: number, step: number) {
     return result;
 };
 
-export {range};
+function renderMinutes(inputMins: number) {
+    var hours = Math.floor(inputMins / 60);
+    var minutes = inputMins % 60;
+    return (
+        ("0" + hours).slice(-2)+":"+("0" + minutes).slice(-2) + " h"
+    );
+  }
+
+export {range, renderMinutes};

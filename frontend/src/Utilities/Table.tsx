@@ -10,6 +10,7 @@ import {
   CellMouseOverEvent,
   VirtualColumnsChangedEvent,
   GridReadyEvent,
+  RowNode,
 } from "ag-grid-community";
 
 interface Props {
@@ -23,19 +24,18 @@ interface Props {
   onMouseOverHandler: (event: CellMouseOverEvent) => void;
   onVirtualColumnsChangedHandler: (event: VirtualColumnsChangedEvent) => void;
   onGridReadyHandler: (event: GridReadyEvent) => void;
+  isExternalFilterPresent: () => boolean;
+  doesExternalFilterPass: (node: RowNode) => boolean;
   width: number;
   displayGrid: boolean;
 }
 
 interface State {}
-// TODO: Function to get selected rows
-// TODO: Allow certain filters and sorting
-// TODO: Function to get the hovered item
 class Table extends React.Component<Props, State> {
   render() {
     return (
       <div
-        className={`ag-theme-alpine mx-auto ${this.props.displayGrid ? "" : "hidden" }`}
+        className={`ag-theme-alpine ${this.props.displayGrid ? "" : "hidden" }`}
         style={{ height: 500, width: "100%", maxWidth: this.props.width}}
       >
         <AgGridReact
@@ -44,6 +44,9 @@ class Table extends React.Component<Props, State> {
           onCellMouseOut={this.props.onMouseOutHandler}
           onCellMouseOver={this.props.onMouseOverHandler}
           onVirtualColumnsChanged={this.props.onVirtualColumnsChangedHandler}
+          isExternalFilterPresent={this.props.isExternalFilterPresent}
+          doesExternalFilterPass={this.props.doesExternalFilterPass}
+          onGridReady={this.props.onGridReadyHandler}
           columnDefs={this.props.columnDefs}
           rowData={this.props.rowData}
           animateRows={true}

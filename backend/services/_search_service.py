@@ -139,5 +139,8 @@ class SearchService:
                 + towns_by_id[town_id]["yearlyCostTaxes"]
                 + towns_by_id[town_id]["yearlyCostHome"]
             )
+            towns_by_id[town_id]["monthlyCostTotal"] = (
+                towns_by_id[town_id]["yearlyCostTotal"] // 12
+            )
 
         return towns_by_id

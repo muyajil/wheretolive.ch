@@ -15,11 +15,22 @@ import {
   CellMouseOutEvent,
   VirtualColumnsChangedEvent,
   GridReadyEvent,
+  RowNode,
+  GridApi,
 } from "ag-grid-community";
 import StackedBarChart from "./StackedBarChart";
 import debounce from "lodash.debounce";
+import TownsOverviewFilter from "./TownsOverviewFilter";
 
 interface Props {}
+
+interface NumberFilter {
+  [key: string]: number;
+}
+
+interface BooleanFilter {
+  [key: string]: boolean;
+}
 
 interface State {
   columnDefs: object[];
@@ -28,9 +39,12 @@ interface State {
   hoveredTownId: number;
   gridWidth: number;
   displayGrid: boolean;
+  booleanFilters: BooleanFilter;
+  numberFilters: NumberFilter;
 }
 
 class TownsOverview extends React.Component<Props, State> {
+  private gridApi?: GridApi;
   constructor(props: Props) {
     super(props);
     const searchResults = localStorage.getItem("searchResults");
@@ -50,22 +64,31 @@ class TownsOverview extends React.Component<Props, State> {
           field: "yearlyCostHealth",
           valueFormatter: this.currencyFormatter,
           sortable: true,
+          hide:true,
         },
         {
           headerName: "Yearly Cost Home",
           field: "yearlyCostHome",
           valueFormatter: this.currencyFormatter,
           sortable: true,
+          hide: true,
         },
         {
           headerName: "Yearly Cost Taxes",
           field: "yearlyCostTaxes",
           valueFormatter: this.currencyFormatter,
           sortable: true,
+          hide: true,
         },
         {
           headerName: "Total Yearly Cost",
           field: "yearlyCostTotal",
+          valueFormatter: this.currencyFormatter,
+          sortable: true,
+        },
+        {
+          headerName: "Total Montly Cost",
+          field: "monthlyCostTotal",
           valueFormatter: this.currencyFormatter,
           sortable: true,
         },
@@ -99,21 +122,28 @@ class TownsOverview extends React.Component<Props, State> {
       hoveredTownId: -1,
       gridWidth: 2000,
       displayGrid: false,
+      booleanFilters: {},
+      numberFilters: {},
     };
     this.dataUpdateHandler = this.dataUpdateHandler.bind(this);
     this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
     this.onMouseOverHandler = this.onMouseOverHandler.bind(this);
     this.firstDataRenderedHandler = this.firstDataRenderedHandler.bind(this);
-    this.onVirtualColumnsChangedHandler = this.onVirtualColumnsChangedHandler.bind(this);
+    this.onVirtualColumnsChangedHandler = this.onVirtualColumnsChangedHandler.bind(
+      this
+    );
     this.onGridReadyHandler = this.onGridReadyHandler.bind(this);
+    this.handleFilterChange = this.handleFilterChange.bind(this);
+    this.doesExternalFilterPass = this.doesExternalFilterPass.bind(this);
+    this.isExternalFilterPresent = this.isExternalFilterPresent.bind(this);
   }
 
   renderBarPlot() {
     if (this.state.selectedTowns.length > 200) {
       return (
-        <h4 className="text-light">
+        <h5 className="text-muted">
           Please filter fewer than 200 towns to display detailed analysis{" "}
-        </h4>
+        </h5>
       );
     }
     return (
@@ -124,7 +154,7 @@ class TownsOverview extends React.Component<Props, State> {
     );
   }
 
-  debounceSetState = debounce((state) => this.setState(state), 50);
+  debounceSetState = debounce((state) => this.setState(state), 100);
 
   currencyFormatter(params: ValueFormatterParams) {
     return "CHF " + new Intl.NumberFormat("ch").format(params.value);
@@ -155,16 +185,18 @@ class TownsOverview extends React.Component<Props, State> {
 
   firstDataRenderedHandler(event: FirstDataRenderedEvent) {
     event.columnApi.autoSizeAllColumns();
-    const gridWidth = event.columnApi
-      .getAllColumns()
-      .filter((col) => col.isVisible())
-      .map((col) => col.getActualWidth())
-      .reduce((result, num) => result + num) + 20;
-    event.api.setSortModel([{colId: 'yearlyCostTotal', sort: 'asc'}]);
-    this.setState({gridWidth: gridWidth, displayGrid: true});
+    const gridWidth =
+      event.columnApi
+        .getAllColumns()
+        .filter((col) => col.isVisible())
+        .map((col) => col.getActualWidth())
+        .reduce((result, num) => result + num) + 20;
+    event.api.setSortModel([{ colId: "yearlyCostTotal", sort: "asc" }]);
+    this.setState({ gridWidth: gridWidth, displayGrid: true });
   }
 
-  onGridReadyHandler(event: GridReadyEvent){
+  onGridReadyHandler(event: GridReadyEvent) {
+    this.gridApi = event.api;
   }
 
   onMouseOverHandler(event: CellMouseOverEvent) {
@@ -176,7 +208,80 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   onVirtualColumnsChangedHandler(event: VirtualColumnsChangedEvent) {
-    debounce(() => event.columnApi.autoSizeAllColumns(), 50)()
+    debounce(() => event.columnApi.autoSizeAllColumns(), 50)();
+  }
+
+  handleFilterChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const target = event.target.id;
+    if (
+      target === "migros" ||
+      target === "coop" ||
+      target === "lidl" ||
+      target === "aldi"
+    ) {
+      const currentFilters = this.state.booleanFilters;
+      currentFilters[target] = event.target.checked;
+      this.debounceSetState({ booleanFilters: currentFilters });
+    } else {
+      const currentFilters = this.state.numberFilters;
+      currentFilters[target] = Number.parseInt(event.target.value);
+      this.debounceSetState({ numberFilters: currentFilters });
+    }
+    this.gridApi?.onFilterChanged();
+  }
+
+  isExternalFilterPresent() {
+    return (
+      Object.keys(this.state.booleanFilters).length > 0 ||
+      Object.keys(this.state.numberFilters).length > 0
+    );
+  }
+
+  doesExternalFilterPass(node: RowNode) {
+    let pass = true;
+    const booleanKeys = Object.keys(this.state.booleanFilters);
+    for (let idx = 0; idx < booleanKeys.length; idx++) {
+      if (this.state.booleanFilters[booleanKeys[idx]]) {
+        pass = pass && node.data[booleanKeys[idx]];
+      }
+    }
+    const numberKeys = Object.keys(this.state.numberFilters);
+    for (let idx = 0; idx < numberKeys.length; idx++) {
+      switch (numberKeys[idx]) {
+        case "maxCommute":
+          pass =
+            pass &&
+            this.state.numberFilters[numberKeys[idx]] * 60 >=
+              node.data["commuteTime"];
+            break;
+        case "maxTotalYearly":
+          pass =
+            pass &&
+            this.state.numberFilters[numberKeys[idx]] >=
+              node.data["yearlyCostTotal"];
+            break;
+        case "minTotalYearly":
+          pass =
+            pass &&
+            this.state.numberFilters[numberKeys[idx]] <=
+              node.data["yearlyCostTotal"];
+            break;
+        case "minTotalMonthly":
+          pass =
+            pass &&
+            this.state.numberFilters[numberKeys[idx]] >=
+              node.data["monthlyCostTotal"];
+            break;
+        case "maxTotalMonthly":
+          pass =
+            pass &&
+            this.state.numberFilters[numberKeys[idx]] <=
+              node.data["monthlyCostTotal"];
+            break;
+        default:
+      }
+    }
+    return pass;
   }
 
   renderOverview(searchResults: TownInfo[]) {
@@ -189,26 +294,40 @@ class TownsOverview extends React.Component<Props, State> {
             </LinkContainer>
           </Col>
         </Row>
-        <Row>
+        <Row className="mt-2">
           <Col xs={12} lg={6}>
+            <h4 className="text-light">Distribution of Total Cost of Living</h4>
             <TownsHistogram
               selectedTowns={this.state.selectedTowns}
               targetTownId={this.state.hoveredTownId}
             />
           </Col>
-          <Col xs={12} lg={6}>
+          <Col xs={12} lg={6} className="mt-2 mt-lg-0">
+            <h4 className="text-light">Total Cost of Living per Town</h4>
             {this.renderBarPlot()}
           </Col>
         </Row>
         <Row>
-          <Col xs={12}>
+          <Col xs={12} lg={4} className="mt-2 d-flex justify-content-center">
+            <TownsOverviewFilter
+              handleChange={this.handleFilterChange}
+              booleanFilters={this.state.booleanFilters}
+              numberFilters={this.state.numberFilters}
+              maxCommute={Math.max(...(searchResults.map((townInfo) => Math.floor(townInfo.commuteTime/60))))}
+            />
+          </Col>
+          <Col xs={12} lg={8} className="mt-2 d-flex justify-content-center">
             <Table
               dataUpdateHandler={this.dataUpdateHandler}
               firstDataRenderedHandler={this.firstDataRenderedHandler}
               onMouseOutHandler={this.onMouseOutHandler}
               onMouseOverHandler={this.onMouseOverHandler}
-              onVirtualColumnsChangedHandler={this.onVirtualColumnsChangedHandler}
+              onVirtualColumnsChangedHandler={
+                this.onVirtualColumnsChangedHandler
+              }
               onGridReadyHandler={this.onGridReadyHandler}
+              isExternalFilterPresent={this.isExternalFilterPresent}
+              doesExternalFilterPass={this.doesExternalFilterPass}
               rowData={searchResults}
               columnDefs={this.state.columnDefs}
               width={this.state.gridWidth}
