@@ -296,7 +296,7 @@ class TownsOverview extends React.Component<Props, State> {
         <Row>
           <Col xs={6}>
             <LinkContainer to="/search">
-              <Button variant="primary">&#10094; Change search</Button>
+              <Button variant="secondary">&#10094; Change search</Button>
             </LinkContainer>
           </Col>
           <Col xs={6} className="ml-auto text-right">

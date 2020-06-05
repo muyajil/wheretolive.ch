@@ -41,10 +41,11 @@ class StackedBarChart extends React.Component<Props, State> {
     return (
       <ResponsiveContainer width="100%" aspect={3}>
         <BarChart data={this.props.data}>
-          <XAxis dataKey="sourceTownName" name="Town" />
+          <XAxis dataKey="sourceTownName" name="Town" hide={false} />
           <YAxis
             name="Total Cost"
             tickFormatter={(value) => new Intl.NumberFormat("ch").format(value)}
+            hide={true}
           />
           <Tooltip labelFormatter={this.formatLabel} formatter={this.formatTooltip} />
           <Bar dataKey="yearlyCostTaxes" stackId="a">

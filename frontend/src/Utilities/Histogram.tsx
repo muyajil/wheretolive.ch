@@ -124,8 +124,8 @@
       return (
         <ResponsiveContainer width="100%" aspect={3}>
           <BarChart data={plotData["data"]}>
-            <XAxis dataKey="interval" name={this.props.xName} />
-            <YAxis name={this.props.yName} />
+            <XAxis dataKey="interval" name={this.props.xName} hide={false}/>
+            <YAxis name={this.props.yName} hide={true} />
             <Tooltip
               formatter={this.props.formatTooltip}
               labelFormatter={this.props.formatLabel}
