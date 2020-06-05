@@ -64,7 +64,7 @@ class TownsOverview extends React.Component<Props, State> {
           field: "yearlyCostHealth",
           valueFormatter: this.currencyFormatter,
           sortable: true,
-          hide:true,
+          hide: true,
         },
         {
           headerName: "Yearly Cost Home",
@@ -190,7 +190,7 @@ class TownsOverview extends React.Component<Props, State> {
         .getAllColumns()
         .filter((col) => col.isVisible())
         .map((col) => col.getActualWidth())
-        .reduce((result, num) => result + num) + 40;
+        .reduce((result, num) => result + num) + 45;
     event.api.setSortModel([{ colId: "yearlyCostTotal", sort: "asc" }]);
     this.setState({ gridWidth: gridWidth, displayGrid: true });
   }
@@ -253,37 +253,37 @@ class TownsOverview extends React.Component<Props, State> {
             pass &&
             this.state.numberFilters[numberKeys[idx]] * 60 >=
               node.data["commuteTime"];
-            break;
+          break;
         case "minCommute":
           pass =
             pass &&
             this.state.numberFilters[numberKeys[idx]] * 60 <=
               node.data["commuteTime"];
-            break;
+          break;
         case "maxTotalYearly":
           pass =
             pass &&
             this.state.numberFilters[numberKeys[idx]] >=
               node.data["yearlyCostTotal"];
-            break;
+          break;
         case "minTotalYearly":
           pass =
             pass &&
             this.state.numberFilters[numberKeys[idx]] <=
               node.data["yearlyCostTotal"];
-            break;
+          break;
         case "minTotalMonthly":
-          pass =
-            pass &&
-            this.state.numberFilters[numberKeys[idx]] >=
-              node.data["monthlyCostTotal"];
-            break;
-        case "maxTotalMonthly":
           pass =
             pass &&
             this.state.numberFilters[numberKeys[idx]] <=
               node.data["monthlyCostTotal"];
-            break;
+          break;
+        case "maxTotalMonthly":
+          pass =
+            pass &&
+            this.state.numberFilters[numberKeys[idx]] >=
+              node.data["monthlyCostTotal"];
+          break;
         default:
       }
     }
@@ -314,12 +314,33 @@ class TownsOverview extends React.Component<Props, State> {
           </Col>
         </Row>
         <Row>
+          <Col xs={12}>
+          <h4 className="text-light">
+            {this.state.selectedTowns.length} towns in selection
+          </h4>
+          </Col>
+        </Row>
+        <Row>
           <Col xs={12} lg={4} className="mt-2 d-flex justify-content-center">
             <TownsOverviewFilter
               handleChange={this.handleFilterChange}
               booleanFilters={this.state.booleanFilters}
               numberFilters={this.state.numberFilters}
-              maxCommute={Math.max(...(searchResults.map((townInfo) => Math.floor(townInfo.commuteTime/60))))}
+              maxCommute={Math.max(
+                ...searchResults.map((townInfo) =>
+                  Math.floor(townInfo.commuteTime / 60)
+                )
+              )}
+              maxYearly={Math.max(
+                ...searchResults.map((townInfo) =>
+                  Math.floor(townInfo.yearlyCostTotal)
+                )
+              )}
+              maxMonthly={Math.max(
+                ...searchResults.map((townInfo) =>
+                  Math.floor(townInfo.monthlyCostTotal)
+                )
+              )}
             />
           </Col>
           <Col xs={12} lg={8} className="mt-2 d-flex justify-content-center">
@@ -342,7 +363,7 @@ class TownsOverview extends React.Component<Props, State> {
           </Col>
         </Row>
         <Row>
-          <Col xs={12} className="text-center pt-5">
+          <Col xs={12} className="text-center pt-4">
             <LinkContainer to="/accomodation">
               <Button variant="primary">
                 Browse Apartements in this selection!
