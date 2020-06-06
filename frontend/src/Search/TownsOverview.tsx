@@ -48,6 +48,8 @@ class TownsOverview extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const searchResults = localStorage.getItem("searchResults");
+    const booleanFilters = localStorage.getItem("booleanFilters");
+    const numberFilters = localStorage.getItem("numberFilters");
     this.state = {
       columnDefs: [
         { headerName: "Id", field: "sourceTownId", hide: true },
@@ -122,8 +124,8 @@ class TownsOverview extends React.Component<Props, State> {
       hoveredTownId: -1,
       gridWidth: 2000,
       displayGrid: false,
-      booleanFilters: {},
-      numberFilters: {},
+      booleanFilters: booleanFilters ? JSON.parse(booleanFilters) : {},
+      numberFilters: numberFilters ? JSON.parse(numberFilters) : {},
     };
     this.dataUpdateHandler = this.dataUpdateHandler.bind(this);
     this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
@@ -197,6 +199,7 @@ class TownsOverview extends React.Component<Props, State> {
 
   onGridReadyHandler(event: GridReadyEvent) {
     this.gridApi = event.api;
+    this.gridApi.onFilterChanged();
   }
 
   onMouseOverHandler(event: CellMouseOverEvent) {
@@ -221,10 +224,12 @@ class TownsOverview extends React.Component<Props, State> {
     ) {
       const currentFilters = this.state.booleanFilters;
       currentFilters[target] = event.target.checked;
+      localStorage.setItem("booleanFilters", JSON.stringify(currentFilters));
       this.debounceSetState({ booleanFilters: currentFilters });
     } else {
       const currentFilters = this.state.numberFilters;
       currentFilters[target] = Number.parseInt(event.target.value);
+      localStorage.setItem("numberFilters", JSON.stringify(currentFilters));
       this.debounceSetState({ numberFilters: currentFilters });
     }
     this.gridApi?.onFilterChanged();
@@ -367,15 +372,6 @@ class TownsOverview extends React.Component<Props, State> {
             />
           </Col>
         </Row>
-        {/* <Row>
-          <Col xs={12} className="text-center pt-4">
-            <LinkContainer to="/accomodation">
-              <Button variant="primary">
-                Browse Apartements in this selection!
-              </Button>
-            </LinkContainer>
-          </Col>
-        </Row> */}
       </div>
     );
   }
