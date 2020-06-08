@@ -282,13 +282,13 @@ class TownsOverview extends React.Component<Props, State> {
         .filter((col) => col.isVisible())
         .map((col) => col.getActualWidth())
         .reduce((result, num) => result + num) + 100;
+    this.gridApi?.onFilterChanged();
     this.setState({ gridWidth: gridWidth, displayGrid: true });
   }
 
   onGridReadyHandler(event: GridReadyEvent) {
     this.gridApi = event.api;
     this.columnApi = event.columnApi;
-    this.gridApi.onFilterChanged();
   }
 
   onMouseOverHandler(event: CellMouseOverEvent) {
