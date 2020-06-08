@@ -31,7 +31,7 @@ class Search extends React.Component<Props, State> {
 
   componentDidMount() {
     window.scrollTo(0, 0)
-  }  
+  }
 
   handleSearchFormSubmission(searchFormState: SearchFormState) {
     if (searchFormState.selectedTown.length >= 1) {

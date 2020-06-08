@@ -280,7 +280,7 @@ class TownsOverview extends React.Component<Props, State> {
         .getAllColumns()
         .filter((col) => col.isVisible())
         .map((col) => col.getActualWidth())
-        .reduce((result, num) => result + num) + 100;
+        .reduce((result, num) => result + num) + 65;
     this.gridApi?.onFilterChanged();
     this.setState({ gridWidth: gridWidth, displayGrid: true });
   }
@@ -452,7 +452,7 @@ class TownsOverview extends React.Component<Props, State> {
               monthlySwitch={this.monthlySwitch}
             />
           </Col>
-          <Col xs={12} lg={8} className="mt-2 d-flex justify-content-center">
+          <Col xs={12} lg={8} className="mt-2">
             <Table
               dataUpdateHandler={this.dataUpdateHandler}
               firstDataRenderedHandler={this.firstDataRenderedHandler}

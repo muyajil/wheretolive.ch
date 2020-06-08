@@ -226,7 +226,7 @@ class TownsOverviewFilter extends React.Component<Props, State> {
         </Form.Row>
         <Form.Row>
           <Col>
-            <Button variant="primary" onClick={this.props.handleReset}>
+            <Button className="mb-3" variant="primary" onClick={this.props.handleReset}>
               Reset Filters
             </Button>
           </Col>
