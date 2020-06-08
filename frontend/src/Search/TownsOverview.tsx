@@ -159,13 +159,14 @@ class TownsOverview extends React.Component<Props, State> {
           field: "yearlyCostTotal",
           valueFormatter: this.currencyFormatter,
           sortable: true,
+          hide: this.monthlySwitch,
         },
         {
           headerName: "Total Monthly Cost",
           field: "monthlyCostTotal",
           valueFormatter: this.currencyFormatter,
           sortable: true,
-          hide: true,
+          hide: !this.monthlySwitch,
         },
         {
           headerName: "Migros",
@@ -283,7 +284,7 @@ class TownsOverview extends React.Component<Props, State> {
         .getAllColumns()
         .filter((col) => col.isVisible())
         .map((col) => col.getActualWidth())
-        .reduce((result, num) => result + num) + 65;
+        .reduce((result, num) => result + num) + 30;
     this.gridApi?.onFilterChanged();
     this.setState({ gridWidth: gridWidth, displayGrid: true });
   }
@@ -336,8 +337,14 @@ class TownsOverview extends React.Component<Props, State> {
       });
     }
     if (event.target.id === "monthlySwitch") {
+      if (event.target.checked){
+        this.numberFilters["maxTotalMonthly"] = Math.floor(this.numberFilters["maxTotalYearly"]/12)
+      } else {
+        this.numberFilters["maxTotalYearly"] = Math.floor(this.numberFilters["maxTotalMonthly"]*12)
+      }
       this.columnApi?.hideColumn("yearlyCostTotal", event.target.checked);
       this.columnApi?.hideColumn("monthlyCostTotal", !event.target.checked);
+      this.columnApi?.autoSizeAllColumns();
     }
     this.gridApi?.onFilterChanged();
   }

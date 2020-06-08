@@ -64,6 +64,7 @@ class Search extends React.Component<Props, State> {
             localStorage.setItem("searchResults", JSON.stringify(data));
             localStorage.setItem("booleanFilters", "");
             localStorage.setItem("numberFilters", "");
+            localStorage.setItem("monthlySwitch", "");
 
             this.setState({
               searchExecuted: true,
