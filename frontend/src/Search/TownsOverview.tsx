@@ -52,8 +52,10 @@ class TownsOverview extends React.Component<Props, State> {
   private maxTotalYearly: number;
   private maxTotalMonthly: number;
   private maxCommute: number;
+  private hoverAllowed: boolean;
   constructor(props: Props) {
     super(props);
+    this.hoverAllowed = false;
     const searchResultString = localStorage.getItem("searchResults");
     let searchResults;
     const booleanFilters = localStorage.getItem("booleanFilters");
@@ -292,11 +294,15 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   onMouseOverHandler(event: CellMouseOverEvent) {
-    this.debounceSetState({ hoveredTownId: event.data.sourceTownId });
+    if (this.hoverAllowed){
+      this.debounceSetState({ hoveredTownId: event.data.sourceTownId });
+    }
   }
 
   onMouseOutHandler(event: CellMouseOutEvent) {
-    this.debounceSetState({ hoveredTownId: -1 });
+    if (this.hoverAllowed){
+      this.debounceSetState({ hoveredTownId: -1 });
+    }
   }
 
   onVirtualColumnsChangedHandler(event: VirtualColumnsChangedEvent) {
@@ -402,6 +408,10 @@ class TownsOverview extends React.Component<Props, State> {
       }
     }
     return pass;
+  }
+
+  componentDidMount(){
+    new Promise(resolve => setTimeout(resolve, 500)).then(() => this.hoverAllowed = true);
   }
 
   renderOverview(searchResults: TownInfo[]) {
