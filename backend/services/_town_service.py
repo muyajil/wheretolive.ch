@@ -31,3 +31,13 @@ class TownService:
             {"id": x[0], "migros": x[1], "coop": x[2], "lidl": x[3], "aldi": x[4]}
             for x in towns
         ]
+
+    def get_towns_from_zips(self, zip_codes):
+        towns = Town.query.with_entities(
+            Town.id, Town.zip_code, Town.bfs_nr, Town.name
+        ).filter(Town.zip_code.in_(zip_codes))
+
+        return [
+            {"id": x.id, "zipCode": x.zip_code, "bfsNr": x.bfs_nr, "name": x.name}
+            for x in towns
+        ]

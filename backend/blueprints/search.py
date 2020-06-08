@@ -5,11 +5,7 @@ from ..services import SearchService
 search_bp = Blueprint("search", __name__)
 
 
-@search_bp.route("/", methods=["POST"])
-def show():
-    service = SearchService()
-    request_json = request.get_json()
-
+def get_info_blocks_from_request(request_json):
     commute_info = {
         "workplaceTownId": int(request_json["selectedTown"]["id"]),
         "maxCommuteSecs": int(request_json["commuteTime"]) * 60,
@@ -48,7 +44,39 @@ def show():
         "isRent": request_json["offerType"] == "Rent",
     }
 
+    return commute_info, tax_info, health_info, accomodation_info
+
+
+@search_bp.route("/towns", methods=["POST"])
+def search_towns():
+    service = SearchService()
+    request_json = request.get_json()
+
+    (
+        commute_info,
+        tax_info,
+        health_info,
+        accomodation_info,
+    ) = get_info_blocks_from_request(request_json)
+
     search_result = service.search_towns(
         commute_info, tax_info, health_info, accomodation_info
     )
+    return jsonify(search_result)
+
+
+@search_bp.route("/towns", methods=["POST"])
+def search_accomodations():
+    service = SearchService()
+    request_json = request.get_json()
+
+    _, tax_info, health_info, accomodation_info = get_info_blocks_from_request(
+        request_json
+    )
+    zip_codes = request_json["zipCodes"]
+
+    search_result = service.search_accomodations(
+        zip_codes, tax_info, health_info, accomodation_info
+    )
+
     return jsonify(search_result)
