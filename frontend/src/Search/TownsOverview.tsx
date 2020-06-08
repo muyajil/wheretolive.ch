@@ -58,6 +58,7 @@ class TownsOverview extends React.Component<Props, State> {
     let searchResults;
     const booleanFilters = localStorage.getItem("booleanFilters");
     const numberFilters = localStorage.getItem("numberFilters");
+    const monthlySwitch = localStorage.getItem("monthlySwitch");
 
     this.maxCommute = 0;
     this.maxTotalMonthly = 0;
@@ -65,7 +66,7 @@ class TownsOverview extends React.Component<Props, State> {
 
     this.numberFilters = {};
     this.booleanFilters = {};
-    this.monthlySwitch = false;
+    this.monthlySwitch = monthlySwitch === "true";
     if (searchResultString) {
       searchResults = JSON.parse(searchResultString);
       this.numberFilters["maxTotalYearly"] = Math.max(
@@ -320,6 +321,7 @@ class TownsOverview extends React.Component<Props, State> {
       });
     } else if (target === "monthlySwitch") {
       this.monthlySwitch = event.target.checked;
+      localStorage.setItem("monthlySwitch", String(this.monthlySwitch));
     } else {
       this.numberFilters[target] = Number.parseInt(event.target.value);
       localStorage.setItem("numberFilters", JSON.stringify(this.numberFilters));
