@@ -249,7 +249,7 @@ class TownsOverview extends React.Component<Props, State> {
     if (this.state.selectedTowns.length > 200) {
       return (
         <h5 className="text-muted">
-          Please filter fewer than 200 towns to display detailed analysis{" "}
+          Details can only be shown for fewer than 200 towns.{" "}
         </h5>
       );
     }
