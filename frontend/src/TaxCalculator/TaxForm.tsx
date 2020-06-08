@@ -19,6 +19,8 @@ interface TaxForm {
 export interface State {
   selectedTown: Array<Object | string>;
   income?: number;
+  typeaheadValid: boolean;
+  typeaheadInvalid: boolean;
   numChildren?: number;
   married: boolean;
   doubleSalary: boolean;
@@ -56,17 +58,19 @@ class TaxForm extends React.Component<Props, State> {
       married: false,
       doubleSalary: false,
       validated: false,
+      typeaheadInvalid: false,
+      typeaheadValid: false,
       key: Date.now(),
     };
   }
 
   handleSubmit(event: any) {
-    if (event.target.checkValidity() === false) {
+    if (event.target.checkValidity() === false || this.state.selectedTown.length !== 1) {
       event.preventDefault();
+      this.setState({ typeaheadInvalid: true, typeaheadValid: false})
       event.stopPropagation();
     } else {
-      this.setState({ validated: true });
-
+      this.setState({ validated: true, typeaheadInvalid: false, typeaheadValid: true });
       this.props.handleTaxFormSubmission(this.state);
     }
     window.focus();
@@ -141,6 +145,8 @@ class TaxForm extends React.Component<Props, State> {
               }}
               selectedTown={this.state.selectedTown}
               typeaheadRef={this.typeaheadRef}
+              typeaheadValid={this.state.typeaheadValid}
+              typeaheadInvalid={this.state.typeaheadInvalid}
             />
           </Form.Group>
           <Form.Group controlId="income">

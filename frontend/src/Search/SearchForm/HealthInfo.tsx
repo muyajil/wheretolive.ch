@@ -117,19 +117,21 @@ class HealthInfo extends React.Component<Props, State> {
             </Button>
           </Col>
           <Col className="text-center">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                const numPeople = Math.max(this.props.numPeople - 1, 1);
-                this.props.setStateInParent({
-                  numPeople: numPeople,
-                  birthYears: this.props.birthYears.slice(0, numPeople),
-                  franchises: this.props.franchises.slice(0, numPeople),
-                });
-              }}
-            >
-              &#8210;
-            </Button>
+            {this.props.numPeople > 1 ? (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  const numPeople = Math.max(this.props.numPeople - 1, 1);
+                  this.props.setStateInParent({
+                    numPeople: numPeople,
+                    birthYears: this.props.birthYears.slice(0, numPeople),
+                    franchises: this.props.franchises.slice(0, numPeople),
+                  });
+                }}
+              >
+                &#8210;
+              </Button>
+            ) : null}
           </Col>
         </Row>
       </Col>

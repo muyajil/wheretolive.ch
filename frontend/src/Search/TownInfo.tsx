@@ -10,6 +10,9 @@ interface TownInfo {
     yearlyCostHealth: number;
     yearlyCostHome: number;
     yearlyCostTaxes: number;
+    monthlyCostHealth: number;
+    monthlyCostHome: number;
+    monthlyCostTaxes: number;
     commuteTime: number;
     monthlyCostTotal: number;
     yearlyCostTotal: number;

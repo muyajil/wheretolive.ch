@@ -11,6 +11,8 @@ interface Props {
   selectedTown: Array<Object | string>;
   commuteTime: number;
   onlyTrainCommute: boolean;
+  typeaheadValid: boolean;
+  typeaheadInvalid: boolean;
 }
 
 interface State {}
@@ -28,6 +30,8 @@ class CommuteInfo extends React.Component<Props, State> {
             onChange={this.props.handleTypeaheadChange}
             selectedTown={this.props.selectedTown}
             typeaheadRef={this.props.typeaheadRef}
+            typeaheadInvalid={this.props.typeaheadInvalid}
+            typeaheadValid={this.props.typeaheadValid}
           />
         </Form.Group>
         <Form.Group controlId="commuteTime">

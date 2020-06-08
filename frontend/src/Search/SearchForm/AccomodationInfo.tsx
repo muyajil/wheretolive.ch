@@ -30,7 +30,8 @@ class AccomodationInfo extends React.Component<Props, State> {
             <Form.Control
               value={this.props.minRooms}
               onChange={this.props.handleChange}
-              type="decimal"
+              type="number"
+              step="0.5"
             />
           </Form.Group>
         </Col>
@@ -40,7 +41,8 @@ class AccomodationInfo extends React.Component<Props, State> {
             <Form.Control
               value={this.props.maxRooms}
               onChange={this.props.handleChange}
-              type="decimal"
+              type="number"
+              step="0.5"
             />
           </Form.Group>
         </Col>

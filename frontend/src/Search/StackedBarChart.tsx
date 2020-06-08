@@ -16,6 +16,7 @@ interface Row {
 interface Props {
   data: Row[];
   idToMark: number;
+  monthlySwitch: boolean;
 }
 
 interface State {}
@@ -27,8 +28,14 @@ class StackedBarChart extends React.Component<Props, State> {
       formattedName = "Yearly Cost Home";
     } else if (name === "yearlyCostTaxes") {
       formattedName = "Yearly Cost Taxes";
-    } else {
+    } else if (name === "yearlyCostHealth") {
       formattedName = "Yearly Cost Health";
+    } else if (name === "monthlyCostHome") {
+      formattedName = "Monthly Cost Home";
+    } else if (name === "monthlyCostTaxes") {
+      formattedName = "Monthly Cost Taxes";
+    } else if (name === "monthlyCostHealth") {
+      formattedName = "Monthly Cost Health";
     }
     return ["CHF " + new Intl.NumberFormat("ch").format(value), formattedName];
   }
@@ -48,7 +55,7 @@ class StackedBarChart extends React.Component<Props, State> {
             hide={true}
           />
           <Tooltip labelFormatter={this.formatLabel} formatter={this.formatTooltip} />
-          <Bar dataKey="yearlyCostTaxes" stackId="a">
+          <Bar dataKey={this.props.monthlySwitch ? "monthlyCostTaxes" : "yearlyCostTaxes"} stackId="a">
             {this.props.data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
@@ -60,7 +67,7 @@ class StackedBarChart extends React.Component<Props, State> {
               />
             ))}
           </Bar>
-          <Bar dataKey="yearlyCostHealth" stackId="a">
+          <Bar dataKey={this.props.monthlySwitch ? "monthlyCostHealth" : "yearlyCostHealth"} stackId="a">
             {this.props.data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
@@ -72,7 +79,7 @@ class StackedBarChart extends React.Component<Props, State> {
               />
             ))}
           </Bar>
-          <Bar dataKey="yearlyCostHome" stackId="a">
+          <Bar dataKey={this.props.monthlySwitch ? "monthlyCostHome" : "yearlyCostHome"} stackId="a">
             {this.props.data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}

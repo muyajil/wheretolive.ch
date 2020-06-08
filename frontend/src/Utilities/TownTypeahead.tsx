@@ -5,6 +5,8 @@ interface Props {
   onChange: (selected: Array<Object | string>) => void;
   selectedTown: Array<Object | string>;
   typeaheadRef: any;
+  typeaheadValid: boolean;
+  typeaheadInvalid: boolean;
 }
 
 interface State {
@@ -38,6 +40,9 @@ class TownTypeahead extends React.Component<Props, State> {
         ref={this.props.typeaheadRef}
         clearButton={true}
         minLength={3}
+        isValid={this.props.typeaheadValid}
+        isInvalid={this.props.typeaheadInvalid}
+        selectHintOnEnter={true}
       />
     );
   }

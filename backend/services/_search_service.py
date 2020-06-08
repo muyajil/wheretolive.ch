@@ -142,5 +142,14 @@ class SearchService:
             towns_by_id[town_id]["monthlyCostTotal"] = (
                 towns_by_id[town_id]["yearlyCostTotal"] // 12
             )
+            towns_by_id[town_id]["monthlyCostHealth"] = (
+                towns_by_id[town_id]["yearlyCostHealth"] // 12
+            )
+            towns_by_id[town_id]["monthlyCostTaxes"] = (
+                towns_by_id[town_id]["yearlyCostTaxes"] // 12
+            )
+            towns_by_id[town_id]["monthlyCostHome"] = (
+                towns_by_id[town_id]["yearlyCostHome"] // 12
+            )
 
-        return towns_by_id
+        return sorted(towns_by_id.values(), key=lambda x: x["yearlyCostTotal"])

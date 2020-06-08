@@ -18,6 +18,8 @@ interface SearchForm {
 
 export interface State {
   selectedTown: Array<Object | string>;
+  typeaheadValid: boolean;
+  typeaheadInvalid: boolean;
   income?: number;
   numChildren?: number;
   married: boolean;
@@ -64,6 +66,8 @@ class SearchForm extends React.Component<Props, State> {
   getEmptyState() {
     return {
       selectedTown: [],
+      typeaheadInvalid: false,
+      typeaheadValid: false,
       income: undefined,
       numChildren: undefined,
       married: false,
@@ -83,7 +87,7 @@ class SearchForm extends React.Component<Props, State> {
     };
   }
 
-  setStateInParent(state: object){
+  setStateInParent(state: object) {
     this.setState(state);
   }
 
@@ -92,12 +96,13 @@ class SearchForm extends React.Component<Props, State> {
   }
 
   handleSubmit(event: any) {
-    if (event.target.checkValidity() === false) {
+    if (event.target.checkValidity() === false || this.state.selectedTown.length !== 1) {
       event.preventDefault();
+      this.setState({ typeaheadInvalid: true, typeaheadValid: false});
       event.stopPropagation();
     } else {
-      this.setState({ validated: true });
-      console.log(JSON.stringify(this.state));
+      this.setState({ validated: true, typeaheadInvalid: false, typeaheadValid: true });
+
       this.props.handleSearchFormSubmission(this.state);
     }
     window.focus();
@@ -128,6 +133,48 @@ class SearchForm extends React.Component<Props, State> {
   handleTypeaheadChange = (selected: Array<Object | string>) =>
     this.setState({ selectedTown: selected });
 
+  validateNumbers(newState: any) {
+    let newMinRooms = newState["minRooms"] ? newState["minRooms"] : this.state.minRooms;
+    let newMaxRooms = newState["maxRooms"] ? newState["maxRooms"] : this.state.maxRooms;
+    let newMinArea = newState["minArea"] ? newState["minArea"] : this.state.minArea;
+    let newMaxArea = newState["maxArea"] ? newState["maxArea"] : this.state.maxArea;
+    let changed = false;
+    if (newMinRooms && newMaxRooms) {
+      if (newMinRooms > newMaxRooms) {
+        [newMinRooms, newMaxRooms] = [newMaxRooms, newMinRooms];
+        changed = true;
+      }
+    }
+    if (newMinRooms && newMinRooms % 0.5 !== 0){
+      newMinRooms = Math.round(newMinRooms*2)/2;
+      changed = true;
+    }
+
+    if (newMaxRooms && newMaxRooms % 0.5 !== 0){
+      newMaxRooms = Math.round(newMaxRooms*2)/2;
+      changed = true;
+    }
+
+    if (newMinArea && newMaxArea) {
+      if (newMinArea > newMaxArea) {
+        [newMinArea, newMaxArea] = [newMaxArea, newMinArea];
+        changed = true;
+      }
+    }
+
+    if (changed){
+      return {
+        minRooms: newMinRooms,
+        maxRooms: newMaxRooms,
+        minArea: newMinArea,
+        maxArea: newMaxArea,
+        key: Date.now()
+      }
+    } else {
+      return {}
+    }
+  }
+
   handleChange<T extends keyof State>(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
@@ -144,7 +191,9 @@ class SearchForm extends React.Component<Props, State> {
       [name]: value,
     };
 
-    this.setState(newState as { [P in T]: State[P] });
+    const mergedState = {...newState, ...this.validateNumbers(newState)}
+
+    this.setState(mergedState as { [P in T]: State[P] });
   }
 
   render() {
@@ -164,6 +213,8 @@ class SearchForm extends React.Component<Props, State> {
               commuteTime={this.state.commuteTime}
               onlyTrainCommute={this.state.onlyTrainCommute}
               selectedTown={this.state.selectedTown}
+              typeaheadInvalid={this.state.typeaheadInvalid}
+              typeaheadValid={this.state.typeaheadValid}
             />
             <TaxInfo
               handleChange={this.handleChange}
