@@ -28,6 +28,11 @@ class Search extends React.Component<Props, State> {
       this
     );
   }
+
+  componentDidMount() {
+    window.scrollTo(0, 0)
+  }  
+
   handleSearchFormSubmission(searchFormState: SearchFormState) {
     if (searchFormState.selectedTown.length >= 1) {
       const ipAddress = publicIp.v4();
