@@ -127,6 +127,7 @@
             <XAxis dataKey="interval" name={this.props.xName} hide={false}/>
             <YAxis name={this.props.yName} hide={true} />
             <Tooltip
+              isAnimationActive={false}
               formatter={this.props.formatTooltip}
               labelFormatter={this.props.formatLabel}
             />

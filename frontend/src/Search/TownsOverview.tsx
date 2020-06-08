@@ -275,7 +275,6 @@ class TownsOverview extends React.Component<Props, State> {
 
   firstDataRenderedHandler(event: FirstDataRenderedEvent) {
     event.columnApi.autoSizeAllColumns();
-    // event.api.setSortModel([{ colId: "yearlyCostTotal", sort: "asc" }]);
     const gridWidth =
       event.columnApi
         .getAllColumns()

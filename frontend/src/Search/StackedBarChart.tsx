@@ -54,7 +54,7 @@ class StackedBarChart extends React.Component<Props, State> {
             tickFormatter={(value) => new Intl.NumberFormat("ch").format(value)}
             hide={true}
           />
-          <Tooltip labelFormatter={this.formatLabel} formatter={this.formatTooltip} />
+          <Tooltip isAnimationActive={false} labelFormatter={this.formatLabel} formatter={this.formatTooltip} />
           <Bar dataKey={this.props.monthlySwitch ? "monthlyCostTaxes" : "yearlyCostTaxes"} stackId="a">
             {this.props.data.map((entry, index) => (
               <Cell
