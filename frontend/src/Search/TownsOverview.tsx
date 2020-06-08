@@ -43,6 +43,12 @@ interface State {
   divKey: number;
 }
 
+function renderTime(seconds: number){
+  const minutes = Math.floor((seconds / 60) % 60);
+  const hours = Math.floor(seconds / 3600);
+  return ("0" + hours).slice(-2) + ":" + ("0" + minutes).slice(-2) + " h";
+}
+
 class TownsOverview extends React.Component<Props, State> {
   private gridApi?: GridApi;
   private columnApi?: ColumnApi;
@@ -53,9 +59,14 @@ class TownsOverview extends React.Component<Props, State> {
   private maxTotalMonthly: number;
   private maxCommute: number;
   private hoverAllowed: boolean;
+  private searchFormState: any;
   constructor(props: Props) {
     super(props);
     this.hoverAllowed = false;
+    const searchFormStateString = localStorage.getItem("searchFormState");
+    this.searchFormState = searchFormStateString
+      ? JSON.parse(searchFormStateString)
+      : {};
     const searchResultString = localStorage.getItem("searchResults");
     let searchResults;
     const booleanFilters = localStorage.getItem("booleanFilters");
@@ -93,11 +104,14 @@ class TownsOverview extends React.Component<Props, State> {
       this.maxTotalMonthly = this.numberFilters["maxTotalMonthly"];
       this.numberFilters["minTotalMonthly"] = 0;
 
-      if (booleanFilters && booleanFilters !== ""){
-        this.booleanFilters = JSON.parse(booleanFilters)
+      if (booleanFilters && booleanFilters !== "") {
+        this.booleanFilters = JSON.parse(booleanFilters);
       }
-      if (numberFilters && numberFilters !== ""){
-        this.numberFilters = {...this.numberFilters, ...JSON.parse(numberFilters)}
+      if (numberFilters && numberFilters !== "") {
+        this.numberFilters = {
+          ...this.numberFilters,
+          ...JSON.parse(numberFilters),
+        };
       }
     }
 
@@ -217,12 +231,12 @@ class TownsOverview extends React.Component<Props, State> {
 
   resetFilters() {
     this.numberFilters = {
-      "maxTotalYearly": this.maxTotalYearly,
-      "minTotalYearly": 0,
-      "maxTotalMonthly": this.maxTotalMonthly,
-      "minTotalMonthly": 0,
-      "maxCommute": this.maxCommute,
-      "minCommute": 0
+      maxTotalYearly: this.maxTotalYearly,
+      minTotalYearly: 0,
+      maxTotalMonthly: this.maxTotalMonthly,
+      minTotalMonthly: 0,
+      maxCommute: this.maxCommute,
+      minCommute: 0,
     };
     this.booleanFilters = {};
     this.setState({
@@ -255,9 +269,7 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   timeFormatter(params: ValueFormatterParams) {
-    const minutes = Math.floor((params.value / 60) % 60);
-    const hours = Math.floor(params.value / 3600);
-    return ("0" + hours).slice(-2) + ":" + ("0" + minutes).slice(-2) + " h";
+    return renderTime(params.value);
   }
 
   booleanFormatter(params: ValueFormatterParams) {
@@ -295,13 +307,13 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   onMouseOverHandler(event: CellMouseOverEvent) {
-    if (this.hoverAllowed){
+    if (this.hoverAllowed) {
       this.debounceSetState({ hoveredTownId: event.data.sourceTownId });
     }
   }
 
   onMouseOutHandler(event: CellMouseOutEvent) {
-    if (this.hoverAllowed){
+    if (this.hoverAllowed) {
       this.debounceSetState({ hoveredTownId: -1 });
     }
   }
@@ -337,10 +349,14 @@ class TownsOverview extends React.Component<Props, State> {
       });
     }
     if (event.target.id === "monthlySwitch") {
-      if (event.target.checked){
-        this.numberFilters["maxTotalMonthly"] = Math.floor(this.numberFilters["maxTotalYearly"]/12)
+      if (event.target.checked) {
+        this.numberFilters["maxTotalMonthly"] = Math.floor(
+          this.numberFilters["maxTotalYearly"] / 12
+        );
       } else {
-        this.numberFilters["maxTotalYearly"] = Math.floor(this.numberFilters["maxTotalMonthly"]*12)
+        this.numberFilters["maxTotalYearly"] = Math.floor(
+          this.numberFilters["maxTotalMonthly"] * 12
+        );
       }
       this.columnApi?.hideColumn("yearlyCostTotal", event.target.checked);
       this.columnApi?.hideColumn("monthlyCostTotal", !event.target.checked);
@@ -417,8 +433,10 @@ class TownsOverview extends React.Component<Props, State> {
     return pass;
   }
 
-  componentDidMount(){
-    new Promise(resolve => setTimeout(resolve, 500)).then(() => this.hoverAllowed = true);
+  componentDidMount() {
+    new Promise((resolve) => setTimeout(resolve, 500)).then(
+      () => (this.hoverAllowed = true)
+    );
   }
 
   renderOverview(searchResults: TownInfo[]) {
@@ -453,7 +471,10 @@ class TownsOverview extends React.Component<Props, State> {
         <Row>
           <Col xs={12}>
             <h4 className="text-light">
-              {this.state.selectedTowns.length} towns in selection
+              <strong>{this.state.selectedTowns.length}</strong> towns filtered from{" "}
+              <strong>{this.state.searchResults.length}</strong> within{" "}
+              <strong>{renderTime(this.numberFilters["maxCommute"]*60)}</strong> of{" "}
+              <strong>{this.searchFormState["selectedTown"][0]["label"]}</strong>
             </h4>
           </Col>
         </Row>
@@ -495,7 +516,10 @@ class TownsOverview extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.state.searchResults === null || this.state.searchResults === undefined) {
+    if (
+      this.state.searchResults === null ||
+      this.state.searchResults === undefined
+    ) {
       return <Redirect to="/search" />;
     } else {
       return this.renderOverview(this.state.searchResults);
