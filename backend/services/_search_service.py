@@ -142,7 +142,9 @@ class SearchService:
             health_info, towns_by_id, zip_to_id, "sourceTownZip"
         )
 
-        towns_by_id = self.get_average_taxes_and_update(tax_info, towns_by_id)
+        towns_by_id = self.get_average_taxes_and_update(
+            tax_info, towns_by_id, "sourceTownBFSNr", "sourceTownName"
+        )
 
         towns_by_id = self.get_shopping_info_and_update(towns_by_id)
 
