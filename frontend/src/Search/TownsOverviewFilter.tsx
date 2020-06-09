@@ -156,8 +156,7 @@ class TownsOverviewFilter extends React.Component<Props, State> {
                 value={this.props.numberFilters["minCommute"]}
                 onChange={this.props.handleChange}
                 min={0}
-                max={(Math.floor(this.props.maxCommute / 5) + 1) * 5}
-                defaultValue={0}
+                max={this.props.maxCommute}
                 step={5}
                 type="range"
               />
@@ -177,8 +176,7 @@ class TownsOverviewFilter extends React.Component<Props, State> {
                 value={this.props.numberFilters["maxCommute"]}
                 onChange={this.props.handleChange}
                 min={0}
-                max={(Math.floor(this.props.maxCommute / 5) + 1) * 5}
-                defaultValue={this.props.maxCommute}
+                max={this.props.maxCommute}
                 step={5}
                 type="range"
               />

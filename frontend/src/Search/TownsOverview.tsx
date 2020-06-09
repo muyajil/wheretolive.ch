@@ -89,11 +89,7 @@ class TownsOverview extends React.Component<Props, State> {
       );
       this.maxTotalYearly = this.numberFilters["maxTotalYearly"];
       this.numberFilters["minTotalYearly"] = 0;
-      this.numberFilters["maxCommute"] = Math.max(
-        ...searchResults.map((townInfo: TownInfo) =>
-          Math.floor(townInfo.commuteTime / 60)
-        )
-      );
+      this.numberFilters["maxCommute"] = this.searchFormState["commuteTime"]
       this.maxCommute = this.numberFilters["maxCommute"];
       this.numberFilters["minCommute"] = 0;
       this.numberFilters["maxTotalMonthly"] = Math.max(
