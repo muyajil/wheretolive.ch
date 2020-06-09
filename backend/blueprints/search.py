@@ -65,7 +65,7 @@ def search_towns():
     return jsonify(search_result)
 
 
-@search_bp.route("/towns", methods=["POST"])
+@search_bp.route("/accomodations", methods=["POST"])
 def search_accomodations():
     service = SearchService()
     request_json = request.get_json()

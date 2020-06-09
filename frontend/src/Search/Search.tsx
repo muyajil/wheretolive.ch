@@ -58,7 +58,7 @@ class Search extends React.Component<Props, State> {
         }),
       };
       this.setState({ loading: true, showSearchForm: false, showBanner: false }, () =>
-        fetch(process.env.REACT_APP_BACKEND_URL + "/search/", requestOptions)
+        fetch(process.env.REACT_APP_BACKEND_URL + "/search/towns", requestOptions)
           .then((response) => response.json())
           .then((data) => {
             localStorage.setItem("searchResults", JSON.stringify(data));
