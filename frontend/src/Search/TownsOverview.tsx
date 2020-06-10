@@ -287,13 +287,13 @@ class TownsOverview extends React.Component<Props, State> {
 
   firstDataRenderedHandler(event: FirstDataRenderedEvent) {
     event.columnApi.autoSizeAllColumns();
+    this.gridApi?.onFilterChanged();
     const gridWidth =
       event.columnApi
         .getAllColumns()
         .filter((col) => col.isVisible())
         .map((col) => col.getActualWidth())
         .reduce((result, num) => result + num) + 30;
-    this.gridApi?.onFilterChanged();
     this.setState({ gridWidth: gridWidth, displayGrid: true });
   }
 
@@ -331,18 +331,12 @@ class TownsOverview extends React.Component<Props, State> {
         "booleanFilters",
         JSON.stringify(this.booleanFilters)
       );
-      this.debounceSetState({
-        divKey: Date.now(),
-      });
     } else if (target === "monthlySwitch") {
       this.monthlySwitch = event.target.checked;
       localStorage.setItem("monthlySwitch", String(this.monthlySwitch));
     } else {
       this.numberFilters[target] = Number.parseInt(event.target.value);
       localStorage.setItem("numberFilters", JSON.stringify(this.numberFilters));
-      this.debounceSetState({
-        divKey: Date.now(),
-      });
     }
     if (event.target.id === "monthlySwitch") {
       if (event.target.checked) {
@@ -359,6 +353,13 @@ class TownsOverview extends React.Component<Props, State> {
       this.columnApi?.autoSizeAllColumns();
     }
     this.gridApi?.onFilterChanged();
+    const columns = this.columnApi?.getAllColumns();
+    if (columns){
+      const gridWidth = columns.filter((col) => col.isVisible())
+      .map((col) => col.getActualWidth())
+      .reduce((result, num) => result + num) + 30;
+      this.debounceSetState({ gridWidth: gridWidth, divKey: Date.now() });
+    }
   }
 
   isExternalFilterPresent() {
